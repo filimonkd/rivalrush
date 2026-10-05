@@ -1,66 +1,122 @@
 # Implementation status
 
-Statuses: PLANNED · IMPLEMENTED · TESTED (automated) · VERIFIED (manually) · DEPLOYED.
+Last updated: 5 Oct 2026 (MVP hardening phase).
 
-## Phase 0 audit (5 Oct 2026)
+Legend: ✅ Verified · 🟡 Not yet verified · ⚠️ Known limitation · ⬜ Planned
 
-- The spec claimed stages 1–13 were "done in the scaffold, typechecked, 56 tests passing".
-  **No such scaffold existed** in any accessible repository. The original target branch
-  belonged to an unrelated product (FPL Radar), and `filimonkd/crack-the-code` is a 2024
-  prototype (~530 lines, not reusable: wrong Telegram HMAC scheme, client-supplied player
-  ids). Everything here was built fresh in this repository; the spec's architecture was kept.
-- `core.telegram.org` and `fastdl.mongodb.org` were blocked in the build environment.
-  Telegram details were cross-checked against maintained npm packages (see
-  [telegram.md](telegram.md)); MongoDB 8.0.32 was taken from the official Docker image for
-  local tests. CI downloads MongoDB normally.
+Two kinds of verification are tracked separately:
 
-## Decisions not fixed by the spec
+- **Automated**: covered by tests that run in CI on every pull request (unit, integration on
+  a real MongoDB replica set, and a two-browser Playwright E2E with dev login).
+- **Production**: checked by a person in real Telegram against the live deployment
+  (Vercel + Render + Atlas). The source for each ✅ is noted in
+  [testing.md](testing.md#production-manual-qa).
 
-| Topic                                            | Decision                                                                                                                           |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Do timed-out turns count toward the guess limit? | Yes, so idle games always end; "both out of turns" = draw                                                                          |
-| Host readiness                                   | The host is implicitly ready; READY = room full and the guest ready                                                                |
-| User in several rooms                            | One active room per user: creating or joining leaves an idle lobby automatically; refused (`ALREADY_IN_ROOM`) while a game is live |
-| A player leaves a finished room                  | The remaining player keeps the room as host in LOBBY; the same invite can bring a new opponent                                     |
-| Streaks                                          | `currentStreak` = consecutive wins; a draw or loss resets it                                                                       |
-| Stale actions                                    | `GUESS` needs `clientVersion == game.version`; `SET_SECRET` and `FORFEIT` are version-independent                                  |
-| Ties between timers and actions                  | A deadline that is due is applied before any action (inclusive)                                                                    |
-| Player who never connects when the game starts   | Gets the same 60 s grace as a disconnect                                                                                           |
-| Invite token storage                             | Only a SHA-256 hash is persisted                                                                                                   |
-| MainButton                                       | Not used; large in-page buttons (BackButton and haptics are used)                                                                  |
-| Repository                                       | New `filimonkd/rivalrush` (chosen by the product owner)                                                                            |
+## Production architecture (live)
+
+```
+Telegram (bot @rivalrushbot, Main Mini App)
+   │  webhook: POST /telegram/webhook (secret header)
+   ▼
+Render Free ── Node 22 · Express + Socket.IO · RoomManager (rooms/games in memory) ── MongoDB Atlas M0
+   ▲                                                                                 (users, matches, room metadata)
+   │  HTTPS REST + WebSocket (JWT)
+Vercel Hobby ── React Mini App (static build)
+```
 
 ## Feature status
 
-| Feature                                                                                                                                                               | Status                                                                                     |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Monorepo, strict TS, lint/format, scripts                                                                                                                             | IMPLEMENTED · TESTED (CI)                                                                  |
-| Telegram initData auth + JWT                                                                                                                                          | IMPLEMENTED · TESTED (unit, integration). Not yet verified in real Telegram                |
-| User model + stats + profile + history                                                                                                                                | IMPLEMENTED · TESTED                                                                       |
-| RoomManager / RoomStore / locking / expiry / host hand-off                                                                                                            | IMPLEMENTED · TESTED                                                                       |
-| Invites (opaque token, startapp deep link, preview)                                                                                                                   | IMPLEMENTED · TESTED (web link in E2E). The t.me deep link is not yet verified in Telegram |
-| Socket.IO auth, snapshots, events, throttle                                                                                                                           | IMPLEMENTED · TESTED                                                                       |
-| Idempotency, versioning, stale handling                                                                                                                               | IMPLEMENTED · TESTED                                                                       |
-| Crack the Code incl. equalizer and timers                                                                                                                             | IMPLEMENTED · TESTED                                                                       |
-| Reconnect / resync / grace / reopen                                                                                                                                   | IMPLEMENTED · TESTED (incl. E2E offline toggle). Not verified on phones                    |
-| Rematch with start swap                                                                                                                                               | IMPLEMENTED · TESTED                                                                       |
-| Transactional idempotent match recording                                                                                                                              | IMPLEMENTED · TESTED                                                                       |
-| Web screens (loading, home, game selection, create, lobby, invite, join preview, setup, game, opponent turn, reconnecting, result, rematch, profile, history, errors) | IMPLEMENTED · TESTED (E2E, desktop Chromium, mobile viewport)                              |
-| Telegram theme, safe area, haptics, BackButton                                                                                                                        | IMPLEMENTED. Not verified in Telegram                                                      |
-| Bot /start, /help, menu button                                                                                                                                        | IMPLEMENTED · TESTED (unit). Not verified against the live Bot API                         |
-| CI (GitHub Actions)                                                                                                                                                   | IMPLEMENTED; see the PR checks for the latest run                                          |
-| Vercel Hobby / Render Free / Atlas M0 config (free tiers only)                                                                                                        | IMPLEMENTED (config only). **Not deployed**: needs accounts and secrets                    |
-| Manual QA on two phones                                                                                                                                               | PLANNED ([testing.md](testing.md))                                                         |
-| Branch protection on `main`                                                                                                                                           | PLANNED: needs repository admin ([ci-cd.md](ci-cd.md))                                     |
+| Feature                                                    | Automated                     | Production (real Telegram)                                       |
+| ---------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| Bot `/start`, Play button, webhook                         | ✅ unit + webhook integration | ✅ verified by the product owner                                 |
+| Mini App launch + Telegram initData sign-in                | ✅ unit + integration         | ✅ verified                                                      |
+| Create room, invite deep link (`startapp`), join, lobby    | ✅ unit + integration + E2E   | ✅ verified (after enabling the Main Mini App in BotFather)      |
+| Ready → start, secret setup, turns, bulls/cows             | ✅ unit + integration + E2E   | ✅ verified                                                      |
+| A full match to a result                                   | ✅                            | ✅ verified                                                      |
+| Draw, last-chance (equalizer), forfeit                     | ✅ unit + integration + E2E   | 🟡 not yet checked in production                                 |
+| Turn timer, timeout, auto secret at setup deadline         | ✅ unit (fake clock)          | 🟡                                                               |
+| Rematch (both agree, start swaps, new session)             | ✅ unit + integration + E2E   | 🟡                                                               |
+| Rematch declined / opponent leaves / offline while waiting | ✅ unit + E2E                 | 🟡                                                               |
+| Reconnect (network drop, socket drop, app reopen)          | ✅ unit + integration + E2E   | 🟡 (backgrounding on iOS/Android needs real phones)              |
+| Resync: stale version, duplicate action after reconnect    | ✅ integration                | 🟡                                                               |
+| Profile: W/L/D, win rate, streaks, recent matches          | ✅ integration + E2E          | 🟡                                                               |
+| Match history recorded once; stats = history               | ✅ integration (real MongoDB) | 🟡 (check Atlas `matches` after a few games)                     |
+| Duplicate / concurrent actions (10 race cases)             | ✅ unit (`races.test.ts`)     | n/a                                                              |
+| Secrets never in other player's views, API, logs, DB       | ✅ unit + integration + E2E   | 🟡 (spot-check Render logs)                                      |
+| Telegram theme (light/dark), safe areas, haptics, Back     | implemented, not automatable  | 🟡                                                               |
+| Invite edge cases: expired / closed / full / bogus         | ✅ unit + integration + E2E   | 🟡                                                               |
+| CI (lint, format, typecheck, tests, build, E2E)            | ✅ green on every merged PR   | n/a                                                              |
+| Vercel production build                                    | n/a                           | ✅ deployed (app opens in Telegram)                              |
+| Render API + Socket.IO                                     | n/a                           | ✅ deployed (sign-in and live games work)                        |
+| MongoDB Atlas M0                                           | n/a                           | ✅ connected (sign-in upserts users); 🟡 match records unchecked |
+| `/health` returns `database: "up"`                         | ✅ integration                | 🟡 not checked from here (the build sandbox can't reach Render)  |
+| Branch protection on `main`                                | n/a                           | ⬜ needs repository admin ([ci-cd.md](ci-cd.md))                 |
+| Uptime pinger (keeps Render Free awake)                    | n/a                           | 🟡 confirm it is set up ([deployment.md](deployment.md))         |
+
+## Changes in the hardening phase
+
+Bugs found and fixed (each has a regression test):
+
+1. **Old match visible to a newcomer.** When a player left a finished room, the finished game
+   stayed attached to the room. Anyone joining through the same invite received the
+   previous match's guesses and result in their snapshot. The room now drops the finished
+   game (it is already recorded) when it returns to the lobby.
+2. **Double-tap on Rematch/Accept** showed a false "A rematch is not possible right now".
+   The button is now disabled while the vote is in flight.
+3. **Waiting for a rematch from someone who went offline** gave no hint. The result sheet now
+   says "<name> is offline right now".
+4. **Home card** called a finished room "Lobby open"; it now says "Game over — rematch?".
+5. **Back from the background on a dead socket**: the app could show a stale board for up to
+   ~40 s until the heartbeat noticed. On return it now resyncs with a 3 s limit and forces a
+   reconnect if the server does not answer.
+6. **A refused session token** left the app on "Reconnecting…" forever (Socket.IO does not
+   retry an auth refusal). It now shows "Your session ended. Close the app and open it again
+   from the bot."
+7. When a rival leaves mid-game (a forfeit), the remaining player now gets a
+   "<name> gave up — you win" toast; previously they were moved to the lobby without one.
+
+No changes to the Crack the Code rules engine were needed.
+
+## Decisions not fixed by the spec
+
+| Topic                                            | Decision                                                                                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Do timed-out turns count toward the guess limit? | Yes, so idle games always end; "both out of turns" = draw                                                                            |
+| Host readiness                                   | The host is implicitly ready; READY = room full and the guest ready                                                                  |
+| User in several rooms                            | One active room per user: creating or joining leaves an idle lobby automatically; refused (`ALREADY_IN_ROOM`) while a game is live   |
+| A player leaves a finished room                  | The remaining player keeps the room as host in LOBBY (old game dropped); the same invite can bring a new opponent                    |
+| Declining a rematch                              | There is no separate "decline": leaving the room is the answer                                                                       |
+| Streaks                                          | `currentStreak` = consecutive wins; a draw or loss resets it                                                                         |
+| Stale actions                                    | `GUESS` needs `clientVersion == game.version`; `SET_SECRET` and `FORFEIT` are version-independent                                    |
+| Ties between timers and actions                  | A deadline that is due is applied before any action (inclusive); a game deadline goes before a reconnect-grace expiry at the same ms |
+| Player who never connects when the game starts   | Gets the same 60 s grace as a disconnect                                                                                             |
+| Invite token storage                             | Only a SHA-256 hash is persisted                                                                                                     |
+| Profiles                                         | Any signed-in player can view another player's profile (name, stats, recent games); no Telegram id is exposed                        |
+| Repository                                       | `filimonkd/rivalrush` (chosen by the product owner)                                                                                  |
 
 ## Known limitations
 
-- Hosting is free tiers only (product owner's decision): Render Free sleeps when idle (kept
-  awake by a free pinger), can restart at any time, and a cold start takes about a minute.
-  The bot uses a webhook so Telegram wakes the server.
+- ⚠️ **Live games are in server memory.** A Render deploy, restart, crash or free-tier sleep
+  ends every game in progress (players see "This room is gone"). Finished matches are safe in
+  MongoDB.
+- ⚠️ **Render Free sleeps after ~15 min idle** unless a pinger keeps it awake; the first open
+  then takes about a minute ("Waking up the game server…").
+- ⚠️ **One server instance only** (no Redis store, adapter or job queue).
+- ⚠️ **Telegram launch data is valid for 1 hour.** If Telegram reloads a Mini App that was
+  left open in the background for longer, sign-in fails with "Your Telegram session is too
+  old. Reopen the app from the bot." Reopening fixes it.
+- ⚠️ JWTs (7 days) cannot be revoked before they expire; there is no CSP header yet.
+- ⚠️ A finished room waits for a rematch until someone leaves or it expires (2 h idle); there
+  is no rematch timeout.
+- ⚠️ English UI only.
+- ⚠️ The automated E2E runs in Chromium with dev login, not inside Telegram's WebViews.
 
-- Live games live in memory: a restart or deploy ends them (documented, accepted for the MVP).
-- One server instance only, until a Redis store, adapter and job queue exist.
-- JWTs are not revocable before expiry; no CSP header yet.
-- English UI only.
-- The E2E runs in desktop Chromium with dev login, not inside Telegram's WebViews.
+## History
+
+- Phase 0 audit: the spec claimed a finished scaffold that did not exist; everything was built
+  fresh here, keeping the spec's architecture. `core.telegram.org` and `fastdl.mongodb.org`
+  were blocked in the build environment; Telegram details were cross-checked against
+  maintained npm packages ([telegram.md](telegram.md)).
+- Deployment fixes: Render build needs dev dependencies (`npm ci --include=dev`); Vercel's
+  Node 24 needed `engines: >=22`; clearer errors for malformed URL variables; invite links
+  need the Main Mini App enabled in BotFather.
