@@ -27,7 +27,7 @@ describe('create / join', () => {
 
   it('rejects unknown games and invalid settings', async () => {
     const { manager } = makeManager();
-    expect(await code(manager.createRoom(alice, 'color-cipher', {}))).toBe('GAME_NOT_AVAILABLE');
+    expect(await code(manager.createRoom(alice, 'defuser', {}))).toBe('GAME_NOT_AVAILABLE');
     expect(await code(manager.createRoom(alice, 'crack-the-code', { turnSeconds: 5 }))).toBe(
       'VALIDATION_ERROR',
     );

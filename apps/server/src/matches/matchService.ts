@@ -1,4 +1,4 @@
-import type { CtcMove, GameResult } from '@rivalrush/shared';
+import type { GameMove, GameResult } from '@rivalrush/shared';
 import mongoose, { Types } from 'mongoose';
 import type { Logger } from 'pino';
 import { UserModel } from '../users/User.model.js';
@@ -13,7 +13,7 @@ export interface FinishedSession {
   isRematch: boolean;
   players: Array<{ userId: string; displayName: string; photoUrl: string | null }>;
   result: GameResult;
-  moves: CtcMove[];
+  moves: GameMove[];
   startedAt: number;
   endedAt: number;
 }

@@ -99,7 +99,7 @@ export class TelegramBot {
         chat_id: message.chat.id,
         text: token
           ? `You've been challenged${name}! Tap below to join the duel.`
-          : `Hey${name}! RivalRush — quick games, real rivals.\n\nStart a Crack the Code duel and send the invite to a friend.`,
+          : `Hey${name}! RivalRush — quick games, real rivals.\n\nPick Crack the Code or Color Cipher, start a duel and send the invite to a friend.`,
         reply_markup: {
           inline_keyboard: [[{ text: token ? 'Join game' : 'Play', web_app: { url } }]],
         },
@@ -110,8 +110,10 @@ export class TelegramBot {
         chat_id: message.chat.id,
         text:
           'Crack the Code: both players hide a secret code of unique digits. Take turns guessing.\n' +
-          '• Bull = right digit, right place\n• Cow = right digit, wrong place\n' +
-          'First to crack the other’s code wins. If the first player cracks it, the second gets one last guess to tie.',
+          '• Bull = right digit, right place\n• Cow = right digit, wrong place\n\n' +
+          'Color Cipher: both players hide a pattern of 4 colors (colors can repeat).\n' +
+          '• Exact = right color, right spot\n• Close = right color, wrong spot\n\n' +
+          'First to crack the other’s secret wins. If the first player cracks it, the second gets one last guess to tie.',
         reply_markup: {
           inline_keyboard: [[{ text: 'Play', web_app: { url: this.opts.webAppUrl } }]],
         },
