@@ -44,6 +44,12 @@ During a game nothing depends on the host.
 `LOBBY` from the spec is represented by the room's LOBBY/READY states: the game state is
 created only when the host starts.
 
+## Color Cipher (`apps/server/src/games/color-cipher/game.ts`)
+
+The same phases, transitions, timers, equalizer and version rules as Crack the Code, with
+color patterns (repeats allowed) and Exact/Close feedback. Per-phase allowed actions and errors:
+[color-cipher.md](color-cipher.md#state-machine).
+
 ## Deterministic races
 
 | Race                                                           | Result                                                                                          |

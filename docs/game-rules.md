@@ -1,4 +1,10 @@
-# Crack the Code: rules
+# Game rules
+
+Two live games share the same room, timer, reconnect, rematch and stats rules. **Color
+Cipher** (colors, repeats allowed, Exact/Close feedback) is specified in
+[color-cipher.md](color-cipher.md). This page covers Crack the Code.
+
+## Crack the Code
 
 An original two-player duel in the bulls-and-cows family. Each player hides a code; take turns
 guessing the other's.

@@ -8,6 +8,12 @@ The first numbers are baselines, not pass/fail.
 Launch gate suggested by the plan: 50+ finished matches, no open blocking bugs, and a
 rematch rate above 40%.
 
+## Built
+
+| Feature                                        | Status                                                                                                                               |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Color Cipher** (original color-pattern duel) | Implemented and tested as a second `GameDefinition` ([color-cipher.md](color-cipher.md)); production release and Telegram QA pending |
+
 ## After the beta (default order; metrics decide)
 
 | Feature                                      | Where it plugs in                                                                                              | Effort |
@@ -15,7 +21,6 @@ rematch rate above 40%.
 | Rich invite card                             | Bot `savePreparedInlineMessage` + `WebApp.shareMessage` in the lobby                                           | S      |
 | 3-screen how-to-play, branded loading screen | Web + BotFather                                                                                                | S      |
 | Global and per-group leaderboards            | `users.stats.wins` index exists; group boards from the signed `chat_instance`                                  | S      |
-| **Color Cipher** (original color-code duel)  | New `GameDefinition` + board component; rooms, sockets and stats unchanged                                     | M      |
 | **Defuser** (asymmetric 2–4 players)         | Per-role `getPlayerView`; `maxPlayers > 2` already supported by rooms                                          | L      |
 | Team games                                   | `teamId` per seat; results gain a winner list                                                                  | M      |
 | Matchmaking                                  | A per-game queue that pairs players and calls `RoomManager.createRoom`                                         | M      |

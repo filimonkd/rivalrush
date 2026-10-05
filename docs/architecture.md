@@ -13,7 +13,7 @@ Game server (apps/server, Render Free, ONE instance kept awake by a pinger)
  ├── users/       User model + service (identity, stats, profile)
  ├── rooms/       RoomManager · RoomStore (InMemoryRoomStore) · KeyedLock · TimerRegistry ·
  │                roomViews (per-player snapshots) · Room metadata repository
- ├── games/       GameDefinition contract · GameRegistry · crack-the-code (pure rules)
+ ├── games/       GameDefinition contract · GameRegistry · crack-the-code · color-cipher (pure rules)
  ├── matches/     Match model · transactional, idempotent recorder
  ├── websocket/   Authenticated Socket.IO gateway, throttling, presence
  ├── http/        Express app, routes, middleware (helmet, CORS, limits, errors)
@@ -23,7 +23,26 @@ MongoDB Atlas: users · matches · rooms (metadata only)
 ```
 
 `packages/shared` holds what both sides must agree on: stable error codes, REST DTOs,
-Socket.IO event names and payload schemas, Crack the Code settings/action schemas and views.
+Socket.IO event names and payload schemas, and each game's settings/action schemas and views
+(`crackTheCode.ts`, `colorCipher.ts`, plus game-neutral `games.ts`).
+
+## Games are plug-ins
+
+```
+RoomManager ──getGame(room.gameType)──▶ GameRegistry ──▶ GameDefinition
+                                                        ├── crack-the-code
+                                                        └── color-cipher
+```
+
+Adding Color Cipher (the second game) proved the boundary: its server code is two pure files
+(`games/color-cipher/rules.ts`, `game.ts`) plus one registry line. RoomManager, sockets,
+timers, reconnect, rematch, auth, the match recorder and stats were reused unchanged. The
+platform needed only type unions (`RoomSettings`, `GamePlayerView`, `GameMove`), a shared
+`GameEndReason`, and optional feedback fields on stored moves (`bulls`/`cows` for Crack the
+Code, `exact`/`partial` for Color Cipher). On the web, `lib/games.ts` holds per-game names and
+summaries, `components/game/` the shared top bar, timer and result sheet, and each game has
+its own board under `features/<game>/`. Rules: [game-rules.md](game-rules.md),
+[color-cipher.md](color-cipher.md).
 
 ## Principles
 
