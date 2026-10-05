@@ -5,6 +5,32 @@ const bool = z
   .optional()
   .transform((v) => v === 'true' || v === '1');
 
+/** Trims whitespace and surrounding quotes pasted into dashboards; empty means unset. */
+function cleanEnvValue(v: unknown): unknown {
+  if (typeof v !== 'string') return v;
+  const t = v
+    .trim()
+    .replace(/^(["'])(.*)\1$/, '$2')
+    .trim();
+  return t === '' ? undefined : t;
+}
+
+/** A public web address (not a secret), so the error may echo what was received. */
+const webUrl = z.preprocess(
+  cleanEnvValue,
+  z
+    .string()
+    .superRefine((v, ctx) => {
+      if (!/^https?:\/\/[^\s/]+/.test(v) || !URL.canParse(v)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `must be a full address starting with https://, e.g. https://rivalrush.vercel.app (got "${v}")`,
+        });
+      }
+    })
+    .optional(),
+);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
@@ -22,10 +48,10 @@ const envSchema = z.object({
   BOT_MODE: z.enum(['off', 'polling', 'webhook']).optional(),
   /** Legacy switch: BOT_POLLING=true means BOT_MODE=polling when BOT_MODE is unset. */
   BOT_POLLING: bool,
-  WEBAPP_URL: z.string().url().optional(),
+  WEBAPP_URL: webUrl,
   /** This server's public https URL (webhook target). Render sets RENDER_EXTERNAL_URL. */
-  PUBLIC_URL: z.string().url().optional(),
-  RENDER_EXTERNAL_URL: z.string().url().optional(),
+  PUBLIC_URL: webUrl,
+  RENDER_EXTERNAL_URL: webUrl,
 
   JWT_SECRET: z.string().optional(),
   JWT_TTL_SECONDS: z.coerce
