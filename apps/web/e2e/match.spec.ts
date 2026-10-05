@@ -101,7 +101,9 @@ test('two friends play a full Crack the Code match, rematch, reconnect and finis
   // Bob opens the invite, sees the challenge and joins.
   await signIn(bob, 'Bob');
   await bob.goto(new URL(invite).pathname);
-  await expect(bob.getByTestId('challenge-title')).toHaveText('Alice challenged you');
+  await expect(bob.getByTestId('challenge-title')).toHaveText(
+    'Alice challenged you to Crack the Code',
+  );
   await bob.getByTestId('join-game').click();
   await expect(alice.getByText('Bob joined')).toBeVisible();
 
@@ -237,7 +239,9 @@ test('a declined rematch frees the room for someone new, with nothing of the old
   // Carol joins through the old link and starts a clean game (no old moves, no result).
   await signIn(carol, 'Carla');
   await carol.goto(new URL(invite).pathname);
-  await expect(carol.getByTestId('challenge-title')).toHaveText('Alina challenged you');
+  await expect(carol.getByTestId('challenge-title')).toHaveText(
+    'Alina challenged you to Crack the Code',
+  );
   await carol.getByTestId('join-game').click();
   await carol.getByTestId('ready-toggle').click();
   await alice.getByTestId('start-game').click();
