@@ -29,6 +29,21 @@ describe('acceptSnapshot (snapshots are the source of truth)', () => {
   });
 });
 
+describe('acceptSnapshot across reconnects and rematches', () => {
+  it('a late reply from before a reconnect never replaces the newer state', () => {
+    const afterGuess = snap(12);
+    // The resync reply (v11) and the guess reply (v12) can arrive in either order.
+    expect(acceptSnapshot(afterGuess, snap(11), 'room00000001')).toBe(afterGuess);
+    expect(acceptSnapshot(snap(11), afterGuess, 'room00000001')).toBe(afterGuess);
+  });
+
+  it('a delayed snapshot of the finished game cannot overwrite the rematch', () => {
+    const rematch = { ...snap(30), game: { sessionId: 'new' } } as unknown as RoomSnapshot;
+    const oldResult = { ...snap(27), game: { sessionId: 'old' } } as unknown as RoomSnapshot;
+    expect(acceptSnapshot(rematch, oldResult, 'room00000001')).toBe(rematch);
+  });
+});
+
 describe('describeEvent', () => {
   const ev = (
     type: RoomEvent['type'],
@@ -68,6 +83,13 @@ describe('describeEvent', () => {
     expect(
       describeEvent(ev('player_online', 'opp', { reconnected: false }), snap(1), 'me'),
     ).toBeNull();
+  });
+  it('tells you when a rival who left mid-game forfeited, but not the forfeiter', () => {
+    const over = (winnerId: string, reason: string) =>
+      ev('game_over', null, { outcome: 'win', winnerId, reason, loserId: 'opp' });
+    expect(describeEvent(over('me', 'forfeit'), snap(1), 'me')?.text).toBe('Ben gave up — you win');
+    expect(describeEvent(over('opp', 'forfeit'), snap(1), 'me')).toBeNull();
+    expect(describeEvent(over('me', 'cracked'), snap(1), 'me')).toBeNull();
   });
 });
 
