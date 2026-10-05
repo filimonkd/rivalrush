@@ -161,3 +161,13 @@ The platform's rematch: both players vote, a new session starts in the same room
 patterns and the other player first. Finished games are recorded once with
 `gameType: "color-cipher"`. Wins, losses, draws and streaks are shared across both games (one
 record per player).
+
+## Release
+
+| Item                                                                                      | State                                                                            |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Merged to `main`                                                                          | ✅ PR #9, commit `a5d0781`, 5 Oct 2026                                           |
+| CI on `main`                                                                              | ✅ passed (232 unit/integration, 4 E2E incl. Crack the Code)                     |
+| Deployed (Render `/health` → `version`)                                                   | 🟡 not confirmed                                                                 |
+| Production Telegram QA (C1–C20, scoring S1–S7, isolation X1–X4, reconnect, rematch, data) | 🟡 NOT RUN: [checklist](testing.md#color-cipher-release-verification-production) |
+| Crack the Code production regression (T1–T4)                                              | 🟡 NOT RUN                                                                       |

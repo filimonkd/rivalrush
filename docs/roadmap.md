@@ -10,9 +10,9 @@ rematch rate above 40%.
 
 ## Built
 
-| Feature                                        | Status                                                                                                                               |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Color Cipher** (original color-pattern duel) | Implemented and tested as a second `GameDefinition` ([color-cipher.md](color-cipher.md)); production release and Telegram QA pending |
+| Feature                                        | Status                                                                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Color Cipher** (original color-pattern duel) | Merged to `main` (`a5d0781`), CI green. Production deployment and Telegram QA not yet verified ([color-cipher.md](color-cipher.md#release)) |
 
 ## After the beta (default order; metrics decide)
 

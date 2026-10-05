@@ -153,3 +153,100 @@ Two Telegram accounts on two phones, after the Color Cipher release. Status: �
 | C18 | Stats              | Profile after a few games of each                            | One combined W/L/D record; history lists each game with its name         | 🟡     |
 | C19 | Themes             | Light and dark Telegram theme                                | Tiles, symbols and diamonds readable in both                             | 🟡     |
 | C20 | Regression         | Play one full Crack the Code match and a rematch             | Unchanged from before the release                                        | 🟡     |
+
+## Color Cipher release verification (production)
+
+Release: PR #9 merged to `main` as commit `a5d0781` on 5 Oct 2026. CI on `main` for that
+commit: ✅ passed (lint, typecheck, 232 unit/integration tests, build, 4 two-browser E2E).
+Everything below needs real Telegram and the production hosts, which the build agent cannot
+reach. Status: ✅ PASS · ❌ FAIL (add an issue link) · 🟡 NOT RUN.
+
+**Run record:** date: ____ · tester(s): ____ · phone A: ____ (iOS/Android, Telegram version) ·
+phone B: ____ · desktop (for payload checks): Telegram Web in Chrome · `/health` version: ____
+
+### Deployment
+
+| #   | Check                      | How                                                               | Expected                                                                                                | Status |
+| --- | -------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
+| D1  | Render runs the release    | Open `https://<render-service>.onrender.com/health`               | `version` = `a5d0781` (or a later `main` commit). If not, Render → Manual Deploy → Deploy latest commit | 🟡     |
+| D2  | API healthy                | Same response                                                     | HTTP 200, `"status":"ok"`                                                                               | 🟡     |
+| D3  | Database healthy           | Same response                                                     | `"database":"up"`                                                                                       | 🟡     |
+| D4  | Web live                   | Vercel → Deployments: production = `a5d0781`; open the Vercel URL | Loads ("Open in Telegram" page outside Telegram)                                                        | 🟡     |
+| D5  | Web talks to the right API | Sign in inside Telegram                                           | Home loads with your name (wrong `VITE_API_URL` = "Can't reach the server")                             | 🟡     |
+| D6  | Socket.IO works            | Lobby with two phones                                             | "B joined" toast appears without refreshing                                                             | 🟡     |
+| D7  | Telegram Mini App opens    | `/start` → Play                                                   | Home shows **both** games as Live now                                                                   | 🟡     |
+
+### Color Cipher checklist
+
+Run C1–C20 in [the section above](#color-cipher-production-manual-qa) and fill its Status column.
+
+### Duplicate-color scoring in a real game
+
+Player B hides **Ruby Ruby Leaf Sky** (● ● ◆ ★). Player A makes these guesses on their turns
+(B can guess anything in between). Then a second game where B hides **Sun Sun Sun Plum**
+(■ ■ ■ ✚).
+
+| #   | B's pattern        | A guesses           | Expected          | Why                                                              | Status |
+| --- | ------------------ | ------------------- | ----------------- | ---------------------------------------------------------------- | ------ |
+| S1  | Ruby Ruby Leaf Sky | Ruby Ruby Ruby Ruby | 2 exact, 0 close  | Only two Rubies exist; both are exact, the other two miss        | 🟡     |
+| S2  | Ruby Ruby Leaf Sky | Leaf Leaf Ruby Ruby | 0 exact, 3 close  | Two Rubies + one Leaf present, none in place; second Leaf misses | 🟡     |
+| S3  | Ruby Ruby Leaf Sky | Sky Ruby Ruby Leaf  | 1 exact, 3 close  | Position 2 exact; the rest present elsewhere                     | 🟡     |
+| S4  | Ruby Ruby Leaf Sky | Amber Amber Sun Sun | 0 exact, 0 close  | No color in common                                               | 🟡     |
+| S5  | Ruby Ruby Leaf Sky | Ruby Ruby Leaf Sky  | 4 exact → cracked | Last chance for B (or win if A moved second)                     | 🟡     |
+| S6  | Sun Sun Sun Plum   | Sun Sun Plum Plum   | 3 exact, 0 close  | The extra Plum is not counted again                              | 🟡     |
+| S7  | Sun Sun Sun Plum   | Plum Sun Sun Sun    | 2 exact, 2 close  | Positions 2–3 exact; the third Sun and the Plum swapped          | 🟡     |
+
+### Secret isolation
+
+Open one player in **Telegram Web** (web.telegram.org) in desktop Chrome, launch the Mini App,
+then DevTools → Network → WS → the socket → Messages. Don't copy frames anywhere public.
+
+| #   | Check                                             | Expected                                                                | Status |
+| --- | ------------------------------------------------- | ----------------------------------------------------------------------- | ------ |
+| X1  | Each `room:snapshot` during setup and play        | `"opponentSecret":null`; the opponent's pattern string never appears    | 🟡     |
+| X2  | Phone A's screen / phone B's screen while playing | Each shows only its own pattern                                         | 🟡     |
+| X3  | Snapshot after the result                         | `opponentSecret` now holds the opponent's pattern; the sheet shows both | 🟡     |
+| X4  | Atlas `matches` document for that game            | Guesses and counts only; no pattern fields                              | 🟡     |
+
+### Reconnect, rematch and data
+
+| #   | Check                                                           | Expected                                                                                                                        | Status |
+| --- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| R1  | Background Telegram 20 s during your own turn                   | Back on the same turn; timer still counting from the server deadline                                                            | 🟡     |
+| R2  | Background Telegram 20 s during the opponent's turn             | Their moves made meanwhile are shown; no duplicate rows                                                                         | 🟡     |
+| R3  | Airplane mode 20 s                                              | "Reconnecting…" then clears; opponent saw "Lost connection"                                                                     | 🟡     |
+| R4  | Fully close the Mini App, reopen from the bot (< 60 s)          | Lands back in the game with the same pattern and board                                                                          | 🟡     |
+| R5  | Leave a turn running while away until it times out, then return | "Timed out" row recorded once; it is now the other player's turn                                                                | 🟡     |
+| M1  | A wins → both tap Rematch                                       | New game, new patterns, the other player starts                                                                                 | 🟡     |
+| M2  | A draw (both crack on the last chance) → rematch                | Same as M1; starting player alternates again                                                                                    | 🟡     |
+| V1  | Atlas query below after the test games                          | One document per game, `gameType: "color-cipher"`, distinct `sessionId`s, correct winner/reason, `isRematch` true for rematches | 🟡     |
+| V2  | Profile on both phones                                          | W/L/D and history match the games played; each game named; no double counts                                                     | 🟡     |
+
+```js
+// Atlas → rivalrush.matches → Aggregations
+[
+  { $match: { gameType: 'color-cipher' } },
+  { $sort: { endedAt: -1 } },
+  { $limit: 10 },
+  {
+    $project: {
+      sessionId: 1,
+      isRematch: 1,
+      result: 1,
+      endedAt: 1,
+      'players.displayName': 1,
+      'players.outcome': 1,
+      moves: { guess: 1, exact: 1, partial: 1, timedOut: 1 },
+    },
+  },
+];
+```
+
+### Crack the Code regression (separate result)
+
+| #   | Check                                                                                | Expected                                        | Status |
+| --- | ------------------------------------------------------------------------------------ | ----------------------------------------------- | ------ |
+| T1  | Create, invite (preview says "challenged you to Crack the Code"), join, ready, start | Unchanged flow                                  | 🟡     |
+| T2  | Secrets, a full game to a result                                                     | Bulls/cows and result as before                 | 🟡     |
+| T3  | Rematch                                                                              | New game, other player first                    | 🟡     |
+| T4  | Profile                                                                              | Stats include it, history says "Crack the Code" | 🟡     |
