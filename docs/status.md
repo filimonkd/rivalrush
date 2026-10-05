@@ -26,32 +26,32 @@ Vercel Hobby ── React Mini App (static build)
 
 ## Feature status
 
-| Feature                                                    | Automated                     | Production (real Telegram)                                       |
-| ---------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------- |
-| Bot `/start`, Play button, webhook                         | ✅ unit + webhook integration | ✅ verified by the product owner                                 |
-| Mini App launch + Telegram initData sign-in                | ✅ unit + integration         | ✅ verified                                                      |
-| Create room, invite deep link (`startapp`), join, lobby    | ✅ unit + integration + E2E   | ✅ verified (after enabling the Main Mini App in BotFather)      |
-| Ready → start, secret setup, turns, bulls/cows             | ✅ unit + integration + E2E   | ✅ verified                                                      |
-| A full match to a result                                   | ✅                            | ✅ verified                                                      |
-| Draw, last-chance (equalizer), forfeit                     | ✅ unit + integration + E2E   | 🟡 not yet checked in production                                 |
-| Turn timer, timeout, auto secret at setup deadline         | ✅ unit (fake clock)          | 🟡                                                               |
-| Rematch (both agree, start swaps, new session)             | ✅ unit + integration + E2E   | 🟡                                                               |
-| Rematch declined / opponent leaves / offline while waiting | ✅ unit + E2E                 | 🟡                                                               |
-| Reconnect (network drop, socket drop, app reopen)          | ✅ unit + integration + E2E   | 🟡 (backgrounding on iOS/Android needs real phones)              |
-| Resync: stale version, duplicate action after reconnect    | ✅ integration                | 🟡                                                               |
-| Profile: W/L/D, win rate, streaks, recent matches          | ✅ integration + E2E          | 🟡                                                               |
-| Match history recorded once; stats = history               | ✅ integration (real MongoDB) | 🟡 (check Atlas `matches` after a few games)                     |
-| Duplicate / concurrent actions (10 race cases)             | ✅ unit (`races.test.ts`)     | n/a                                                              |
-| Secrets never in other player's views, API, logs, DB       | ✅ unit + integration + E2E   | 🟡 (spot-check Render logs)                                      |
-| Telegram theme (light/dark), safe areas, haptics, Back     | implemented, not automatable  | 🟡                                                               |
-| Invite edge cases: expired / closed / full / bogus         | ✅ unit + integration + E2E   | 🟡                                                               |
-| CI (lint, format, typecheck, tests, build, E2E)            | ✅ green on every merged PR   | n/a                                                              |
-| Vercel production build                                    | n/a                           | ✅ deployed (app opens in Telegram)                              |
-| Render API + Socket.IO                                     | n/a                           | ✅ deployed (sign-in and live games work)                        |
-| MongoDB Atlas M0                                           | n/a                           | ✅ connected (sign-in upserts users); 🟡 match records unchecked |
-| `/health` returns `database: "up"`                         | ✅ integration                | 🟡 not checked from here (the build sandbox can't reach Render)  |
-| Branch protection on `main`                                | n/a                           | ⬜ needs repository admin ([ci-cd.md](ci-cd.md))                 |
-| Uptime pinger (keeps Render Free awake)                    | n/a                           | 🟡 confirm it is set up ([deployment.md](deployment.md))         |
+| Feature                                                    | Automated                     | Production (real Telegram)                                                    |
+| ---------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| Bot `/start`, Play button, webhook                         | ✅ unit + webhook integration | ✅ verified by the product owner                                              |
+| Mini App launch + Telegram initData sign-in                | ✅ unit + integration         | ✅ verified                                                                   |
+| Create room, invite deep link (`startapp`), join, lobby    | ✅ unit + integration + E2E   | ✅ verified (after enabling the Main Mini App in BotFather)                   |
+| Ready → start, secret setup, turns, bulls/cows             | ✅ unit + integration + E2E   | ✅ verified                                                                   |
+| A full match to a result                                   | ✅                            | ✅ verified                                                                   |
+| Draw, last-chance (equalizer), forfeit                     | ✅ unit + integration + E2E   | ✅ verified (QA run 2)                                                        |
+| Turn timer, timeout, auto secret at setup deadline         | ✅ unit (fake clock)          | ✅ verified on two phones (QA run 2)                                          |
+| Rematch (both agree, start swaps, new session)             | ✅ unit + integration + E2E   | ✅ verified on two phones (QA run 2)                                          |
+| Rematch declined / opponent leaves / offline while waiting | ✅ unit + E2E                 | ✅ verified on two phones (QA run 2)                                          |
+| Reconnect (network drop, socket drop, app reopen)          | ✅ unit + integration + E2E   | ✅ verified on two phones (QA run 2)                                          |
+| Resync: stale version, duplicate action after reconnect    | ✅ integration                | ✅ verified on two phones (QA run 2)                                          |
+| Profile: W/L/D, win rate, streaks, recent matches          | ✅ integration + E2E          | ✅ verified on two phones (QA run 2)                                          |
+| Match history recorded once; stats = history               | ✅ integration (real MongoDB) | ✅ profile and history correct on both phones (QA run 2)                      |
+| Duplicate / concurrent actions (10 race cases)             | ✅ unit (`races.test.ts`)     | n/a                                                                           |
+| Secrets never in other player's views, API, logs, DB       | ✅ unit + integration + E2E   | 🟡 (spot-check Render logs)                                                   |
+| Telegram theme (light/dark), safe areas, haptics, Back     | implemented, not automatable  | ✅ verified on two phones (QA run 2)                                          |
+| Invite edge cases: expired / closed / full / bogus         | ✅ unit + integration + E2E   | ✅ full + closed (QA run 2); 🟡 expired (2 h) and after-restart not confirmed |
+| CI (lint, format, typecheck, tests, build, E2E)            | ✅ green on every merged PR   | n/a                                                                           |
+| Vercel production build                                    | n/a                           | ✅ deployed (app opens in Telegram)                                           |
+| Render API + Socket.IO                                     | n/a                           | ✅ deployed (sign-in and live games work)                                     |
+| MongoDB Atlas M0                                           | n/a                           | ✅ connected (sign-in upserts users); 🟡 match records unchecked              |
+| `/health` returns `database: "up"`                         | ✅ integration                | 🟡 not checked from here (the build sandbox can't reach Render)               |
+| Branch protection on `main`                                | n/a                           | ⬜ needs repository admin ([ci-cd.md](ci-cd.md))                              |
+| Uptime pinger (keeps Render Free awake)                    | n/a                           | 🟡 confirm it is set up ([deployment.md](deployment.md))                      |
 
 ## Changes in the hardening phase
 

@@ -62,7 +62,12 @@ Status: ✅ passed · ❌ failed · 🟡 not yet run. A ✅ means a person saw i
 
 **Run 1, 5 Oct 2026, product owner.** Devices not recorded. Result reported: "everything is
 working, I played a duel and Crack the Code works fine". The rows marked ✅ below are the ones
-that report covers; everything else is 🟡 until someone runs it.
+that report covers.
+
+**Run 2, 5 Oct 2026, product owner, two phones (after the hardening deploy).** Followed the
+two-phone script (rules and timers, rematch, reconnect, give up / decline, profile, invites,
+UI). Result reported: "all tests passed". Rows 36 (room idle > 2 h) and 37 (old link after a
+restart) were optional in that script and are left 🟡 until confirmed.
 
 | #   | Area      | Step                                          | Expected                                                                 | Status |
 | --- | --------- | --------------------------------------------- | ------------------------------------------------------------------------ | ------ |
@@ -76,32 +81,32 @@ that report covers; everything else is 🟡 until someone runs it.
 | 8   | Room      | B taps I'm ready; A taps Start                | Both see "Hide your code" with a 60 s timer                              | ✅     |
 | 9   | Game      | Secret setup                                  | Used digits disabled; Lock it in; the other side sees "locked in"        | ✅     |
 | 10  | Game      | Valid guess                                   | Only the player on turn sees the keypad; pegs match a hand-checked count | ✅     |
-| 11  | Game      | Invalid guess (incomplete)                    | Cannot be submitted; the field shakes                                    | 🟡     |
-| 12  | Game      | Duplicate guess                               | "You already tried that one"                                             | 🟡     |
-| 13  | Game      | Let a turn run out                            | "Time's up — turn skipped"; the other player's turn; guesses left drop   | 🟡     |
-| 14  | Game      | Let setup run out without locking             | "Time ran out — we picked a code for you"                                | 🟡     |
+| 11  | Game      | Invalid guess (incomplete)                    | Cannot be submitted; the field shakes                                    | ✅     |
+| 12  | Game      | Duplicate guess                               | "You already tried that one"                                             | ✅     |
+| 13  | Game      | Let a turn run out                            | "Time's up — turn skipped"; the other player's turn; guesses left drop   | ✅     |
+| 14  | Game      | Let setup run out without locking             | "Time ran out — we picked a code for you"                                | ✅     |
 | 15  | Game      | Play to a result                              | Result sheet for both; both codes revealed                               | ✅     |
-| 15b | Game      | Win and loss on the two phones                | Second player cracks → "You won! 🏆" / "You lost"                        | 🟡     |
-| 16  | Game      | Last chance                                   | First player cracks → other sees "Last chance — crack it to tie!"        | 🟡     |
-| 17  | Game      | Draw                                          | Both crack via last chance → "It's a draw 🤝"                            | 🟡     |
-| 18  | Game      | Forfeit                                       | Give up → confirm → "You lost" / "You won! 🏆 · Gave up"                 | 🟡     |
-| 19  | Reconnect | Background Telegram 20 s mid-game, return     | Board is current, no forfeit                                             | 🟡     |
-| 20  | Reconnect | Airplane mode 20 s, then back                 | "Reconnecting…" banner, then clears; opponent saw "Lost connection"      | 🟡     |
-| 21  | Reconnect | Close the Mini App fully, reopen from the bot | Lands back in the game with the same code and board                      | 🟡     |
-| 22  | Reconnect | Airplane mode > 60 s                          | Opponent wins with "Dropped out"                                         | 🟡     |
-| 23  | Rematch   | After a win: both tap Rematch                 | New game; the other player goes first                                    | 🟡     |
-| 24  | Rematch   | After a draw / loss: rematch again            | Starting player keeps alternating                                        | 🟡     |
-| 25  | Rematch   | A taps Rematch, B taps Leave                  | A is back in the lobby with the invite; B on Home                        | 🟡     |
-| 26  | Profile   | Open Profile on both phones after a few games | W/L/D, win rate, streak and recent games match what happened             | 🟡     |
-| 27  | Profile   | All games                                     | History lists every game once, newest first                              | 🟡     |
-| 28  | UI        | Light Telegram theme                          | Readable; colors follow the theme                                        | 🟡     |
-| 29  | UI        | Dark Telegram theme                           | Same                                                                     | 🟡     |
-| 30  | UI        | Safe areas (notch / home indicator)           | Nothing hidden under system bars; result sheet buttons reachable         | 🟡     |
-| 31  | UI        | Haptics                                       | Buzz on join, your turn, win/loss, wrong input                           | 🟡     |
-| 32  | UI        | Telegram Back button                          | Goes to Home without leaving the game; Home shows "Back to the game"     | 🟡     |
-| 33  | UI        | Error messages                                | Plain-language toasts, no codes or stack traces                          | 🟡     |
-| 34  | Invites   | A third account opens a link to a full room   | "Someone already took this seat."                                        | 🟡     |
-| 35  | Invites   | Link to a room everyone left                  | "This room has closed. Ask your friend for a new invite."                | 🟡     |
+| 15b | Game      | Win and loss on the two phones                | Second player cracks → "You won! 🏆" / "You lost"                        | ✅     |
+| 16  | Game      | Last chance                                   | First player cracks → other sees "Last chance — crack it to tie!"        | ✅     |
+| 17  | Game      | Draw                                          | Both crack via last chance → "It's a draw 🤝"                            | ✅     |
+| 18  | Game      | Forfeit                                       | Give up → confirm → "You lost" / "You won! 🏆 · Gave up"                 | ✅     |
+| 19  | Reconnect | Background Telegram 20 s mid-game, return     | Board is current, no forfeit                                             | ✅     |
+| 20  | Reconnect | Airplane mode 20 s, then back                 | "Reconnecting…" banner, then clears; opponent saw "Lost connection"      | ✅     |
+| 21  | Reconnect | Close the Mini App fully, reopen from the bot | Lands back in the game with the same code and board                      | ✅     |
+| 22  | Reconnect | Airplane mode > 60 s                          | Opponent wins with "Dropped out"                                         | ✅     |
+| 23  | Rematch   | After a win: both tap Rematch                 | New game; the other player goes first                                    | ✅     |
+| 24  | Rematch   | After a draw / loss: rematch again            | Starting player keeps alternating                                        | ✅     |
+| 25  | Rematch   | A taps Rematch, B taps Leave                  | A is back in the lobby with the invite; B on Home                        | ✅     |
+| 26  | Profile   | Open Profile on both phones after a few games | W/L/D, win rate, streak and recent games match what happened             | ✅     |
+| 27  | Profile   | All games                                     | History lists every game once, newest first                              | ✅     |
+| 28  | UI        | Light Telegram theme                          | Readable; colors follow the theme                                        | ✅     |
+| 29  | UI        | Dark Telegram theme                           | Same                                                                     | ✅     |
+| 30  | UI        | Safe areas (notch / home indicator)           | Nothing hidden under system bars; result sheet buttons reachable         | ✅     |
+| 31  | UI        | Haptics                                       | Buzz on join, your turn, win/loss, wrong input                           | ✅     |
+| 32  | UI        | Telegram Back button                          | Goes to Home without leaving the game; Home shows "Back to the game"     | ✅     |
+| 33  | UI        | Error messages                                | Plain-language toasts, no codes or stack traces                          | ✅     |
+| 34  | Invites   | A third account opens a link to a full room   | "Someone already took this seat."                                        | ✅     |
+| 35  | Invites   | Link to a room everyone left                  | "This room has closed. Ask your friend for a new invite."                | ✅     |
 | 36  | Invites   | Link to a room idle > 2 h                     | "This room expired. Ask your friend for a new invite."                   | 🟡     |
 | 37  | Invites   | Old link after a server restart               | A clear "closed"/"doesn't work anymore" message, no crash                | 🟡     |
 
