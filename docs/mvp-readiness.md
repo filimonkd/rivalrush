@@ -12,7 +12,7 @@ real Telegram against the live deployment. Details: [status.md](status.md),
 **Ready for the closed beta.** The core journey, rematch, reconnect, timers, stats, themes and
 invite errors were all verified on two phones in production (QA run 2, 5 Oct 2026), on top of
 the automated suite that runs in CI. No known blocking bugs remain. Open items are operational
-(health check from outside, keep-warm pinger, branch protection) plus two optional invite
+(keep-warm pinger, branch protection, Render auto-deploy) plus two optional invite
 checks.
 
 ## Checklist
@@ -39,7 +39,7 @@ checks.
 | DEPLOYMENT | Vercel (web)                                             | n/a       | ✅                         |
 | DEPLOYMENT | Render (API + Socket.IO + webhook)                       | n/a       | ✅                         |
 | DEPLOYMENT | MongoDB Atlas (users written on sign-in)                 | ✅        | ✅                         |
-| DEPLOYMENT | `/health` + keep-warm pinger                             | ✅        | 🟡                         |
+| DEPLOYMENT | `/health` ✅ (5 Oct); keep-warm pinger 🟡                | ✅        | 🟡                         |
 | TELEGRAM   | Bot `/start`, Play button, Main Mini App                 | ✅        | ✅                         |
 | TELEGRAM   | Theme, safe areas, haptics, Back button on real phones   | n/a       | ✅                         |
 | MANUAL QA  | 38-row production checklist                              | n/a       | 36 ✅ · 2 🟡 (optional)    |
@@ -47,21 +47,21 @@ checks.
 
 ## Definition of done for this phase
 
-| #   | Requirement                                  | State                                                                                            |
-| --- | -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1   | Two Telegram users can complete a match      | ✅ production                                                                                    |
-| 2   | Both can rematch                             | ✅ automated (unit, integration, E2E) · ✅ production (QA run 2)                                 |
-| 3   | Starting player swaps on rematch             | ✅ automated · ✅ production (QA run 2)                                                          |
-| 4   | Reconnect/resync works                       | ✅ automated (incl. E2E offline/online and reopen) · ✅ production (QA run 2)                    |
-| 5   | Timer behavior is correct                    | ✅ automated (server deadlines, ties, reconnect) · ✅ production (QA run 2)                      |
-| 6   | Stats are correct                            | ✅ automated against real MongoDB · ✅ production (QA run 2)                                     |
-| 7   | Match history is correct                     | ✅ automated · ✅ production (QA run 2)                                                          |
-| 8   | Duplicate actions are safe                   | ✅ automated                                                                                     |
-| 9   | Race-condition tests exist and pass          | ✅ `races.test.ts` + `rematch.test.ts` + `timers.test.ts` + `reliability.test.ts`                |
-| 10  | Production manual QA as far as devices allow | ✅ run 1 (core loop) + run 2 (two phones, full script); 2 optional invite rows open              |
-| 11  | Documentation reflects reality               | ✅ status, testing, deployment, runbook, this review                                             |
-| 12  | CI remains green                             | ✅ on the hardening PR and on `main` after the merge                                             |
-| 13  | Production deployment remains healthy        | ✅ the full two-phone run passed on the post-merge deploy; 🟡 `/health` not checked from outside |
+| #   | Requirement                                  | State                                                                               |
+| --- | -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 1   | Two Telegram users can complete a match      | ✅ production                                                                       |
+| 2   | Both can rematch                             | ✅ automated (unit, integration, E2E) · ✅ production (QA run 2)                    |
+| 3   | Starting player swaps on rematch             | ✅ automated · ✅ production (QA run 2)                                             |
+| 4   | Reconnect/resync works                       | ✅ automated (incl. E2E offline/online and reopen) · ✅ production (QA run 2)       |
+| 5   | Timer behavior is correct                    | ✅ automated (server deadlines, ties, reconnect) · ✅ production (QA run 2)         |
+| 6   | Stats are correct                            | ✅ automated against real MongoDB · ✅ production (QA run 2)                        |
+| 7   | Match history is correct                     | ✅ automated · ✅ production (QA run 2)                                             |
+| 8   | Duplicate actions are safe                   | ✅ automated                                                                        |
+| 9   | Race-condition tests exist and pass          | ✅ `races.test.ts` + `rematch.test.ts` + `timers.test.ts` + `reliability.test.ts`   |
+| 10  | Production manual QA as far as devices allow | ✅ run 1 (core loop) + run 2 (two phones, full script); 2 optional invite rows open |
+| 11  | Documentation reflects reality               | ✅ status, testing, deployment, runbook, this review                                |
+| 12  | CI remains green                             | ✅ on the hardening PR and on `main` after the merge                                |
+| 13  | Production deployment remains healthy        | ✅ two-phone runs passed; `/health` checked with Color Cipher release `a5d0781`     |
 
 ## Remaining risks
 
@@ -87,7 +87,7 @@ Plan: [beta-plan.md](beta-plan.md) · Tester guide and message:
 | ✅ Ready                 | Full two-phone production QA passed; CI green on `main`; Vercel, Render and Atlas live                     |
 | ✅ Ready                 | Tester guide + message, feedback survey and polls, bug template, metric queries, daily log, decision rules |
 | ✅ Ready                 | Daily monitoring routine and incident response for 6 scenarios                                             |
-| 🟡 Owner action required | `/health` shows `"database":"up"` and `version` = latest `main` commit                                     |
+| ✅ Done (5 Oct)          | `/health` shows `"database":"up"` and `version` = latest `main` commit                                     |
 | 🟡 Owner action required | UptimeRobot monitor on `/health` every 5 min                                                               |
 | 🟡 Owner action required | Branch protection on `main`; Render Auto-Deploy set deliberately                                           |
 | 🟡 Owner action required | Recruit testers, create the survey, set up the daily log                                                   |
