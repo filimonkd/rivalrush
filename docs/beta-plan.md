@@ -93,6 +93,22 @@ the rematch count per ending.
 ];
 ```
 
+**Per game** (`matches`): matches, rematches and abandons for each game, to compare them.
+
+```js
+[
+  { $match: { endedAt: { $gte: ISODate('2026-10-12T00:00:00Z') } } },
+  {
+    $group: {
+      _id: '$gameType',
+      matches: { $sum: 1 },
+      rematches: { $sum: { $cond: ['$isRematch', 1, 0] } },
+      abandoned: { $sum: { $cond: [{ $eq: ['$result.reason', 'abandoned'] }, 1, 0] } },
+    },
+  },
+];
+```
+
 **Games per player and multi-day players** (`matches`):
 
 ```js

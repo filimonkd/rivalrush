@@ -8,16 +8,17 @@ the longer version for anyone who wants it.
 
 > **Thanks for testing RivalRush! 🎯**
 >
-> **What it is:** quick 1-on-1 games inside Telegram. The first game is **Crack the Code**:
-> you each hide a secret code, then take turns guessing the other's. A **bull** is a right digit
-> in the right place, a **cow** is a right digit in the wrong place. Crack it first to win.
+> **What it is:** quick 1-on-1 games inside Telegram. Two games so far:
+> **Crack the Code** (hide a number code; bulls = right digit, right place; cows = right digit,
+> wrong place) and **Color Cipher** (hide a pattern of colors; exact = right color, right spot;
+> close = right color, wrong spot). Crack your rival's secret first to win.
 >
 > **Start:** open https://t.me/rivalrushbot → **Start** → **Play**. No signup, no install.
 >
 > **Invite a friend:** **Start a duel** → **Create room** → **Send invite** and pick a chat.
 > Your friend taps the link → **Join game** → **I'm ready**, then you tap **Start game**.
 >
-> **What to test this week:** just play, ideally a few games on different days. Rematch when
+> **What to test this week:** just play both games, ideally a few on different days. Rematch when
 > you feel like it, try different settings, and invite people inside and outside this group.
 >
 > **If something breaks:** post here (or message me) with what you were doing, what happened,
