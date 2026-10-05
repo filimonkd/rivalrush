@@ -1,0 +1,450 @@
+import {
+  checkCode,
+  type CtcMove,
+  type CtcPlayerView,
+  type PlayerSeat,
+  type RoomSnapshot,
+} from '@rivalrush/shared';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { Avatar, Button, Pill, Screen } from '../../components/ui';
+import { formatSeconds, remainingMs, useNow } from '../../lib/clock';
+import { reasonLabel } from '../../lib/labels';
+import { confirmDialog, haptic } from '../../lib/telegram';
+import { useRoom } from '../../store/room';
+import { useSession } from '../../store/session';
+import { toast } from '../../store/toasts';
+import { CodeSlots, Keypad, Pegs, TimerRing } from './pieces';
+
+function useShake(): [boolean, () => void] {
+  const [shake, setShake] = useState(false);
+  const trigger = () => {
+    setShake(true);
+    setTimeout(() => setShake(false), 400);
+  };
+  return [shake, trigger];
+}
+
+export function CrackTheCodeGame({ room }: { room: RoomSnapshot }) {
+  const me = useSession((s) => s.user!.id);
+  const view = room.game!.view;
+  const opponent = room.players.find((p) => p.userId !== me) ?? null;
+  const over = view.phase === 'FINISHED' || view.phase === 'ABANDONED';
+
+  return (
+    <Screen className="gap-3">
+      <TopBar room={room} view={view} opponent={opponent} over={over} />
+      {view.phase === 'SETUP' ? (
+        <SecretSetup view={view} opponent={opponent} />
+      ) : (
+        <Board view={view} opponent={opponent} over={over} />
+      )}
+      {over && <ResultSheet room={room} view={view} me={me} opponent={opponent} />}
+    </Screen>
+  );
+}
+
+function TopBar({
+  room,
+  view,
+  opponent,
+  over,
+}: {
+  room: RoomSnapshot;
+  view: CtcPlayerView;
+  opponent: PlayerSeat | null;
+  over: boolean;
+}) {
+  const offset = useRoom((s) => s.offset);
+  const now = useNow(500);
+  const grace = opponent?.graceDeadlineAt
+    ? remainingMs(opponent.graceDeadlineAt, offset, now)
+    : null;
+  const giveUp = async () => {
+    if (!(await confirmDialog('Give up this game? It counts as a loss.'))) return;
+    const err = await useRoom.getState().act({ type: 'FORFEIT' });
+    if (err) toast(err.message, 'bad');
+  };
+  return (
+    <div className="flex items-center gap-3">
+      {opponent && (
+        <div className="relative">
+          <Avatar name={opponent.displayName} url={opponent.photoUrl} size={40} />
+          <span
+            className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-bg ${opponent.online ? 'bg-bull' : 'bg-danger'}`}
+          />
+        </div>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-black">vs {opponent?.displayName ?? '—'}</p>
+        {grace !== null ? (
+          <p className="text-xs font-bold text-danger" data-testid="opponent-away">
+            Lost connection · {formatSeconds(grace)}s to return
+          </p>
+        ) : (
+          <p className="text-xs text-muted">
+            Game {room.gamesPlayed + (over ? 0 : 1)} · {view.settings.codeLength} digits
+          </p>
+        )}
+      </div>
+      {!over && (
+        <button
+          type="button"
+          onClick={giveUp}
+          className="rounded-xl px-3 py-2 text-sm font-bold text-danger"
+          data-testid="give-up"
+        >
+          Give up
+        </button>
+      )}
+    </div>
+  );
+}
+
+function SecretSetup({ view, opponent }: { view: CtcPlayerView; opponent: PlayerSeat | null }) {
+  const offset = useRoom((s) => s.offset);
+  const now = useNow();
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [shake, doShake] = useShake();
+  const len = view.settings.codeLength;
+  const left = remainingMs(view.setupDeadlineAt, offset, now);
+  const oppReady = view.players.find((p) => p.userId !== view.me)?.hasSecret ?? false;
+
+  const lock = async () => {
+    if (checkCode(code, len) !== 'ok') {
+      doShake();
+      haptic.error();
+      return;
+    }
+    setBusy(true);
+    const err = await useRoom.getState().act({ type: 'SET_SECRET', code });
+    setBusy(false);
+    if (err) {
+      doShake();
+      haptic.error();
+      toast(err.message, 'bad');
+    } else haptic.success();
+  };
+
+  return (
+    <div className="flex flex-1 flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-black">Hide your code</h1>
+          <p className="text-sm text-muted">
+            {len} different digits. Your rival will try to crack it.
+          </p>
+        </div>
+        <TimerRing remainingMs={left} totalMs={60_000} urgent={(left ?? 99_999) < 10_000} />
+      </div>
+
+      {view.mySecret ? (
+        <div
+          className="flex flex-1 flex-col items-center justify-center gap-4 text-center"
+          data-testid="secret-locked"
+        >
+          <CodeSlots value={view.mySecret} length={len} />
+          <Pill tone="good">
+            🔒 Code locked{view.mySecretAutoGenerated ? ' (picked for you)' : ''}
+          </Pill>
+          <p className="text-muted">
+            {oppReady
+              ? 'Starting…'
+              : `Waiting for ${opponent?.displayName ?? 'your rival'} to lock in…`}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="py-4">
+            <CodeSlots value={code} length={len} shake={shake} />
+          </div>
+          <p className="text-center text-sm text-muted">
+            {oppReady ? `${opponent?.displayName ?? 'Your rival'} is locked in ✓` : ' '}
+          </p>
+          <div className="mt-auto flex flex-col gap-3">
+            <Keypad value={code} length={len} onChange={setCode} disabled={busy} />
+            <Button onClick={lock} disabled={busy || code.length !== len} data-testid="lock-secret">
+              Lock it in
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function MoveRow({ m, len, mine }: { m: CtcMove; len: number; mine: boolean }) {
+  return (
+    <li
+      className="flex animate-rise items-center gap-3 rounded-2xl bg-card px-3 py-2"
+      data-testid={mine ? 'my-move' : 'their-move'}
+    >
+      <span className="w-6 text-xs font-bold text-muted tabular-nums">{m.turnNumber}</span>
+      {m.timedOut ? (
+        <span className="flex-1 text-sm font-bold text-muted">⏱ Timed out</span>
+      ) : (
+        <span className="flex-1 font-mono text-xl font-black tracking-[0.3em]">{m.guess}</span>
+      )}
+      {!m.timedOut && (
+        <>
+          <Pegs bulls={m.bulls} cows={m.cows} length={len} />
+          <span className="w-12 text-right text-xs font-bold tabular-nums">
+            <span className="text-bull">{m.bulls}B</span>{' '}
+            <span className="text-cow">{m.cows}C</span>
+          </span>
+        </>
+      )}
+    </li>
+  );
+}
+
+function Board({
+  view,
+  opponent,
+  over,
+}: {
+  view: CtcPlayerView;
+  opponent: PlayerSeat | null;
+  over: boolean;
+}) {
+  const offset = useRoom((s) => s.offset);
+  const now = useNow();
+  const [tab, setTab] = useState<'mine' | 'theirs'>('mine');
+  const len = view.settings.codeLength;
+  const myTurn = !over && view.currentTurn === view.me;
+  const meP = view.players.find((p) => p.userId === view.me)!;
+  const oppP = view.players.find((p) => p.userId !== view.me)!;
+  const left = remainingMs(view.turnDeadlineAt, offset, now);
+  const myMoves = view.moves.filter((m) => m.playerId === view.me);
+  const theirMoves = view.moves.filter((m) => m.playerId !== view.me);
+  const lastTurn = useRef(view.currentTurn);
+
+  useEffect(() => {
+    if (view.currentTurn === view.me && lastTurn.current !== view.me) haptic.press();
+    lastTurn.current = view.currentTurn;
+  }, [view.currentTurn, view.me]);
+
+  const turnText =
+    view.phase === 'LAST_CHANCE'
+      ? myTurn
+        ? 'Last chance — crack it to tie!'
+        : `${opponent?.displayName ?? 'Rival'}'s last chance`
+      : myTurn
+        ? 'Your turn'
+        : `${opponent?.displayName ?? 'Rival'}'s turn`;
+
+  return (
+    <div className="flex flex-1 flex-col gap-3">
+      {!over && (
+        <div
+          className={`flex items-center justify-between rounded-3xl px-4 py-3 ${myTurn ? 'bg-accent text-accent-text' : 'bg-card'} ${view.phase === 'LAST_CHANCE' ? 'ring-4 ring-cow' : ''}`}
+          data-testid="turn-banner"
+        >
+          <div>
+            <p className="text-xl font-black">{turnText}</p>
+            <p className="text-xs opacity-80">
+              You: {meP.guessesLeft} left · Them: {oppP.guessesLeft} left
+            </p>
+          </div>
+          <TimerRing
+            remainingMs={left}
+            totalMs={view.settings.turnSeconds * 1000}
+            urgent={(left ?? 99_999) < 10_000}
+          />
+        </div>
+      )}
+
+      <div className="flex items-center justify-between rounded-2xl bg-surface px-4 py-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-muted">Your code</span>
+        <span className="font-mono text-lg font-black tracking-[0.3em]" data-testid="my-secret">
+          {view.mySecret}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-1 rounded-2xl bg-surface p-1 text-sm font-bold">
+        {(['mine', 'theirs'] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTab(t)}
+            className={`h-9 rounded-xl ${tab === t ? 'bg-card text-text shadow' : 'text-muted'}`}
+          >
+            {t === 'mine'
+              ? `Your guesses (${myMoves.length})`
+              : `Their guesses (${theirMoves.length})`}
+          </button>
+        ))}
+      </div>
+
+      <ul className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto">
+        {(tab === 'mine' ? myMoves : theirMoves)
+          .slice()
+          .reverse()
+          .map((m) => (
+            <MoveRow key={`${m.playerId}-${m.turnNumber}`} m={m} len={len} mine={tab === 'mine'} />
+          ))}
+        {(tab === 'mine' ? myMoves : theirMoves).length === 0 && (
+          <li className="py-6 text-center text-sm text-muted">
+            {tab === 'mine'
+              ? 'No guesses yet. Bulls ● right place, cows ○ wrong place.'
+              : 'They have not guessed yet.'}
+          </li>
+        )}
+      </ul>
+
+      {!over &&
+        (myTurn ? (
+          // Keyed by move count so the input resets for every new turn.
+          <GuessPanel key={view.moves.length} view={view} onGuessed={() => setTab('mine')} />
+        ) : (
+          <div className="rounded-3xl bg-card p-4 text-center" data-testid="waiting-turn">
+            <p className="font-bold">{opponent?.displayName ?? 'Your rival'} is thinking…</p>
+            <p className="text-sm text-muted">Their guesses are scored against your code.</p>
+          </div>
+        ))}
+    </div>
+  );
+}
+
+function GuessPanel({ view, onGuessed }: { view: CtcPlayerView; onGuessed: () => void }) {
+  const [guess, setGuess] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [shake, doShake] = useShake();
+  const len = view.settings.codeLength;
+  const tried = view.moves.filter((m) => m.playerId === view.me);
+
+  const submit = async () => {
+    const check = checkCode(guess, len);
+    if (check !== 'ok' || tried.some((m) => m.guess === guess)) {
+      doShake();
+      haptic.error();
+      if (check === 'ok') toast('You already tried that one', 'bad');
+      return;
+    }
+    setBusy(true);
+    const err = await useRoom.getState().act({ type: 'GUESS', guess });
+    setBusy(false);
+    if (err) {
+      doShake();
+      haptic.error();
+      toast(err.message, 'bad');
+      return;
+    }
+    onGuessed();
+    const latest = useRoom
+      .getState()
+      .snapshot?.game?.view.moves.filter((m) => m.playerId === view.me)
+      .at(-1);
+    if (latest && latest.bulls + latest.cows > 0) haptic.success();
+    else haptic.tap();
+  };
+
+  return (
+    <div className="flex flex-col gap-3" data-testid="guess-panel">
+      <CodeSlots value={guess} length={len} shake={shake} />
+      <Keypad value={guess} length={len} onChange={setGuess} disabled={busy} />
+      <Button onClick={submit} disabled={busy || guess.length !== len} data-testid="submit-guess">
+        Guess
+      </Button>
+    </div>
+  );
+}
+
+function ResultSheet({
+  room,
+  view,
+  me,
+  opponent,
+}: {
+  room: RoomSnapshot;
+  view: CtcPlayerView;
+  me: string;
+  opponent: PlayerSeat | null;
+}) {
+  const navigate = useNavigate();
+  const result = view.result!;
+  const outcome = result.outcome === 'draw' ? 'draw' : result.winnerId === me ? 'win' : 'loss';
+  const mySeat = room.players.find((p) => p.userId === me);
+  const sessionId = room.game!.sessionId;
+  const buzzed = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (buzzed.current === sessionId) return;
+    buzzed.current = sessionId;
+    if (outcome === 'win') haptic.success();
+    else if (outcome === 'loss') haptic.error();
+    else haptic.warning();
+    void useSession
+      .getState()
+      .refreshMe()
+      .catch(() => undefined);
+  }, [sessionId, outcome]);
+
+  const rematch = async () => {
+    const err = await useRoom.getState().rematch();
+    if (err) toast(err.message, 'bad');
+  };
+
+  const leave = async () => {
+    await useRoom.getState().leave();
+    navigate('/', { replace: true });
+  };
+
+  const title =
+    outcome === 'win' ? 'You won! 🏆' : outcome === 'loss' ? 'You lost' : "It's a draw 🤝";
+  return (
+    <div className="fixed inset-0 z-30 flex items-end bg-black/50 backdrop-blur-sm">
+      <div
+        className="mx-auto w-full max-w-md animate-rise rounded-t-[2rem] bg-bg p-6"
+        style={{ paddingBottom: 'calc(var(--rr-safe-bottom) + 24px)' }}
+        data-testid="result-sheet"
+      >
+        <p
+          className={`text-4xl font-black ${outcome === 'win' ? 'text-bull' : outcome === 'loss' ? 'text-danger' : ''}`}
+          data-testid="result-title"
+        >
+          {title}
+        </p>
+        <p className="mt-1 text-muted" data-testid="result-reason">
+          {reasonLabel(result.reason)}
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-3 text-center">
+          <div className="rounded-2xl bg-surface p-3">
+            <p className="text-xs font-bold uppercase text-muted">Your code</p>
+            <p className="font-mono text-2xl font-black tracking-[0.25em]">{view.mySecret}</p>
+          </div>
+          <div className="rounded-2xl bg-surface p-3">
+            <p className="text-xs font-bold uppercase text-muted">Their code</p>
+            <p
+              className="font-mono text-2xl font-black tracking-[0.25em]"
+              data-testid="opponent-secret"
+            >
+              {view.opponentSecret}
+            </p>
+          </div>
+        </div>
+        <div className="mt-6 flex flex-col gap-2">
+          {opponent ? (
+            mySeat?.wantsRematch ? (
+              <Button disabled variant="secondary" data-testid="rematch-waiting">
+                Waiting for {opponent.displayName}…
+              </Button>
+            ) : (
+              <Button onClick={rematch} data-testid="rematch">
+                {opponent.wantsRematch
+                  ? `${opponent.displayName} wants a rematch — Accept`
+                  : 'Rematch'}
+              </Button>
+            )
+          ) : (
+            <p className="text-center text-muted">Your rival left.</p>
+          )}
+          <Button variant="secondary" big={false} onClick={leave}>
+            Leave
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
