@@ -1,13 +1,18 @@
 # CI/CD
 
 ```
-feature/* branch ─▶ Pull Request ─▶ GitHub Actions
-                                     ├─ verify: lint · format · typecheck · unit+integration tests · build
-                                     └─ e2e:    two-browser Playwright match (after verify)
-                                   ─▶ Vercel preview deployment (PRs)
-   all green + review ─▶ merge to main ─▶ Vercel production (web)
-                                       ─▶ Render production (API, after CI checks pass)
+branch ─▶ Pull Request ─▶ GitHub Actions
+                           ├─ verify: lint · format · typecheck · unit+integration tests · build
+                           └─ e2e:    two-browser Playwright match (after verify)
+                         ─▶ Vercel preview build (build check only, see below)
+   CI green ─▶ merge to main ─▶ GitHub Actions again on main
+                             ─▶ Vercel production (web): deploys on every push to main, does NOT wait for CI
+                             ─▶ Render production (API): depends on the service's Auto-Deploy setting
 ```
+
+**Current state (5 Oct 2026):** CI is green on `main`. Branch protection is **not yet
+enabled** (owner action), so GitHub currently allows merging before CI finishes; PR #6 was
+merged that way, and CI then passed on `main`.
 
 ## GitHub Actions (`.github/workflows/ci.yml`)
 
@@ -21,8 +26,8 @@ feature/* branch ─▶ Pull Request ─▶ GitHub Actions
 
 ## Branch model
 
-`main` (always deployable) + short-lived `feature/*` branches (e.g. `feature/telegram-auth`).
-No develop/release branches.
+`main` (always deployable) + short-lived branches named by purpose: `feature/*`, `fix/*`,
+`docs/*`. No develop/release branches.
 
 ## Required GitHub settings (manual: needs repository admin)
 
@@ -38,9 +43,16 @@ Settings → Actions → General: allow GitHub Actions; workflow permissions rea
 
 ## Deployments
 
-- **Vercel** builds previews for PRs and production for `main` automatically once the project
-  is linked (see [deployment.md](deployment.md)). Enable "Ignored Build Step" only if you want
-  to skip unrelated changes.
-- **Render**: `autoDeploy: false` in `render.yaml`. In the dashboard set Auto-Deploy to
-  **"After CI Checks Pass"** for `main`, so failing code never deploys. Alternatively, trigger
-  the service's deploy hook from a protected workflow.
+- **Vercel** deploys production on every push to `main`, independently of GitHub Actions.
+  Branch protection is what keeps untested code out of `main`, and so out of production.
+  Vercel deploys don't interrupt live games (the game server is on Render).
+- **Vercel PR previews** prove the web build works. They are not usable as an app: the preview
+  environment has no `VITE_API_URL`, and preview domains aren't in `CLIENT_ORIGINS`. Test changes
+  locally ([local-development.md](local-development.md)) or after merge.
+- **Render**: `render.yaml` sets `autoDeploy: false`. Choose one in Render → service →
+  Settings → **Auto-Deploy**:
+  - **After CI Checks Pass** (recommended): every green `main` deploys automatically. Every API
+    deploy ends live games, so during the beta merge server changes only at quiet hours.
+  - **Off**: deploy by hand with **Manual Deploy → Deploy latest commit**, at a time you choose.
+- **Which commit is live:** `/health` returns `version`, the first 7 characters of the commit
+  Render deployed. Compare it with `main`.

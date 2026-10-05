@@ -1,0 +1,87 @@
+name: Beta bug report
+description: A problem reported by a closed-beta tester (fill in from their message).
+title: '[beta] '
+labels: ['beta', 'bug']
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Blocker = can't sign in/join/finish, or a wrong result or stats. Major = interrupted but there's a workaround. Minor = cosmetic.
+      options:
+        - Blocker
+        - Major
+        - Minor
+    validations:
+      required: true
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporter
+      description: Telegram name (no phone numbers).
+    validations:
+      required: true
+  - type: input
+    id: when
+    attributes:
+      label: When
+      description: Date, time and time zone. Needed to find it in the Render logs.
+      placeholder: 2026-10-13 21:40 UTC+3
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: iPhone or Android, OS version, Telegram app version. Wi-Fi or mobile data, VPN?
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where in the app
+      options:
+        - Sign-in / opening the app
+        - Home
+        - Create room / lobby
+        - Invite link / joining
+        - Hiding the code (setup)
+        - My turn
+        - Their turn
+        - Result / rematch
+        - Reconnecting
+        - Profile / history
+        - Bot chat
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps, expected and actual
+      description: What they did in order, what should have happened, what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Screenshots or recordings. For a wrong result, both players' result screens and guess lists.
+  - type: dropdown
+    id: recovered
+    attributes:
+      label: Did reopening the app fix it?
+      options:
+        - 'Yes'
+        - 'No'
+        - Didn't try
+  - type: input
+    id: opponent
+    attributes:
+      label: Other player
+      description: If it happened during a game, the opponent's Telegram name.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server logs (owner)
+      description: Relevant Render log lines around that time (events only; never paste tokens or initData).
+      render: text

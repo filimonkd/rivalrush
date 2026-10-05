@@ -64,7 +64,9 @@ Status: ✅ passed · ❌ failed · 🟡 not yet run. A ✅ means a person saw i
 working, I played a duel and Crack the Code works fine". The rows marked ✅ below are the ones
 that report covers.
 
-**Run 2, 5 Oct 2026, product owner, two phones (after the hardening deploy).** Followed the
+**Run 2, 5 Oct 2026, product owner, two phones (after the hardening PR was merged).** Vercel
+had deployed the new web app; that Render was running the same commit is not recorded (check
+`/health` → `version`). Followed the
 two-phone script (rules and timers, rematch, reconnect, give up / decline, profile, invites,
 UI). Result reported: "all tests passed". Rows 36 (room idle > 2 h) and 37 (old link after a
 restart) were optional in that script and are left 🟡 until confirmed.

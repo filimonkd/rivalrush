@@ -27,14 +27,21 @@ start looks intentional rather than broken.
 
 ## Environment matrix
 
-|           | Development                              | Preview / staging                                                      | Production                                                       |
+There is **no staging environment**: changes are tested locally and in CI, then go to
+production. The "Staging (optional)" column describes how to add one later at no cost; none of
+it exists today.
+
+|           | Development                              | Staging (optional, not set up)                                         | Production (live)                                                |
 | --------- | ---------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Web       | `localhost:5173` (+ tunnel for Telegram) | Vercel preview deployments (free)                                      | Vercel production domain                                         |
+| Web       | `localhost:5173` (+ tunnel for Telegram) | a second Vercel project or preview with its own `VITE_API_URL`         | Vercel production domain                                         |
 | API       | `localhost:4000` (+ tunnel)              | your machine + tunnel, or a 2nd Render Free service **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
-| Database  | in-memory (or local)                     | Atlas DB `rivalrush_staging` (same free M0 cluster)                    | Atlas DB `rivalrush` (separate DB user)                          |
-| Bot       | dev bot (polling)                        | dev bot                                                                | production bot (webhook)                                         |
+| Database  | in-memory (or local)                     | Atlas DB `rivalrush_staging` (same free M0 cluster)                    | Atlas DB `rivalrush`                                             |
+| Bot       | dev bot (polling)                        | dev bot                                                                | `@rivalrushbot` (webhook)                                        |
 | Dev login | on                                       | **off**                                                                | **off** (server refuses to boot otherwise)                       |
 | CI        | in-memory MongoDB, no secrets            | —                                                                      | —                                                                |
+
+Vercel PR previews only check that the web app builds; they can't reach the API (see
+[ci-cd.md](ci-cd.md#deployments)).
 
 ### Server variables (Render)
 
@@ -64,7 +71,8 @@ start looks intentional rather than broken.
 1. **MongoDB Atlas**: create a free **M0** cluster. Database Access: create users
    `rivalrush_prod` (readWrite on `rivalrush`) and `rivalrush_staging` (readWrite on
    `rivalrush_staging`) with long random passwords. Network Access: add `0.0.0.0/0` (Render
-   Free has no fixed outbound IPs). Copy the SRV URI. Indexes are created by the server on
+   Free has no fixed outbound IPs). Copy the SRV URI. (The staging user is optional; see the
+   matrix above.) Indexes are created by the server on
    boot (`syncIndexes`): `users.telegramId` unique, `matches.sessionId` unique,
    `matches.players.userId+endedAt`, `rooms.roomId` unique, `rooms.inviteTokenHash` unique,
    TTL on `rooms.purgeAt` (30 days after expiry).
@@ -94,10 +102,12 @@ start looks intentional rather than broken.
 
 - [x] Render: `NODE_ENV=production`, `DEV_LOGIN_ENABLED=false` (the server refuses to boot otherwise, and it boots)
 - [x] `CLIENT_ORIGINS` = exact https Vercel origin(s) (sign-in from the Mini App works, so CORS accepts it)
-- [ ] `MONGODB_URI` points at the **production** DB; CI and local never use it
+- [x] `MONGODB_URI` is set on Render only; CI and local development never use it (CI uses an in-memory database)
 - [x] `BOT_TOKEN` only in Render; not in Vercel or the repo (the web build only reads `VITE_API_URL`, `VITE_BOT_USERNAME`, `VITE_DEV_LOGIN`)
 - [ ] Exactly **one** Render instance (Free plan), and the uptime pinger is running
-- [ ] `/health` returns 200 with `database: "up"`
+- [ ] `/health` returns 200 with `database: "up"`, and `version` matches the latest deployed `main` commit
+- [ ] Render Auto-Deploy set deliberately (After CI Checks Pass, or Off with manual deploys)
+- [ ] GitHub branch protection on `main` ([ci-cd.md](ci-cd.md))
 - [x] WebSocket connects from the Mini App (live games work in production)
 - [x] No debug endpoints exist (there are none; `/api/auth/dev` is absent in production)
 

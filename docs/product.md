@@ -35,4 +35,6 @@ future game uses original names, art and rules.
 | Games per player / D7 return | `matches.players.userId`, `users.createdAt`                                                             |
 | Organic invites              | `users.acquisition.viaInvite` (set from the signed `start_param` on first sign-in)                      |
 
-The most important early signal: **do people want to play again?**
+The most important early signal: **do people want to play again?** The closed beta measures it:
+[beta-plan.md](beta-plan.md) (metrics, queries, decisions) and
+[beta-tester-guide.md](beta-tester-guide.md).

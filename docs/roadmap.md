@@ -1,8 +1,8 @@
 # Roadmap
 
-**Next: run the closed beta, not new features.** 15–20 testers in two Telegram groups for a
+**Next: run the closed beta, not new features** ([beta-plan.md](beta-plan.md), 12–18 Oct 2026). 15–20 testers in two Telegram groups for a
 week. Watch room abandonment, failed invites, reconnect failures, completion and rematch rate,
-and whether people want to play again. Use [product.md](product.md) for metric definitions.
+and whether people want to play again. Metric definitions and queries: [beta-plan.md](beta-plan.md#metrics).
 The first numbers are baselines, not pass/fail.
 
 Launch gate suggested by the plan: 50+ finished matches, no open blocking bugs, and a

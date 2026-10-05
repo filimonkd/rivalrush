@@ -76,9 +76,28 @@ checks.
 5. **Single instance**: no horizontal scaling until a Redis-backed store exists. That is
    enough for a closed beta of 15–20 testers.
 
+## Closed beta readiness
+
+Plan: [beta-plan.md](beta-plan.md) · Tester guide and message:
+[beta-tester-guide.md](beta-tester-guide.md) · Daily routine and incidents:
+[runbook.md](runbook.md).
+
+| State                    | Item                                                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| ✅ Ready                 | Full two-phone production QA passed; CI green on `main`; Vercel, Render and Atlas live                     |
+| ✅ Ready                 | Tester guide + message, feedback survey and polls, bug template, metric queries, daily log, decision rules |
+| ✅ Ready                 | Daily monitoring routine and incident response for 6 scenarios                                             |
+| 🟡 Owner action required | `/health` shows `"database":"up"` and `version` = latest `main` commit                                     |
+| 🟡 Owner action required | UptimeRobot monitor on `/health` every 5 min                                                               |
+| 🟡 Owner action required | Branch protection on `main`; Render Auto-Deploy set deliberately                                           |
+| 🟡 Owner action required | Recruit testers, create the survey, set up the daily log                                                   |
+| 🟡 Optional              | QA rows 36–37 (invite to a room idle > 2 h; old link after a restart)                                      |
+| ⚠️ Known limitation      | Deploys and restarts end live games; free tier can sleep without the pinger                                |
+| ⚠️ Known limitation      | "Games started" exists only in Render logs (short retention): record it daily                              |
+| ⚠️ Known limitation      | ~50 matches and 15–20 testers make every rate noisy: directional, not pass/fail                            |
+
 ## Recommended next step
 
-1. Set up the keep-warm pinger and run the daily health check in [runbook.md](runbook.md).
-2. Turn on branch protection for `main`.
-3. Start the closed beta (15–20 testers, one week) and watch completion and rematch rates
-   ([roadmap.md](roadmap.md)). Announce deploys to testers: a deploy ends live games.
+1. Finish the owner actions above this week.
+2. Run the closed beta 12–18 Oct following [beta-plan.md](beta-plan.md#one-week-schedule).
+3. Decide on 19–20 Oct with the decision table; re-check day-7 return on 25 Oct.
