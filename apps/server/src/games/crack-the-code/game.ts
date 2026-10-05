@@ -328,6 +328,8 @@ export const crackTheCode: GameDefinition<CtcState, CtcSettings, CtcPlayerView, 
   name: 'Crack the Code',
   minPlayers: 2,
   maxPlayers: 2,
+  // A secret is independent of the opponent's moves; giving up is always allowed.
+  versionIndependentActions: ['SET_SECRET', 'FORFEIT'],
 
   parseSettings(input) {
     return ctcSettingsSchema.parse(input ?? {});

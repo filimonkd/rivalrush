@@ -47,6 +47,12 @@ export interface GameDefinition<S, Settings, PlayerView, PublicView> {
   name: string;
   minPlayers: number;
   maxPlayers: number;
+  /**
+   * Player action types that are safe to apply even if the client's view is behind
+   * (e.g. submitting your own secret, giving up). All other actions are rejected with
+   * STALE_GAME_VERSION when clientVersion < current game version.
+   */
+  versionIndependentActions: readonly string[];
   /** Validates and normalizes room settings; throws a ZodError on bad input. */
   parseSettings(input: unknown): Settings;
   /** Validates the client-supplied action payload shape; returns null when invalid. */

@@ -1,0 +1,126 @@
+import { z } from 'zod';
+
+const bool = z
+  .enum(['true', 'false', '1', '0', ''])
+  .optional()
+  .transform((v) => v === 'true' || v === '1');
+
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().int().min(1).max(65535).default(4000),
+  HOST: z.string().default('0.0.0.0'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  /** Number of reverse proxies in front of the server (Render = 1). */
+  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(0),
+
+  MONGODB_URI: z.string().optional(),
+  MONGODB_DB_NAME: z.string().optional(),
+
+  BOT_TOKEN: z.string().optional(),
+  BOT_USERNAME: z.string().optional(),
+  BOT_POLLING: bool,
+  WEBAPP_URL: z.string().url().optional(),
+
+  JWT_SECRET: z.string().optional(),
+  JWT_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(300)
+    .default(7 * 24 * 3600),
+  /** Telegram launch data older than this is rejected. */
+  AUTH_MAX_AGE_SECONDS: z.coerce.number().int().min(60).max(86_400).default(3600),
+
+  CLIENT_ORIGINS: z.string().default('http://localhost:5173'),
+  DEV_LOGIN_ENABLED: bool,
+
+  DISCONNECT_GRACE_SECONDS: z.coerce.number().int().min(10).max(600).default(60),
+  ROOM_TTL_MINUTES: z.coerce
+    .number()
+    .int()
+    .min(5)
+    .max(24 * 60)
+    .default(120),
+});
+
+export interface AppConfig {
+  nodeEnv: 'development' | 'test' | 'production';
+  isProduction: boolean;
+  port: number;
+  host: string;
+  logLevel: string;
+  trustProxy: number;
+  mongoUri: string | null;
+  mongoDbName: string | undefined;
+  botToken: string | null;
+  botUsername: string | null;
+  botPolling: boolean;
+  webAppUrl: string | null;
+  jwtSecret: string;
+  jwtTtlSeconds: number;
+  authMaxAgeSeconds: number;
+  clientOrigins: string[];
+  devLoginEnabled: boolean;
+  disconnectGraceMs: number;
+  roomTtlMs: number;
+}
+
+export class ConfigError extends Error {}
+
+const DEV_JWT_SECRET = 'dev-only-insecure-jwt-secret-change-me-0000';
+
+/**
+ * Validates the environment. In production it refuses to start with insecure settings:
+ * dev login on, missing/weak secrets, wildcard CORS, or no database.
+ */
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
+  const parsed = envSchema.safeParse(env);
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+    throw new ConfigError(`Invalid environment: ${issues}`);
+  }
+  const e = parsed.data;
+  const isProduction = e.NODE_ENV === 'production';
+  const clientOrigins = e.CLIENT_ORIGINS.split(',')
+    .map((o) => o.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+
+  if (isProduction) {
+    const problems: string[] = [];
+    if (e.DEV_LOGIN_ENABLED) problems.push('DEV_LOGIN_ENABLED must be false in production');
+    if (!e.BOT_TOKEN) problems.push('BOT_TOKEN is required');
+    if (!e.JWT_SECRET || e.JWT_SECRET.length < 32)
+      problems.push('JWT_SECRET must be at least 32 characters');
+    if (e.JWT_SECRET === DEV_JWT_SECRET)
+      problems.push('JWT_SECRET must not be the development default');
+    if (!e.MONGODB_URI) problems.push('MONGODB_URI is required');
+    if (clientOrigins.length === 0) problems.push('CLIENT_ORIGINS is required');
+    for (const o of clientOrigins) {
+      if (o === '*' || !o.startsWith('https://'))
+        problems.push(`CLIENT_ORIGINS entry must be an exact https origin: ${o}`);
+    }
+    if (problems.length)
+      throw new ConfigError(`Refusing to start in production: ${problems.join('; ')}`);
+  }
+
+  return {
+    nodeEnv: e.NODE_ENV,
+    isProduction,
+    port: e.PORT,
+    host: e.HOST,
+    logLevel: e.LOG_LEVEL,
+    trustProxy: e.TRUST_PROXY,
+    mongoUri: e.MONGODB_URI ?? null,
+    mongoDbName: e.MONGODB_DB_NAME,
+    botToken: e.BOT_TOKEN ?? null,
+    botUsername: e.BOT_USERNAME ?? null,
+    botPolling: e.BOT_POLLING,
+    webAppUrl: e.WEBAPP_URL ?? null,
+    jwtSecret: e.JWT_SECRET ?? DEV_JWT_SECRET,
+    jwtTtlSeconds: e.JWT_TTL_SECONDS,
+    authMaxAgeSeconds: e.AUTH_MAX_AGE_SECONDS,
+    clientOrigins,
+    devLoginEnabled: e.DEV_LOGIN_ENABLED,
+    disconnectGraceMs: e.DISCONNECT_GRACE_SECONDS * 1000,
+    roomTtlMs: e.ROOM_TTL_MINUTES * 60_000,
+  };
+}
