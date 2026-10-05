@@ -5,9 +5,8 @@ week. Watch room abandonment, failed invites, reconnect failures, completion and
 and whether people want to play again. Use [product.md](product.md) for metric definitions.
 The first numbers are baselines, not pass/fail.
 
-Launch gate suggested by the plan: 50+ finished matches, no open blocking bugs, rematch rate
-
-> 40%.
+Launch gate suggested by the plan: 50+ finished matches, no open blocking bugs, and a
+rematch rate above 40%.
 
 ## After the beta (default order; metrics decide)
 
