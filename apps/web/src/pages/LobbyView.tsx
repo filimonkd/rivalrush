@@ -2,6 +2,7 @@ import type { RoomSnapshot } from '@rivalrush/shared';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar, Button, Card, Pill, Screen } from '../components/ui';
+import { gameInfo } from '../lib/games';
 import { inviteLinkFor, inviteText } from '../lib/invite';
 import { confirmDialog, haptic, shareToTelegram } from '../lib/telegram';
 import { useRoom } from '../store/room';
@@ -17,6 +18,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   const host = room.players.find((p) => p.isHost);
   const full = room.players.length >= room.maxPlayers;
   const link = inviteLinkFor(room.inviteToken);
+  const game = gameInfo(room.gameType);
 
   const run = async (fn: () => Promise<{ message: string } | null>) => {
     setBusy(true);
@@ -29,7 +31,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   };
 
   const share = async () => {
-    const text = inviteText(host?.displayName ?? 'A friend');
+    const text = inviteText(host?.displayName ?? 'A friend', game.name);
     if (shareToTelegram(link, text)) return;
     if (navigator.share) {
       await navigator.share({ text, url: link }).catch(() => undefined);
@@ -57,10 +59,17 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   return (
     <Screen className="gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black">Lobby</h1>
+        <div>
+          <h1 className="text-3xl font-black">Lobby</h1>
+          <p className="text-sm font-bold text-muted" data-testid="lobby-game">
+            {game.name}
+          </p>
+        </div>
         <Pill tone="accent">
-          {room.settings.codeLength} digits · {room.settings.turnSeconds}s ·{' '}
-          {room.settings.maxGuesses} guesses
+          {game
+            .summary(room.settings)
+            .map((s) => `${s.value} ${s.label}`)
+            .join(' · ')}
         </Pill>
       </div>
 

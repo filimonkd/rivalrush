@@ -14,6 +14,6 @@ export function inviteLinkFor(
   return bot ? buildInviteLink(bot, token) : `${origin}/join/${token}`;
 }
 
-export function inviteText(hostName: string): string {
-  return `${hostName} challenged you to Crack the Code on RivalRush ⚔️`;
+export function inviteText(hostName: string, gameName = 'Crack the Code'): string {
+  return `${hostName} challenged you to ${gameName} on RivalRush ⚔️`;
 }

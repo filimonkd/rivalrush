@@ -64,9 +64,7 @@ export function describeEvent(
     case 'last_chance':
       return {
         text:
-          e.actorId === me
-            ? 'Last chance! Crack it to tie'
-            : 'Code cracked! They get one last guess',
+          e.actorId === me ? 'Last chance! Crack it to tie' : 'Cracked! They get one last guess',
         kind: 'info',
         haptic: 'warning',
       };
@@ -85,8 +83,8 @@ export function describeEvent(
       return null;
     case 'secret_locked':
       if (e.data?.auto && mine)
-        return { text: 'Time ran out — we picked a code for you', kind: 'info' };
-      return mine ? null : { text: `${nameOf(snap, e.actorId)} locked in a code`, kind: 'info' };
+        return { text: 'Time ran out — we picked one for you', kind: 'info' };
+      return mine ? null : { text: `${nameOf(snap, e.actorId)} is locked in`, kind: 'info' };
     default:
       return null;
   }

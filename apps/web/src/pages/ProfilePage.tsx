@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router';
 import { Avatar, Card, Pill, Screen, Spinner } from '../components/ui';
 import type { ApiError } from '../lib/api';
 import { api } from '../lib/api';
+import { gameInfo } from '../lib/games';
 import { outcomeLabel, reasonLabel } from '../lib/labels';
 import { useBackButton } from '../lib/useBackButton';
 import { useSession } from '../store/session';
@@ -24,7 +25,8 @@ export function MatchList({ matches }: { matches: MatchSummary[] }) {
           <div className="min-w-0 flex-1">
             <p className="truncate font-bold">vs {m.opponent?.displayName ?? 'someone'}</p>
             <p className="text-xs text-muted">
-              {reasonLabel(m.reason)} · {new Date(m.endedAt).toLocaleDateString()}
+              {gameInfo(m.gameType).name} · {reasonLabel(m.reason, m.gameType)} ·{' '}
+              {new Date(m.endedAt).toLocaleDateString()}
             </p>
           </div>
           <Pill tone={m.outcome === 'win' ? 'good' : m.outcome === 'loss' ? 'bad' : 'muted'}>

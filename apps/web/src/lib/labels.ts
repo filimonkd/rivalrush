@@ -1,19 +1,6 @@
-import type { CtcEndReason, ErrorCode } from '@rivalrush/shared';
+import type { ErrorCode } from '@rivalrush/shared';
 
-export function reasonLabel(reason: CtcEndReason): string {
-  switch (reason) {
-    case 'cracked':
-      return 'Code cracked';
-    case 'both_cracked':
-      return 'Both cracked it — draw';
-    case 'out_of_guesses':
-      return 'Out of guesses — draw';
-    case 'forfeit':
-      return 'Gave up';
-    case 'abandoned':
-      return 'Dropped out';
-  }
-}
+export { reasonLabel } from './games';
 
 export function outcomeLabel(outcome: 'win' | 'loss' | 'draw'): string {
   return outcome === 'win' ? 'Win' : outcome === 'loss' ? 'Loss' : 'Draw';

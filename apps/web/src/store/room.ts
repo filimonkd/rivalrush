@@ -2,7 +2,7 @@ import type {
   Ack,
   AppErrorPayload,
   ClientToServerEvents,
-  CtcPlayerAction,
+  PlayerAction,
   ResyncResult,
   RoomClosedPayload,
   RoomEvent,
@@ -38,7 +38,7 @@ interface RoomState {
   start(): Promise<AppErrorPayload | null>;
   rematch(): Promise<AppErrorPayload | null>;
   leave(): Promise<void>;
-  act(action: CtcPlayerAction): Promise<AppErrorPayload | null>;
+  act(action: PlayerAction): Promise<AppErrorPayload | null>;
 }
 
 let socket: AppSocket | null = null;
