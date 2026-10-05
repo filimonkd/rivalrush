@@ -583,7 +583,12 @@ export class RoomManager {
     }
     for (const s of room.seats) s.wantsRematch = false;
     // Whoever is left waits in the lobby; the same invite link can bring a new opponent.
-    if (room.status === 'FINISHED') room.status = 'LOBBY';
+    // The finished game is already recorded; drop it so a newcomer never sees its moves.
+    if (room.status === 'FINISHED') {
+      room.status = 'LOBBY';
+      room.game = null;
+      room.nextFirstPlayerId = null;
+    }
     this.recomputeLobby(room);
   }
 

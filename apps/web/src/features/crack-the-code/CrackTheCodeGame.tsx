@@ -368,6 +368,8 @@ function ResultSheet({
   const mySeat = room.players.find((p) => p.userId === me);
   const sessionId = room.game!.sessionId;
   const buzzed = useRef<string | null>(null);
+  // One vote in flight at a time: a double tap must not surface a false "not possible".
+  const [voting, setVoting] = useState(false);
 
   useEffect(() => {
     if (buzzed.current === sessionId) return;
@@ -382,7 +384,10 @@ function ResultSheet({
   }, [sessionId, outcome]);
 
   const rematch = async () => {
+    if (voting) return;
+    setVoting(true);
     const err = await useRoom.getState().rematch();
+    setVoting(false);
     if (err) toast(err.message, 'bad');
   };
 
@@ -431,7 +436,7 @@ function ResultSheet({
                 Waiting for {opponent.displayName}…
               </Button>
             ) : (
-              <Button onClick={rematch} data-testid="rematch">
+              <Button onClick={rematch} disabled={voting} data-testid="rematch">
                 {opponent.wantsRematch
                   ? `${opponent.displayName} wants a rematch — Accept`
                   : 'Rematch'}
@@ -439,6 +444,11 @@ function ResultSheet({
             )
           ) : (
             <p className="text-center text-muted">Your rival left.</p>
+          )}
+          {opponent && !opponent.online && (
+            <p className="text-center text-sm text-muted" data-testid="rematch-opponent-offline">
+              {opponent.displayName} is offline right now.
+            </p>
           )}
           <Button variant="secondary" big={false} onClick={leave}>
             Leave

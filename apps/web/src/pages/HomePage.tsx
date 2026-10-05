@@ -50,7 +50,11 @@ export function HomePage() {
             Your game is waiting
           </p>
           <p className="mt-1 text-lg font-black">
-            {active.status === 'IN_GAME' ? 'Match in progress' : 'Lobby open'}
+            {active.status === 'IN_GAME'
+              ? 'Match in progress'
+              : active.status === 'FINISHED'
+                ? 'Game over — rematch?'
+                : 'Lobby open'}
           </p>
           <Button className="mt-3" big={false} onClick={() => navigate(`/room/${active.roomId}`)}>
             Back to the game

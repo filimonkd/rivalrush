@@ -32,7 +32,8 @@ interface RoomState {
   error: AppErrorPayload | null;
   enter(roomId: string, initial?: RoomSnapshot): Promise<void>;
   exit(): void;
-  resync(): Promise<void>;
+  /** Catches up with the server. Resolves false if the server did not answer in time. */
+  resync(timeoutMs?: number): Promise<boolean>;
   setReady(ready: boolean): Promise<AppErrorPayload | null>;
   start(): Promise<AppErrorPayload | null>;
   rematch(): Promise<AppErrorPayload | null>;
@@ -44,7 +45,11 @@ let socket: AppSocket | null = null;
 let socketToken: string | null = null;
 let stopForeground: (() => void) | null = null;
 
-function call<T>(event: keyof ClientToServerEvents, payload: unknown): Promise<Ack<T>> {
+function call<T>(
+  event: keyof ClientToServerEvents,
+  payload: unknown,
+  timeoutMs = 8000,
+): Promise<Ack<T>> {
   return new Promise((resolve) => {
     if (!socket || !socket.connected) {
       resolve({
@@ -59,7 +64,7 @@ function call<T>(event: keyof ClientToServerEvents, payload: unknown): Promise<A
           ok: false,
           error: { code: 'RECONNECT_REQUIRED', message: 'Reconnecting… your game is safe.' },
         }),
-      8000,
+      timeoutMs,
     );
     (socket.emit as (e: string, p: unknown, cb: (r: Ack<T>) => void) => void)(
       event,
@@ -107,8 +112,20 @@ export const useRoom = create<RoomState>((set, get) => {
     socket.on('disconnect', () => {
       if (get().roomId) set({ connection: 'reconnecting' });
     });
-    socket.on('connect_error', () => {
-      if (get().roomId) set({ connection: 'reconnecting' });
+    socket.on('connect_error', (err) => {
+      if (!get().roomId) return;
+      // The server refused the session token: Socket.IO will not retry this on its own.
+      if (err.message === 'UNAUTHORIZED') {
+        set({
+          connection: 'idle',
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Your session ended. Close the app and open it again from the bot.',
+          },
+        });
+        return;
+      }
+      set({ connection: 'reconnecting' });
     });
     socket.on('room:snapshot', apply);
     socket.on('room:event', onEvent);
@@ -118,8 +135,21 @@ export const useRoom = create<RoomState>((set, get) => {
     stopForeground?.();
     // Telegram backgrounding can freeze the socket: on return, reconnect and catch up.
     stopForeground = onForeground(() => {
-      if (!socket?.connected) socket?.connect();
-      else void get().resync();
+      const s = socket;
+      if (!s) return;
+      if (!s.connected) {
+        s.connect();
+        return;
+      }
+      // A socket that slept in the background can look connected while it is dead (the
+      // heartbeat takes up to ~40 s to notice). No quick answer → reconnect now.
+      void get()
+        .resync(3000)
+        .then((answered) => {
+          if (answered || socket !== s || !get().roomId) return;
+          set({ connection: 'reconnecting' });
+          s.disconnect().connect();
+        });
     });
     return socket;
   };
@@ -171,19 +201,22 @@ export const useRoom = create<RoomState>((set, get) => {
       });
     },
 
-    async resync() {
+    async resync(timeoutMs) {
       const roomId = get().roomId;
-      if (!roomId) return;
-      const r = await call<ResyncResult>('game:resync', {
-        roomId,
-        knownVersion: get().snapshot?.version,
-      });
+      if (!roomId) return true;
+      const r = await call<ResyncResult>(
+        'game:resync',
+        { roomId, knownVersion: get().snapshot?.version },
+        timeoutMs,
+      );
       if (r.ok) {
         if (r.data.changed) apply(r.data.room);
         set({ error: null });
-      } else if (r.error.code !== 'RECONNECT_REQUIRED' && r.error.code !== 'RATE_LIMITED') {
-        set({ error: r.error });
+        return true;
       }
+      if (r.error.code === 'RECONNECT_REQUIRED') return false;
+      if (r.error.code !== 'RATE_LIMITED') set({ error: r.error });
+      return true;
     },
 
     setReady: (ready) => command('room:ready', { ready }),
