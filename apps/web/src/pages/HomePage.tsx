@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Avatar, Button, Card, Logo, Pill, Screen } from '../components/ui';
 import { api } from '../lib/api';
+import { gameInfo } from '../lib/games';
 import { outcomeLabel, reasonLabel } from '../lib/labels';
 import { useSession } from '../store/session';
 
@@ -50,6 +51,7 @@ export function HomePage() {
             Your game is waiting
           </p>
           <p className="mt-1 text-lg font-black">
+            {gameInfo(active.gameType).name} ·{' '}
             {active.status === 'IN_GAME'
               ? 'Match in progress'
               : active.status === 'FINISHED'
@@ -79,6 +81,28 @@ export function HomePage() {
         </span>
       </button>
 
+      <button
+        type="button"
+        data-testid="start-color-cipher"
+        onClick={() => navigate('/create/color-cipher')}
+        className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0b7c86] to-[#6b3fd1] p-6 text-left text-white shadow-2xl shadow-[#0b7c86]/30 transition active:scale-[0.98]"
+      >
+        <div
+          className="absolute -bottom-2 -right-2 grid rotate-12 grid-cols-2 gap-1.5 opacity-40"
+          aria-hidden
+        >
+          {['#e5484d', '#ffc53d', '#30a46c', '#0090ff'].map((c) => (
+            <span key={c} className="h-10 w-10 rounded-xl" style={{ backgroundColor: c }} />
+          ))}
+        </div>
+        <p className="text-xs font-bold uppercase tracking-widest opacity-80">Live now · New</p>
+        <p className="mt-1 text-3xl font-black">Color Cipher</p>
+        <p className="mt-1 opacity-90">Hide a color pattern. Crack theirs first.</p>
+        <span className="mt-5 inline-flex h-12 items-center rounded-2xl bg-white px-5 text-lg font-black text-[#0b5d66]">
+          Start a duel 🎨
+        </span>
+      </button>
+
       <Card>
         <div className="flex items-center justify-between">
           <p className="font-black">Your record</p>
@@ -105,7 +129,9 @@ export function HomePage() {
               {outcomeLabel(recent.outcome)}
             </Pill>
           </div>
-          <p className="text-sm text-muted">{reasonLabel(recent.reason)}</p>
+          <p className="text-sm text-muted">
+            {gameInfo(recent.gameType).name} · {reasonLabel(recent.reason, recent.gameType)}
+          </p>
         </Card>
       )}
 

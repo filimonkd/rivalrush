@@ -1,15 +1,20 @@
 import { Schema, Types, model, type InferSchemaType } from 'mongoose';
 
 /**
- * Finished match history. Written once per game session (sessionId is unique).
- * Secret codes are never stored: only guesses, scores and the result.
+ * Finished match history for every game. Written once per game session (sessionId is unique).
+ * Secret codes and patterns are never stored: only guesses, feedback counts and the result.
  */
 const moveSchema = new Schema(
   {
     playerId: { type: String, required: true },
     guess: { type: String, default: null },
-    bulls: { type: Number, required: true },
-    cows: { type: Number, required: true },
+    // Feedback counts; which pair is present depends on the game (gameType on the match).
+    /** Crack the Code: right digit right place / wrong place. */
+    bulls: { type: Number },
+    cows: { type: Number },
+    /** Color Cipher: right color right position / wrong position. */
+    exact: { type: Number },
+    partial: { type: Number },
     timedOut: { type: Boolean, required: true },
     turnNumber: { type: Number, required: true },
     at: { type: Date, required: true },

@@ -10,15 +10,15 @@ caller's authoritative `snapshot` so the client can resync immediately.
 
 ## Client → server
 
-| Event            | Payload                                     | Ack data                                             | Notes                                                                                  |
-| ---------------- | ------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `room:subscribe` | `{roomId}`                                  | `RoomSnapshot`                                       | Members only. Marks the player online (presence)                                       |
-| `room:ready`     | `{roomId, ready, actionId}`                 | `RoomSnapshot`                                       | Lobby only; the host is always ready                                                   |
-| `room:start`     | `{roomId, actionId}`                        | `RoomSnapshot`                                       | Host only, room READY                                                                  |
-| `room:leave`     | `{roomId, actionId}`                        | `{left:true}`                                        | Mid-game = forfeit                                                                     |
-| `room:rematch`   | `{roomId, actionId}`                        | `RoomSnapshot`                                       | FINISHED rooms; both votes start a new session                                         |
-| `game:action`    | `{roomId, actionId, clientVersion, action}` | `RoomSnapshot`                                       | `action` is `{type:'SET_SECRET', code}`, `{type:'GUESS', guess}` or `{type:'FORFEIT'}` |
-| `game:resync`    | `{roomId, knownVersion?}`                   | `{changed:false, version}` or `{changed:true, room}` | Also (re)subscribes the socket                                                         |
+| Event            | Payload                                     | Ack data                                             | Notes                                                                                                                                                                   |
+| ---------------- | ------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `room:subscribe` | `{roomId}`                                  | `RoomSnapshot`                                       | Members only. Marks the player online (presence)                                                                                                                        |
+| `room:ready`     | `{roomId, ready, actionId}`                 | `RoomSnapshot`                                       | Lobby only; the host is always ready                                                                                                                                    |
+| `room:start`     | `{roomId, actionId}`                        | `RoomSnapshot`                                       | Host only, room READY                                                                                                                                                   |
+| `room:leave`     | `{roomId, actionId}`                        | `{left:true}`                                        | Mid-game = forfeit                                                                                                                                                      |
+| `room:rematch`   | `{roomId, actionId}`                        | `RoomSnapshot`                                       | FINISHED rooms; both votes start a new session                                                                                                                          |
+| `game:action`    | `{roomId, actionId, clientVersion, action}` | `RoomSnapshot`                                       | Crack the Code: `{type:'SET_SECRET', code}`, `{type:'GUESS', guess}`. Color Cipher: `{type:'SET_SECRET', pattern}`, `{type:'GUESS', pattern}`. Both: `{type:'FORFEIT'}` |
+| `game:resync`    | `{roomId, knownVersion?}`                   | `{changed:false, version}` or `{changed:true, room}` | Also (re)subscribes the socket                                                                                                                                          |
 
 `actionId`: 8–64 chars `[A-Za-z0-9_-]`, unique per state-changing action. A repeated
 `actionId` from the same user is not applied again; it returns the current snapshot.
@@ -43,7 +43,7 @@ RoomSnapshot {
   roomId, inviteToken, gameType, settings, status, hostId, maxPlayers,
   players: [{ userId, displayName, photoUrl, isHost, ready, online, wantsRematch, graceDeadlineAt }],
   version, createdAt, expiresAt, serverTime, gamesPlayed,
-  game: { sessionId, gameType, version, result, view: CtcPlayerView } | null
+  game: { sessionId, gameType, version, result, view: CtcPlayerView | CcPlayerView } | null
 }
 CtcPlayerView {
   phase, version, settings, me, mySecret, mySecretAutoGenerated,
@@ -52,7 +52,15 @@ CtcPlayerView {
   firstPlayerId, currentTurn, setupDeadlineAt, turnStartedAt, turnDeadlineAt,
   moves: [{ playerId, guess, bulls, cows, timedOut, at, turnNumber }], result
 }
+CcPlayerView {            // same shape; patterns are color-id strings like "0312"
+  gameId: 'color-cipher', phase, settings: { patternLength, colorCount, turnSeconds, maxGuesses },
+  mySecret, opponentSecret /* null until the end */, …,
+  moves: [{ playerId, guess, exact, partial, timedOut, at, turnNumber }], result
+}
 ```
+
+`view.gameId` tells the two views apart. `guess_made` events carry `bulls`/`cows` (Crack the
+Code) or `exact`/`partial` (Color Cipher).
 
 Countdowns: `remaining = deadline − (Date.now() + (serverTime − receivedAt))`. The client
 never decides that time is up.

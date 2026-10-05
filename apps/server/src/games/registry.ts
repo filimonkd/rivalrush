@@ -1,10 +1,12 @@
 import type { GameCatalogEntry } from '@rivalrush/shared';
+import { colorCipher } from './color-cipher/game.js';
 import { crackTheCode } from './crack-the-code/game.js';
 import type { AnyGameDefinition } from './engine/types.js';
 
 /** Playable games. Adding a game = adding its plug-in here. */
 const LIVE_GAMES: Record<string, AnyGameDefinition> = {
   [crackTheCode.id]: crackTheCode,
+  [colorCipher.id]: colorCipher,
 };
 
 const CATALOG: GameCatalogEntry[] = [
@@ -19,8 +21,8 @@ const CATALOG: GameCatalogEntry[] = [
   {
     id: 'color-cipher',
     name: 'Color Cipher',
-    tagline: 'A color code duel.',
-    status: 'coming_soon',
+    tagline: 'Hide a color pattern. Crack theirs first.',
+    status: 'live',
     minPlayers: 2,
     maxPlayers: 2,
   },

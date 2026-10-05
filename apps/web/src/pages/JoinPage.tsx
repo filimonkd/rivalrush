@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Avatar, Button, Card, Screen, Spinner } from '../components/ui';
 import type { ApiError } from '../lib/api';
 import { api } from '../lib/api';
+import { gameInfo } from '../lib/games';
 import { joinErrorMessage } from '../lib/labels';
 import { haptic } from '../lib/telegram';
 import { useBackButton } from '../lib/useBackButton';
@@ -81,29 +82,23 @@ export function JoinPage() {
     );
   }
 
-  const s = preview.settings;
+  const game = gameInfo(preview.gameType);
   return (
     <Screen className="items-center justify-center gap-6 text-center">
       <Avatar name={preview.host.displayName} url={preview.host.photoUrl} size={96} ring />
       <div>
         <h1 className="text-3xl font-black" data-testid="challenge-title">
-          {preview.host.displayName} challenged you
+          {preview.host.displayName} challenged you to {game.name}
         </h1>
-        <p className="mt-1 text-muted">Crack the Code · 1 vs 1</p>
+        <p className="mt-1 text-muted">{game.tagline} · 1 vs 1</p>
       </div>
       <Card className="grid w-full grid-cols-3 gap-2 text-center">
-        <div>
-          <p className="text-2xl font-black">{s.codeLength}</p>
-          <p className="text-xs text-muted">digits</p>
-        </div>
-        <div>
-          <p className="text-2xl font-black">{s.turnSeconds}s</p>
-          <p className="text-xs text-muted">per turn</p>
-        </div>
-        <div>
-          <p className="text-2xl font-black">{s.maxGuesses}</p>
-          <p className="text-xs text-muted">guesses</p>
-        </div>
+        {game.summary(preview.settings).map((item) => (
+          <div key={item.label}>
+            <p className="text-2xl font-black">{item.value}</p>
+            <p className="text-xs text-muted">{item.label}</p>
+          </div>
+        ))}
       </Card>
       {preview.alreadyMember && preview.roomId ? (
         <Button onClick={() => navigate(`/room/${preview.roomId}`, { replace: true })}>

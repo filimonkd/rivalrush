@@ -46,6 +46,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/create" element={<CreateRoomPage />} />
+        <Route path="/create/:gameId" element={<CreateRoomPage />} />
         <Route path="/join/:inviteToken" element={<JoinPage />} />
         <Route path="/room/:roomId" element={<RoomPage />} />
         <Route path="/profile" element={<ProfilePage />} />

@@ -1,7 +1,7 @@
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
 import {
   TERMINAL_ROOM_STATUSES,
-  type CtcMove,
+  type GameMove,
   type GameId,
   type GameResult,
   type InvitePreview,
@@ -549,7 +549,7 @@ export class RoomManager {
         photoUrl: byId.get(id)?.photoUrl ?? null,
       })),
       result,
-      moves: def.getMoves(game.state) as CtcMove[],
+      moves: def.getMoves(game.state) as GameMove[],
       startedAt: game.startedAt,
       endedAt: ctx.now,
     });

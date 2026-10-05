@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Screen, Spinner } from '../components/ui';
+import { ColorCipherGame } from '../features/color-cipher/ColorCipherGame';
 import { CrackTheCodeGame } from '../features/crack-the-code/CrackTheCodeGame';
 import { useBackButton } from '../lib/useBackButton';
 import { useRoom } from '../store/room';
@@ -49,7 +50,13 @@ export function RoomPage() {
   }
   if (snapshot.status === 'LOBBY' || snapshot.status === 'READY')
     return <LobbyView room={snapshot} />;
-  if (snapshot.game) return <CrackTheCodeGame room={snapshot} />;
+  if (snapshot.game) {
+    return snapshot.gameType === 'color-cipher' ? (
+      <ColorCipherGame room={snapshot} />
+    ) : (
+      <CrackTheCodeGame room={snapshot} />
+    );
+  }
   return (
     <Screen className="items-center justify-center">
       <Spinner />

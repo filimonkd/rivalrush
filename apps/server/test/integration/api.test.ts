@@ -116,9 +116,11 @@ describe('authenticated REST', () => {
       winRate: 0,
     });
     const games = await env.http().get('/api/games').set(auth(a.token)).expect(200);
-    expect(games.body.games.find((g: { id: string }) => g.id === 'crack-the-code').status).toBe(
-      'live',
-    );
+    const statusOf = (id: string) =>
+      games.body.games.find((g: { id: string }) => g.id === id).status;
+    expect(statusOf('crack-the-code')).toBe('live');
+    expect(statusOf('color-cipher')).toBe('live');
+    expect(statusOf('defuser')).toBe('coming_soon');
     expect(
       games.body.games.filter((g: { status: string }) => g.status === 'coming_soon').length,
     ).toBeGreaterThan(0);

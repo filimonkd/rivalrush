@@ -1,8 +1,15 @@
-import { CTC_LIMITS, type RoomSnapshot } from '@rivalrush/shared';
+import {
+  CC_LIMITS,
+  COLOR_CIPHER_ID,
+  CRACK_THE_CODE_ID,
+  CTC_LIMITS,
+  type RoomSnapshot,
+} from '@rivalrush/shared';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Button, Card, Screen } from '../components/ui';
 import { api, ApiError } from '../lib/api';
+import { gameInfo } from '../lib/games';
 import { haptic } from '../lib/telegram';
 import { useBackButton } from '../lib/useBackButton';
 import { useRoom } from '../store/room';
@@ -57,6 +64,9 @@ function Segmented<T extends number>({
 export function CreateRoomPage() {
   useBackButton('/');
   const navigate = useNavigate();
+  const { gameId = CRACK_THE_CODE_ID } = useParams();
+  const isCipher = gameId === COLOR_CIPHER_ID;
+  const game = gameInfo(isCipher ? COLOR_CIPHER_ID : CRACK_THE_CODE_ID);
   const [codeLength, setCodeLength] = useState<number>(CTC_LIMITS.codeLength.default);
   const [turnSeconds, setTurnSeconds] = useState<number>(CTC_LIMITS.turnSeconds.default);
   const [maxGuesses, setMaxGuesses] = useState<number>(CTC_LIMITS.maxGuesses.default);
@@ -69,7 +79,9 @@ export function CreateRoomPage() {
     try {
       const room = await api<RoomSnapshot>('/rooms', {
         method: 'POST',
-        body: { gameType: 'crack-the-code', settings: { codeLength, turnSeconds, maxGuesses } },
+        body: isCipher
+          ? { gameType: COLOR_CIPHER_ID, settings: { turnSeconds, maxGuesses } }
+          : { gameType: CRACK_THE_CODE_ID, settings: { codeLength, turnSeconds, maxGuesses } },
       });
       haptic.success();
       await useRoom.getState().enter(room.roomId, room);
@@ -86,24 +98,38 @@ export function CreateRoomPage() {
       <h1 className="text-3xl font-black">New duel</h1>
 
       <Card className="flex items-center gap-3 border-2 border-accent">
-        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-xl font-black text-accent-text">
-          #
+        <div
+          className={`grid h-12 w-12 place-items-center rounded-2xl text-xl font-black ${isCipher ? 'bg-gradient-to-br from-[#0b7c86] to-[#6b3fd1] text-white' : 'bg-accent text-accent-text'}`}
+        >
+          {isCipher ? '◆' : '#'}
         </div>
         <div>
-          <p className="font-black">Crack the Code</p>
-          <p className="text-sm text-muted">2 players · hide a code, crack theirs first</p>
+          <p className="font-black">{game.name}</p>
+          <p className="text-sm text-muted">{game.blurb}</p>
         </div>
       </Card>
 
       <Card className="flex flex-col gap-5">
-        <Segmented
-          testId="opt-length"
-          label="Code length"
-          hint="Fewer digits = faster games"
-          options={[3, 4, 5] as const}
-          value={codeLength as 3 | 4 | 5}
-          onChange={setCodeLength}
-        />
+        {isCipher ? (
+          <div>
+            <div className="flex items-baseline justify-between">
+              <p className="font-black">Pattern</p>
+              <p className="text-xs text-muted">Same for every game</p>
+            </div>
+            <p className="mt-2 rounded-2xl bg-surface px-4 py-3 font-bold">
+              {CC_LIMITS.patternLength} tiles · {CC_LIMITS.colorCount} colors · repeats allowed
+            </p>
+          </div>
+        ) : (
+          <Segmented
+            testId="opt-length"
+            label="Code length"
+            hint="Fewer digits = faster games"
+            options={[3, 4, 5] as const}
+            value={codeLength as 3 | 4 | 5}
+            onChange={setCodeLength}
+          />
+        )}
         <Segmented
           testId="opt-turn"
           label="Turn time"
@@ -124,11 +150,19 @@ export function CreateRoomPage() {
       </Card>
 
       <Card className="text-sm text-muted">
-        <p>
-          <span className="font-bold text-bull">● Bull</span> = right digit, right place.{' '}
-          <span className="font-bold text-cow">○ Cow</span> = right digit, wrong place. Digits never
-          repeat. If the first player cracks it, the second gets one last guess to tie.
-        </p>
+        {isCipher ? (
+          <p>
+            <span className="font-bold text-bull">◆ Exact</span> = right color, right spot.{' '}
+            <span className="font-bold text-cow">◇ Close</span> = right color, wrong spot. Colors
+            can repeat. If the first player cracks it, the second gets one last guess to tie.
+          </p>
+        ) : (
+          <p>
+            <span className="font-bold text-bull">● Bull</span> = right digit, right place.{' '}
+            <span className="font-bold text-cow">○ Cow</span> = right digit, wrong place. Digits
+            never repeat. If the first player cracks it, the second gets one last guess to tie.
+          </p>
+        )}
       </Card>
 
       {error && <p className="text-center font-bold text-danger">{error}</p>}
