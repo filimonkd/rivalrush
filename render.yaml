@@ -1,0 +1,42 @@
+# Render Blueprint for the RivalRush game server (one always-on instance: live games are in memory).
+services:
+  - type: web
+    name: rivalrush-api
+    runtime: node
+    plan: starter # paid, always-on: free instances sleep and would drop every live game
+    region: frankfurt
+    numInstances: 1 # MUST stay 1 until a Redis RoomStore + Socket.IO adapter exist
+    autoDeploy: false # deploy after CI passes (Render "Auto-Deploy: After CI Checks Pass" or deploy hook)
+    buildCommand: npm ci && npm run build:shared && npm run build -w @rivalrush/server
+    startCommand: node apps/server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: '22'
+      - key: TRUST_PROXY
+        value: '1'
+      - key: LOG_LEVEL
+        value: info
+      - key: BOT_POLLING
+        value: 'true'
+      - key: DEV_LOGIN_ENABLED
+        value: 'false'
+      - key: DISCONNECT_GRACE_SECONDS
+        value: '60'
+      - key: ROOM_TTL_MINUTES
+        value: '120'
+      - key: JWT_SECRET
+        generateValue: true
+      # Set these in the Render dashboard (never commit them):
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: WEBAPP_URL
+        sync: false
+      - key: CLIENT_ORIGINS
+        sync: false
