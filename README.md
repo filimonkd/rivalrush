@@ -68,4 +68,5 @@ profiles to play against yourself. Testing inside Telegram needs an HTTPS tunnel
 [Telegram](docs/telegram.md) · [Security](docs/security.md) · [Testing & QA](docs/testing.md) ·
 [Local development](docs/local-development.md) · [CI/CD](docs/ci-cd.md) ·
 [Deployment](docs/deployment.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md) ·
-[Status](docs/status.md) · [MVP readiness](docs/mvp-readiness.md)
+[Status](docs/status.md) · [MVP readiness](docs/mvp-readiness.md) ·
+[Beta plan](docs/beta-plan.md) · [Beta tester guide](docs/beta-tester-guide.md)
