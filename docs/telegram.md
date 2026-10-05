@@ -57,9 +57,21 @@
 
 ## Bot (`apps/server/src/bot/bot.ts`)
 
-Long polling (`BOT_POLLING=true`): `deleteWebhook` → `setMyCommands` (`/start`, `/help`) →
-`setChatMenuButton` (web_app "Play") → `getUpdates` loop with backoff. The token is never
-logged (errors exclude the URL).
+`BOT_MODE` selects how updates arrive:
+
+- **`webhook`** (production on Render Free): on boot the server calls `setWebhook` with
+  `<PUBLIC_URL or RENDER_EXTERNAL_URL>/telegram/webhook`, `allowed_updates: ["message"]` and a
+  `secret_token` derived from the bot token (HMAC, hex). Requests without the matching
+  `X-Telegram-Bot-Api-Secret-Token` header get 401. The endpoint answers 200 at once and
+  replies afterwards. Because Telegram makes an inbound request, this also wakes a sleeping
+  free instance; Telegram retries until it gets an answer.
+- **`polling`** (local development, no public URL): `deleteWebhook` → `getUpdates` loop with
+  backoff. Starting it with the production token would remove the production webhook, so use
+  the dev bot.
+- **`off`** (default).
+
+Both modes then call `setMyCommands` (`/start`, `/help`) and `setChatMenuButton` (web_app
+"Play"). The token is never logged (errors exclude the URL).
 
 ## BotFather setup
 

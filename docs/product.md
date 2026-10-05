@@ -12,14 +12,14 @@ message to a live duel in under 30 seconds, with no signup and no install.
 
 ## MVP scope
 
-| In                                                          | Not yet (why)                                        |
-| ----------------------------------------------------------- | ---------------------------------------------------- |
-| Crack the Code, 1v1 via invite link                         | Other games (prove one first)                        |
-| Automatic Telegram sign-in                                  | Email/password (never)                               |
-| Invite links, presence, reconnect, rematch, toasts, haptics | In-game chat (people talk in Telegram)               |
-| W/L/D, win rate, streaks, recent games                      | Leaderboards, achievements (need players)            |
-| One always-on server, MongoDB Atlas, Vercel                 | Redis / multiple servers (past ~1,000 concurrent)    |
-| —                                                           | Matchmaking, tournaments, Telegram Stars, spectators |
+| In                                                                              | Not yet (why)                                        |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Crack the Code, 1v1 via invite link                                             | Other games (prove one first)                        |
+| Automatic Telegram sign-in                                                      | Email/password (never)                               |
+| Invite links, presence, reconnect, rematch, toasts, haptics                     | In-game chat (people talk in Telegram)               |
+| W/L/D, win rate, streaks, recent games                                          | Leaderboards, achievements (need players)            |
+| One server on Render Free (kept awake), Atlas M0, Vercel Hobby — all free tiers | Redis / multiple servers (past ~1,000 concurrent)    |
+| —                                                                               | Matchmaking, tournaments, Telegram Stars, spectators |
 
 Coming-soon games are shown as non-playable cards: **Color Cipher** and **Defuser**. Every
 future game uses original names, art and rules.

@@ -38,7 +38,7 @@ Then:
 - `apps/web/.env.local`: `VITE_API_URL=https://<api>…`, `VITE_BOT_USERNAME=<dev bot>`,
   `VITE_DEV_LOGIN=false`; restart `npm run dev`
 - `apps/server/.env`: `BOT_TOKEN=<dev bot token>`, `BOT_USERNAME=<dev bot>`,
-  `WEBAPP_URL=https://<web>…`, `CLIENT_ORIGINS=https://<web>…`, `BOT_POLLING=true`
+  `WEBAPP_URL=https://<web>…`, `CLIENT_ORIGINS=https://<web>…`, `BOT_MODE=polling`
 - BotFather (dev bot) → Configure Mini App → URL `https://<web>…`
 
 Use a separate **development bot**. Never use the production token locally.

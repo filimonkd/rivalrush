@@ -5,6 +5,7 @@ import {
   type ServerResponse,
 } from 'node:http';
 import type { Logger } from 'pino';
+import type { TelegramBot } from './bot/bot.js';
 import type { AppConfig } from './config/env.js';
 import { createApp } from './http/app.js';
 import { MatchRecorder, recordMatch, type FinishedSession } from './matches/matchService.js';
@@ -28,6 +29,8 @@ export interface ServerOverrides {
   now?: () => number;
   random?: () => number;
   recordMatch?: (s: FinishedSession) => Promise<'recorded' | 'duplicate'>;
+  /** Telegram bot; when set, the app serves its webhook endpoint. */
+  bot?: TelegramBot | null;
 }
 
 /** Composition root: wires HTTP, Socket.IO, RoomManager and persistence. Does not listen. */
@@ -67,7 +70,7 @@ export function buildServer(
     },
   );
   sockets.attach(rooms);
-  app = createApp({ config, logger, rooms, roomRepo });
+  app = createApp({ config, logger, rooms, roomRepo, bot: overrides.bot ?? null });
 
   return {
     httpServer,

@@ -18,8 +18,14 @@ const envSchema = z.object({
 
   BOT_TOKEN: z.string().optional(),
   BOT_USERNAME: z.string().optional(),
+  /** off | polling (local dev) | webhook (hosted; wakes a sleeping free-tier server). */
+  BOT_MODE: z.enum(['off', 'polling', 'webhook']).optional(),
+  /** Legacy switch: BOT_POLLING=true means BOT_MODE=polling when BOT_MODE is unset. */
   BOT_POLLING: bool,
   WEBAPP_URL: z.string().url().optional(),
+  /** This server's public https URL (webhook target). Render sets RENDER_EXTERNAL_URL. */
+  PUBLIC_URL: z.string().url().optional(),
+  RENDER_EXTERNAL_URL: z.string().url().optional(),
 
   JWT_SECRET: z.string().optional(),
   JWT_TTL_SECONDS: z.coerce
@@ -53,7 +59,8 @@ export interface AppConfig {
   mongoDbName: string | undefined;
   botToken: string | null;
   botUsername: string | null;
-  botPolling: boolean;
+  botMode: 'off' | 'polling' | 'webhook';
+  publicUrl: string | null;
   webAppUrl: string | null;
   jwtSecret: string;
   jwtTtlSeconds: number;
@@ -80,6 +87,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   }
   const e = parsed.data;
   const isProduction = e.NODE_ENV === 'production';
+  const botMode = e.BOT_MODE ?? (e.BOT_POLLING ? 'polling' : 'off');
+  const publicUrl = (e.PUBLIC_URL ?? e.RENDER_EXTERNAL_URL ?? null)?.replace(/\/$/, '') ?? null;
   const clientOrigins = e.CLIENT_ORIGINS.split(',')
     .map((o) => o.trim().replace(/\/$/, ''))
     .filter(Boolean);
@@ -98,6 +107,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       if (o === '*' || !o.startsWith('https://'))
         problems.push(`CLIENT_ORIGINS entry must be an exact https origin: ${o}`);
     }
+    if (botMode === 'webhook' && !publicUrl?.startsWith('https://'))
+      problems.push('BOT_MODE=webhook needs an https PUBLIC_URL (or RENDER_EXTERNAL_URL)');
+    if (botMode !== 'off' && !e.WEBAPP_URL) problems.push('WEBAPP_URL is required for the bot');
     if (problems.length)
       throw new ConfigError(`Refusing to start in production: ${problems.join('; ')}`);
   }
@@ -113,7 +125,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     mongoDbName: e.MONGODB_DB_NAME,
     botToken: e.BOT_TOKEN ?? null,
     botUsername: e.BOT_USERNAME ?? null,
-    botPolling: e.BOT_POLLING,
+    botMode,
+    publicUrl,
     webAppUrl: e.WEBAPP_URL ?? null,
     jwtSecret: e.JWT_SECRET ?? DEV_JWT_SECRET,
     jwtTtlSeconds: e.JWT_TTL_SECONDS,
