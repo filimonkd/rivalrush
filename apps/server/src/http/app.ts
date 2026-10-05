@@ -4,6 +4,7 @@ import express, { type Express } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import type { Logger } from 'pino';
+import { isValidWebhookSecret, WEBHOOK_PATH, type TelegramBot, type TgUpdate } from '../bot/bot.js';
 import type { AppConfig } from '../config/env.js';
 import { isDatabaseUp } from '../db/connection.js';
 import { listGames } from '../games/registry.js';
@@ -20,11 +21,12 @@ export interface AppDeps {
   logger: Logger;
   rooms: RoomManager;
   roomRepo: RoomRepository;
+  bot?: TelegramBot | null;
 }
 
 const rateLimited = { error: { code: 'RATE_LIMITED', message: 'Slow down a little.' } };
 
-export function createApp({ config, logger, rooms, roomRepo }: AppDeps): Express {
+export function createApp({ config, logger, rooms, roomRepo, bot = null }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
   if (config.trustProxy > 0) app.set('trust proxy', config.trustProxy);
@@ -59,6 +61,20 @@ export function createApp({ config, logger, rooms, roomRepo }: AppDeps): Express
     const h = health();
     res.status(h.status === 'ok' ? 200 : 503).json(h);
   });
+
+  // Telegram webhook: authenticated by the secret-token header Telegram echoes back.
+  // Answer 200 at once (Telegram retries otherwise) and handle the update afterwards.
+  if (bot && config.botToken) {
+    const botToken = config.botToken;
+    app.post(WEBHOOK_PATH, (req, res) => {
+      if (!isValidWebhookSecret(req.get('x-telegram-bot-api-secret-token'), botToken)) {
+        res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Bad webhook secret.' } });
+        return;
+      }
+      res.status(200).json({ ok: true });
+      void bot.handleUpdate(req.body as TgUpdate);
+    });
+  }
 
   const apiLimiter = rateLimit({
     windowMs: 60_000,

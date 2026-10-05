@@ -30,16 +30,25 @@ async function main(): Promise<void> {
     allowInMemory: config.nodeEnv === 'development',
     logger,
   });
-  const server = buildServer(config, logger);
+  // Bot first: in webhook mode the HTTP app serves its endpoint.
+  let bot: TelegramBot | null = null;
+  if (config.botMode !== 'off') {
+    if (config.botToken && config.webAppUrl && (config.botMode === 'polling' || config.publicUrl)) {
+      bot = new TelegramBot({ token: config.botToken, webAppUrl: config.webAppUrl, logger });
+    } else {
+      logger.warn(
+        { mode: config.botMode },
+        'bot enabled but BOT_TOKEN, WEBAPP_URL or PUBLIC_URL is missing; bot not started',
+      );
+    }
+  }
+  const server = buildServer(config, logger, { bot });
   await new Promise<void>((resolve) => server.httpServer.listen(config.port, config.host, resolve));
   logger.info({ event: 'listening', port: config.port }, 'server listening');
 
-  let bot: TelegramBot | null = null;
-  if (config.botPolling && config.botToken && config.webAppUrl) {
-    bot = new TelegramBot({ token: config.botToken, webAppUrl: config.webAppUrl, logger });
-    void bot.start();
-  } else if (config.botPolling) {
-    logger.warn('BOT_POLLING is on but BOT_TOKEN or WEBAPP_URL is missing; bot not started');
+  if (bot) {
+    if (config.botMode === 'webhook') void bot.startWebhook(config.publicUrl!);
+    else void bot.startPolling();
   }
 
   let stopping = false;

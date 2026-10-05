@@ -47,3 +47,46 @@ describe('TelegramBot replies', () => {
     await expect(failing.call('getMe')).rejects.not.toThrow(/SECRET/);
   });
 });
+
+describe('webhook mode', () => {
+  it('derives a stable hex secret Telegram accepts, and checks it in constant time', async () => {
+    const { webhookSecret, isValidWebhookSecret } = await import('../../src/bot/bot.js');
+    const s = webhookSecret('123:abc');
+    expect(s).toMatch(/^[0-9a-f]{64}$/);
+    expect(webhookSecret('123:abc')).toBe(s);
+    expect(webhookSecret('999:other')).not.toBe(s);
+    expect(isValidWebhookSecret(s, '123:abc')).toBe(true);
+    expect(isValidWebhookSecret(s, '999:other')).toBe(false);
+    expect(isValidWebhookSecret(undefined, '123:abc')).toBe(false);
+    expect(isValidWebhookSecret('short', '123:abc')).toBe(false);
+  });
+
+  it('registers the webhook URL with the secret token, then sets commands and menu button', async () => {
+    const { webhookSecret } = await import('../../src/bot/bot.js');
+    const calls: Array<{ method: string; body: Record<string, unknown> }> = [];
+    const recording = new TelegramBot({
+      token: '1:x',
+      webAppUrl: 'https://rivalrush.app',
+      logger: pino({ level: 'silent' }),
+      fetchImpl: (async (url: string, init: { body: string }) => {
+        calls.push({ method: String(url).split('/').pop()!, body: JSON.parse(init.body) });
+        return new Response(JSON.stringify({ ok: true, result: true }));
+      }) as unknown as typeof fetch,
+    });
+    await recording.startWebhook('https://api.rivalrush.app/');
+    expect(calls.map((c) => c.method)).toEqual([
+      'setWebhook',
+      'setMyCommands',
+      'setChatMenuButton',
+    ]);
+    expect(calls[0]!.body).toMatchObject({
+      url: 'https://api.rivalrush.app/telegram/webhook',
+      secret_token: webhookSecret('1:x'),
+      allowed_updates: ['message'],
+    });
+    await recording.handleUpdate({ update_id: 1, message: { chat: { id: 5 }, text: '/start' } });
+    expect(calls.at(-1)!.method).toBe('sendMessage');
+    await recording.handleUpdate({ update_id: 2, message: { chat: { id: 5 }, text: 'hi' } });
+    expect(calls).toHaveLength(4);
+  });
+});

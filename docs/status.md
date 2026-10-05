@@ -49,11 +49,15 @@ Statuses: PLANNED · IMPLEMENTED · TESTED (automated) · VERIFIED (manually) ·
 | Telegram theme, safe area, haptics, BackButton                                                                                                                        | IMPLEMENTED. Not verified in Telegram                                                      |
 | Bot /start, /help, menu button                                                                                                                                        | IMPLEMENTED · TESTED (unit). Not verified against the live Bot API                         |
 | CI (GitHub Actions)                                                                                                                                                   | IMPLEMENTED; see the PR checks for the latest run                                          |
-| Vercel / Render / Atlas config                                                                                                                                        | IMPLEMENTED (config only). **Not deployed**: needs accounts and secrets                    |
+| Vercel Hobby / Render Free / Atlas M0 config (free tiers only)                                                                                                        | IMPLEMENTED (config only). **Not deployed**: needs accounts and secrets                    |
 | Manual QA on two phones                                                                                                                                               | PLANNED ([testing.md](testing.md))                                                         |
 | Branch protection on `main`                                                                                                                                           | PLANNED: needs repository admin ([ci-cd.md](ci-cd.md))                                     |
 
 ## Known limitations
+
+- Hosting is free tiers only (product owner's decision): Render Free sleeps when idle (kept
+  awake by a free pinger), can restart at any time, and a cold start takes about a minute.
+  The bot uses a webhook so Telegram wakes the server.
 
 - Live games live in memory: a restart or deploy ends them (documented, accepted for the MVP).
 - One server instance only, until a Redis store, adapter and job queue exist.

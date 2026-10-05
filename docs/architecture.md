@@ -8,7 +8,7 @@ Telegram client (iOS / Android / Desktop / Web)
        │  HTTPS REST  (sign-in, create/join, profile)
        │  Socket.IO   (everything while in a room)
        ▼
-Game server (apps/server, Render, ONE always-on instance)
+Game server (apps/server, Render Free, ONE instance kept awake by a pinger)
  ├── auth/        Telegram initData validation → JWT session
  ├── users/       User model + service (identity, stats, profile)
  ├── rooms/       RoomManager · RoomStore (InMemoryRoomStore) · KeyedLock · TimerRegistry ·
@@ -17,7 +17,7 @@ Game server (apps/server, Render, ONE always-on instance)
  ├── matches/     Match model · transactional, idempotent recorder
  ├── websocket/   Authenticated Socket.IO gateway, throttling, presence
  ├── http/        Express app, routes, middleware (helmet, CORS, limits, errors)
- └── bot/         Long-polling bot: /start, /help, menu button
+ └── bot/         Telegram bot (webhook in production, polling in dev): /start, /help, menu button
        ▼
 MongoDB Atlas: users · matches · rooms (metadata only)
 ```

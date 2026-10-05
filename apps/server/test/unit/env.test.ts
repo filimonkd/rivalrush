@@ -37,6 +37,19 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ ...prod, ...over })).toThrow(pattern);
   });
 
+  it('bot mode: webhook needs an https public URL in production; Render URL is the default', () => {
+    expect(loadConfig({}).botMode).toBe('off');
+    expect(loadConfig({ BOT_POLLING: 'true' }).botMode).toBe('polling');
+    const withBot = { ...prod, BOT_MODE: 'webhook', WEBAPP_URL: 'https://rivalrush.vercel.app' };
+    expect(() => loadConfig(withBot)).toThrow(/PUBLIC_URL/);
+    const c = loadConfig({
+      ...withBot,
+      RENDER_EXTERNAL_URL: 'https://rivalrush-api.onrender.com/',
+    });
+    expect(c.publicUrl).toBe('https://rivalrush-api.onrender.com');
+    expect(() => loadConfig({ ...prod, BOT_MODE: 'polling' })).toThrow(/WEBAPP_URL/);
+  });
+
   it('reports invalid values as a ConfigError', () => {
     expect(() => loadConfig({ PORT: 'abc' })).toThrow(ConfigError);
   });

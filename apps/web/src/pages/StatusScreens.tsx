@@ -1,14 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Button, Logo, Screen, Spinner } from '../components/ui';
 import { useSession } from '../store/session';
 
 export function LoadingScreen() {
+  // The free-tier server sleeps when idle; the first request can take up to a minute.
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSlow(true), 4000);
+    return () => clearTimeout(t);
+  }, []);
   return (
-    <Screen className="items-center justify-center gap-8">
+    <Screen className="items-center justify-center gap-8 text-center">
       <Logo />
       <Spinner />
-      <p className="text-sm text-muted">Quick games. Real rivals.</p>
+      {slow ? (
+        <p className="max-w-xs text-sm text-muted" data-testid="waking-server">
+          Waking up the game server… this can take up to a minute after a quiet spell.
+        </p>
+      ) : (
+        <p className="text-sm text-muted">Quick games. Real rivals.</p>
+      )}
     </Screen>
   );
 }

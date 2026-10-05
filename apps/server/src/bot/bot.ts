@@ -1,11 +1,32 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { parseInviteStartParam } from '@rivalrush/shared';
 import type { Logger } from 'pino';
 
 /**
- * Minimal Telegram bot (long polling): /start, /help and the chat menu button.
- * Bot API methods used: deleteWebhook, getUpdates, sendMessage, setMyCommands,
+ * Minimal Telegram bot: /start, /help and the chat menu button. Two delivery modes:
+ * - webhook (default for hosted deploys): Telegram POSTs updates to the server, which also
+ *   wakes a sleeping free-tier instance;
+ * - polling (local development without a public URL).
+ * Bot API methods used: setWebhook, deleteWebhook, getUpdates, sendMessage, setMyCommands,
  * setChatMenuButton. The bot token is only ever used server-side.
  */
+
+export const WEBHOOK_PATH = '/telegram/webhook';
+
+/**
+ * Secret for the X-Telegram-Bot-Api-Secret-Token header, derived from the bot token so no
+ * extra configuration is needed. Hex only (Telegram allows A-Z a-z 0-9 _ -, 1–256 chars).
+ */
+export function webhookSecret(botToken: string): string {
+  return createHmac('sha256', 'rivalrush-telegram-webhook').update(botToken).digest('hex');
+}
+
+export function isValidWebhookSecret(header: unknown, botToken: string): boolean {
+  if (typeof header !== 'string') return false;
+  const expected = Buffer.from(webhookSecret(botToken));
+  const received = Buffer.from(header);
+  return expected.length === received.length && timingSafeEqual(expected, received);
+}
 
 export interface BotOptions {
   token: string;
@@ -21,7 +42,7 @@ interface TgMessage {
   from?: { first_name?: string };
 }
 
-interface TgUpdate {
+export interface TgUpdate {
   update_id: number;
   message?: TgMessage;
 }
@@ -99,12 +120,37 @@ export class TelegramBot {
     return null;
   }
 
-  async start(): Promise<void> {
+  /** Handles one update (webhook or polling). Never throws. */
+  async handleUpdate(update: TgUpdate): Promise<void> {
+    const reply = update?.message ? this.replyFor(update.message) : null;
+    if (!reply) return;
+    await this.call('sendMessage', reply).catch((err: unknown) =>
+      this.opts.logger.warn({ err: String(err) }, 'sendMessage failed'),
+    );
+  }
+
+  /** Registers `<publicUrl>/telegram/webhook` with Telegram (idempotent; run on every boot). */
+  async startWebhook(publicUrl: string): Promise<void> {
+    try {
+      await this.call('setWebhook', {
+        url: `${publicUrl.replace(/\/$/, '')}${WEBHOOK_PATH}`,
+        secret_token: webhookSecret(this.opts.token),
+        allowed_updates: ['message'],
+        drop_pending_updates: false,
+      });
+      await this.configure();
+      this.opts.logger.info({ event: 'bot.started', mode: 'webhook' }, 'telegram webhook set');
+    } catch (err) {
+      this.opts.logger.error({ err: String(err) }, 'telegram webhook setup failed');
+    }
+  }
+
+  async startPolling(): Promise<void> {
     this.running = true;
     try {
       await this.call('deleteWebhook', { drop_pending_updates: false });
       await this.configure();
-      this.opts.logger.info({ event: 'bot.started' }, 'telegram bot polling');
+      this.opts.logger.info({ event: 'bot.started', mode: 'polling' }, 'telegram bot polling');
     } catch (err) {
       this.opts.logger.error({ err: String(err) }, 'telegram bot setup failed');
     }
@@ -123,11 +169,7 @@ export class TelegramBot {
         backoff = 1000;
         for (const u of updates) {
           this.offset = u.update_id + 1;
-          const reply = u.message ? this.replyFor(u.message) : null;
-          if (reply)
-            await this.call('sendMessage', reply).catch((err: unknown) =>
-              this.opts.logger.warn({ err: String(err) }, 'sendMessage failed'),
-            );
+          await this.handleUpdate(u);
         }
       } catch (err) {
         if (!this.running) return;
