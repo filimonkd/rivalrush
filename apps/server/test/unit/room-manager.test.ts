@@ -1,0 +1,637 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AppError } from '../../src/errors.js';
+import { aid, alice, bob, carol, GRACE_MS, makeManager, TTL_MS } from '../helpers/manager.js';
+
+const T0 = new Date('2026-10-05T12:00:00Z').getTime();
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(T0);
+});
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+async function code(p: Promise<unknown>): Promise<string> {
+  try {
+    await p;
+  } catch (err) {
+    if (err instanceof AppError) return err.code;
+    throw err;
+  }
+  return 'OK';
+}
+
+/** Alice hosts, Bob joins and readies. */
+async function lobby(seed = 1) {
+  const ctx = makeManager(seed);
+  const created = await ctx.manager.createRoom(alice, 'crack-the-code', {});
+  await ctx.manager.joinByInvite(bob, created.inviteToken);
+  await ctx.manager.setReady(bob.userId, created.roomId, true, aid());
+  return { ...ctx, roomId: created.roomId, inviteToken: created.inviteToken };
+}
+
+/** Both connected, game started, secrets set (Alice=1234, Bob=5678). Returns who moves first. */
+async function playing(seed = 1) {
+  const ctx = await lobby(seed);
+  const { manager, roomId } = ctx;
+  await manager.connect(alice.userId, roomId);
+  await manager.connect(bob.userId, roomId);
+  await manager.start(alice.userId, roomId, aid());
+  let v = (await ctx.state(roomId)).version;
+  await manager.gameAction(alice.userId, {
+    roomId,
+    actionId: aid(),
+    clientVersion: v,
+    action: { type: 'SET_SECRET', code: '1234' },
+  });
+  v = (await ctx.state(roomId)).version;
+  await manager.gameAction(bob.userId, {
+    roomId,
+    actionId: aid(),
+    clientVersion: v,
+    action: { type: 'SET_SECRET', code: '5678' },
+  });
+  const s = await ctx.state(roomId);
+  const first = s.currentTurn === alice.userId ? alice : bob;
+  const second = first === alice ? bob : alice;
+  return { ...ctx, first, second };
+}
+
+async function guess(
+  ctx: Awaited<ReturnType<typeof playing>>,
+  who: { userId: string },
+  g: string,
+  actionId = aid(),
+) {
+  const v = (await ctx.state(ctx.roomId)).version;
+  return ctx.manager.gameAction(who.userId, {
+    roomId: ctx.roomId,
+    actionId,
+    clientVersion: v,
+    action: { type: 'GUESS', guess: g },
+  });
+}
+
+describe('create / join', () => {
+  it('creates a LOBBY room with the host ready and an unguessable invite token', async () => {
+    const { manager } = makeManager();
+    const snap = await manager.createRoom(alice, 'crack-the-code', { codeLength: 5 });
+    expect(snap.status).toBe('LOBBY');
+    expect(snap.hostId).toBe(alice.userId);
+    expect(snap.players).toEqual([
+      expect.objectContaining({ userId: alice.userId, isHost: true, ready: true }),
+    ]);
+    expect(snap.inviteToken).toMatch(/^[A-Za-z0-9_-]{16}$/);
+    expect(snap.settings).toEqual({ codeLength: 5, turnSeconds: 45, maxGuesses: 10 });
+  });
+
+  it('rejects unknown games and invalid settings', async () => {
+    const { manager } = makeManager();
+    expect(await code(manager.createRoom(alice, 'color-cipher', {}))).toBe('GAME_NOT_AVAILABLE');
+    expect(await code(manager.createRoom(alice, 'crack-the-code', { turnSeconds: 5 }))).toBe(
+      'VALIDATION_ERROR',
+    );
+  });
+
+  it('join → LOBBY until the guest is ready → READY', async () => {
+    const { manager } = makeManager();
+    const room = await manager.createRoom(alice, 'crack-the-code', {});
+    const joined = await manager.joinByInvite(bob, room.inviteToken);
+    expect(joined.status).toBe('LOBBY');
+    const ready = await manager.setReady(bob.userId, room.roomId, true, aid());
+    expect(ready.status).toBe('READY');
+    const unready = await manager.setReady(bob.userId, room.roomId, false, aid());
+    expect(unready.status).toBe('LOBBY');
+  });
+
+  it('duplicate join is a no-op', async () => {
+    const { manager, roomId, inviteToken, raw } = await lobby();
+    const before = (await raw(roomId)).version;
+    const again = await manager.joinByInvite(bob, inviteToken);
+    expect(again.players).toHaveLength(2);
+    expect((await raw(roomId)).version).toBe(before);
+  });
+
+  it('rejects a third player (room full) and bad invites', async () => {
+    const { manager, inviteToken } = await lobby();
+    expect(await code(manager.joinByInvite(carol, inviteToken))).toBe('ROOM_FULL');
+    expect(await code(manager.joinByInvite(carol, 'NoSuchTokenAtAll1234'))).toBe('ROOM_NOT_FOUND');
+  });
+
+  it('simultaneous joins for the last seat: exactly one wins', async () => {
+    const { manager } = makeManager();
+    const room = await manager.createRoom(alice, 'crack-the-code', {});
+    const results = await Promise.all([
+      code(manager.joinByInvite(bob, room.inviteToken)),
+      code(manager.joinByInvite(carol, room.inviteToken)),
+    ]);
+    expect(results.sort()).toEqual(['OK', 'ROOM_FULL']);
+  });
+
+  it('expired rooms cannot be joined and old invites explain why', async () => {
+    const { manager } = makeManager();
+    const room = await manager.createRoom(alice, 'crack-the-code', {});
+    await vi.advanceTimersByTimeAsync(TTL_MS + 1000);
+    expect(await code(manager.joinByInvite(bob, room.inviteToken))).toBe('ROOM_EXPIRED');
+    expect((await manager.getInvitePreview(bob.userId, room.inviteToken))?.reason).toBe(
+      'ROOM_EXPIRED',
+    );
+  });
+
+  it('closed rooms cannot be joined', async () => {
+    const { manager } = makeManager();
+    const room = await manager.createRoom(alice, 'crack-the-code', {});
+    await manager.leave(alice.userId, room.roomId);
+    expect(await code(manager.joinByInvite(bob, room.inviteToken))).toBe('ROOM_CLOSED');
+  });
+
+  it('a user holds one active room: creating another leaves the old lobby', async () => {
+    const { manager } = makeManager();
+    const first = await manager.createRoom(alice, 'crack-the-code', {});
+    const second = await manager.createRoom(alice, 'crack-the-code', {});
+    expect((await manager.getActiveRoom(alice.userId))?.roomId).toBe(second.roomId);
+    expect(await code(manager.getSnapshot(alice.userId, first.roomId))).toBe('NOT_ROOM_MEMBER');
+  });
+
+  it('cannot start another room while a game is live (ALREADY_IN_ROOM)', async () => {
+    const { manager } = await playing();
+    expect(await code(manager.createRoom(alice, 'crack-the-code', {}))).toBe('ALREADY_IN_ROOM');
+  });
+
+  it('non-members cannot read or act on a room', async () => {
+    const { manager, roomId } = await lobby();
+    expect(await code(manager.getSnapshot(carol.userId, roomId))).toBe('NOT_ROOM_MEMBER');
+    expect(await code(manager.setReady(carol.userId, roomId, true, aid()))).toBe('NOT_ROOM_MEMBER');
+    expect(await code(manager.connect(carol.userId, roomId))).toBe('NOT_ROOM_MEMBER');
+    expect(
+      await code(
+        manager.gameAction(carol.userId, {
+          roomId,
+          actionId: aid(),
+          clientVersion: 1,
+          action: { type: 'FORFEIT' },
+        }),
+      ),
+    ).toBe('NOT_ROOM_MEMBER');
+  });
+});
+
+describe('host + start', () => {
+  it('only the host can start, and only when READY', async () => {
+    const { manager } = makeManager();
+    const room = await manager.createRoom(alice, 'crack-the-code', {});
+    expect(await code(manager.start(alice.userId, room.roomId, aid()))).toBe('NOT_READY');
+    await manager.joinByInvite(bob, room.inviteToken);
+    expect(await code(manager.start(bob.userId, room.roomId, aid()))).toBe('NOT_HOST');
+    expect(await code(manager.start(alice.userId, room.roomId, aid()))).toBe('NOT_READY');
+    await manager.setReady(bob.userId, room.roomId, true, aid());
+    const started = await manager.start(alice.userId, room.roomId, aid());
+    expect(started.status).toBe('IN_GAME');
+    expect(started.game?.view.phase).toBe('SETUP');
+  });
+
+  it('duplicate start (same actionId) applies once; a second start is rejected', async () => {
+    const { manager, roomId, raw } = await lobby();
+    const id = aid();
+    await manager.start(alice.userId, roomId, id);
+    const v = (await raw(roomId)).version;
+    const session = (await raw(roomId)).game!.sessionId;
+    await manager.start(alice.userId, roomId, id);
+    expect((await raw(roomId)).version).toBe(v);
+    expect((await raw(roomId)).game!.sessionId).toBe(session);
+    expect(await code(manager.start(alice.userId, roomId, aid()))).toBe('GAME_ALREADY_STARTED');
+  });
+
+  it('host leaving the lobby hands the room to the remaining player', async () => {
+    const { manager, roomId, removed } = await lobby();
+    await manager.leave(alice.userId, roomId);
+    const snap = await manager.getSnapshot(bob.userId, roomId);
+    expect(snap.hostId).toBe(bob.userId);
+    expect(snap.players).toEqual([
+      expect.objectContaining({ userId: bob.userId, isHost: true, ready: true }),
+    ]);
+    expect(snap.status).toBe('LOBBY');
+    expect(removed).toContainEqual({ roomId, userId: alice.userId, reason: 'left' });
+  });
+});
+
+describe('gameplay through the manager', () => {
+  it('plays to a win and records the session exactly once', async () => {
+    const ctx = await playing();
+    const target = ctx.first === alice ? '5678' : '1234';
+    await guess(ctx, ctx.first, '9012');
+    await guess(ctx, ctx.second, '9012');
+    const snap = await guess(ctx, ctx.first, target);
+    expect(snap.game?.view.phase).toBe('LAST_CHANCE');
+    const end = await guess(ctx, ctx.second, '9013');
+    expect(end.status).toBe('FINISHED');
+    expect(end.game?.result).toEqual({
+      outcome: 'win',
+      winnerId: ctx.first.userId,
+      reason: 'cracked',
+    });
+    expect(ctx.finished).toHaveLength(1);
+    expect(ctx.finished[0]!.moves).toHaveLength(4);
+    // The recorded session carries guesses and scores only, never secret fields.
+    expect(JSON.stringify(ctx.finished[0])).not.toMatch(/secret/i);
+    const unrevealed = ctx.first === alice ? '1234' : '5678'; // the first player's code was never guessed
+    expect(JSON.stringify(ctx.finished[0])).not.toContain(unrevealed);
+  });
+
+  it('snapshots never contain the opponent secret while the game is live', async () => {
+    const ctx = await playing();
+    await guess(ctx, ctx.first, '9012');
+    for (const change of ctx.changes) {
+      const live = change.room.game && !change.room.game.result;
+      if (!live) continue;
+      for (const viewer of [alice, bob]) {
+        const snap = await ctx.manager.getSnapshot(viewer.userId, ctx.roomId);
+        const opp = viewer === alice ? '5678' : '1234';
+        expect(snap.game?.view.opponentSecret).toBeNull();
+        expect(
+          JSON.stringify({
+            ...snap,
+            game: { ...snap.game, view: { ...snap.game!.view, moves: [] } },
+          }),
+        ).not.toContain(opp);
+      }
+    }
+  });
+
+  it('rejects out-of-turn guesses', async () => {
+    const ctx = await playing();
+    expect(await code(guess(ctx, ctx.second, '9012'))).toBe('NOT_YOUR_TURN');
+  });
+
+  it('duplicate GUESS (same actionId) is applied once', async () => {
+    const ctx = await playing();
+    const id = aid();
+    const v = (await ctx.state(ctx.roomId)).version;
+    const payload = {
+      roomId: ctx.roomId,
+      actionId: id,
+      clientVersion: v,
+      action: { type: 'GUESS', guess: '9012' },
+    };
+    await ctx.manager.gameAction(ctx.first.userId, payload);
+    const again = await ctx.manager.gameAction(ctx.first.userId, payload);
+    expect(again.game?.view.moves).toHaveLength(1);
+    expect((await ctx.state(ctx.roomId)).moves).toHaveLength(1);
+  });
+
+  it('duplicate SET_SECRET is safe', async () => {
+    const ctx = await lobby();
+    await ctx.manager.start(alice.userId, ctx.roomId, aid());
+    const id = aid();
+    const p = {
+      roomId: ctx.roomId,
+      actionId: id,
+      clientVersion: 1,
+      action: { type: 'SET_SECRET', code: '1234' },
+    };
+    await ctx.manager.gameAction(alice.userId, p);
+    await ctx.manager.gameAction(alice.userId, p);
+    expect(
+      await code(
+        ctx.manager.gameAction(alice.userId, {
+          ...p,
+          actionId: aid(),
+          action: { type: 'SET_SECRET', code: '4321' },
+        }),
+      ),
+    ).toBe('SECRET_ALREADY_SET');
+  });
+
+  it('stale clientVersion is rejected for guesses but not for secrets', async () => {
+    const ctx = await lobby();
+    await ctx.manager.start(alice.userId, ctx.roomId, aid());
+    await ctx.manager.gameAction(alice.userId, {
+      roomId: ctx.roomId,
+      actionId: aid(),
+      clientVersion: 1,
+      action: { type: 'SET_SECRET', code: '1234' },
+    });
+    // Bob's client still believes version 1: secrets are version-independent.
+    await ctx.manager.gameAction(bob.userId, {
+      roomId: ctx.roomId,
+      actionId: aid(),
+      clientVersion: 1,
+      action: { type: 'SET_SECRET', code: '5678' },
+    });
+    const s = await ctx.state(ctx.roomId);
+    expect(s.phase).toBe('PLAYING');
+    const r = await code(
+      ctx.manager.gameAction(s.currentTurn!, {
+        roomId: ctx.roomId,
+        actionId: aid(),
+        clientVersion: s.version - 1,
+        action: { type: 'GUESS', guess: '9012' },
+      }),
+    );
+    expect(r).toBe('STALE_GAME_VERSION');
+  });
+
+  it('client-supplied identity or results are ignored (no fake winner)', async () => {
+    const ctx = await playing();
+    const v = (await ctx.state(ctx.roomId)).version;
+    expect(
+      await code(
+        ctx.manager.gameAction(ctx.first.userId, {
+          roomId: ctx.roomId,
+          actionId: aid(),
+          clientVersion: v,
+          action: { type: 'GUESS', guess: '9012', playerId: ctx.second.userId },
+        }),
+      ),
+    ).toBe('INVALID_ACTION');
+    expect(
+      await code(
+        ctx.manager.gameAction(ctx.first.userId, {
+          roomId: ctx.roomId,
+          actionId: aid(),
+          clientVersion: v,
+          action: { type: '$FORFEIT', playerId: ctx.second.userId },
+        }),
+      ),
+    ).toBe('INVALID_ACTION');
+    expect(
+      await code(
+        ctx.manager.gameAction(ctx.first.userId, {
+          roomId: ctx.roomId,
+          actionId: aid(),
+          clientVersion: v,
+          action: { type: 'WIN' },
+        }),
+      ),
+    ).toBe('INVALID_ACTION');
+  });
+});
+
+describe('timers and races', () => {
+  it('server turn timer burns the turn when it expires', async () => {
+    const ctx = await playing();
+    const s = await ctx.state(ctx.roomId);
+    await vi.advanceTimersByTimeAsync(s.turnDeadlineAt! - Date.now());
+    const after = await ctx.state(ctx.roomId);
+    expect(after.currentTurn).toBe(ctx.second.userId);
+    expect(after.moves.at(-1)).toMatchObject({ playerId: ctx.first.userId, timedOut: true });
+    expect(ctx.changes.at(-1)!.events.map((e) => e.type)).toContain('turn_timed_out');
+  });
+
+  it('setup timer auto-generates missing secrets', async () => {
+    const ctx = await lobby();
+    await ctx.manager.connect(alice.userId, ctx.roomId);
+    await ctx.manager.connect(bob.userId, ctx.roomId);
+    await ctx.manager.start(alice.userId, ctx.roomId, aid());
+    await vi.advanceTimersByTimeAsync(60_000);
+    const s = await ctx.state(ctx.roomId);
+    expect(s.phase).toBe('PLAYING');
+    expect(s.players.every((p) => p.secret && p.autoSecret)).toBe(true);
+  });
+
+  it('guess vs timer expiry: at the deadline the timeout wins, deterministically', async () => {
+    const ctx = await playing();
+    const s = await ctx.state(ctx.roomId);
+    vi.setSystemTime(s.turnDeadlineAt!); // clock reached the deadline; timer callback not yet run
+    const r = await code(
+      ctx.manager.gameAction(ctx.first.userId, {
+        roomId: ctx.roomId,
+        actionId: aid(),
+        clientVersion: s.version,
+        action: { type: 'GUESS', guess: '9012' },
+      }),
+    );
+    // The timeout is applied first (bumping the version), so the late guess is stale.
+    expect(r).toBe('STALE_GAME_VERSION');
+    const after = await ctx.state(ctx.roomId);
+    expect(after.moves).toHaveLength(1);
+    expect(after.moves[0]).toMatchObject({ timedOut: true });
+    expect(after.currentTurn).toBe(ctx.second.userId);
+  });
+
+  it('guess one millisecond before the deadline is accepted', async () => {
+    const ctx = await playing();
+    const s = await ctx.state(ctx.roomId);
+    vi.setSystemTime(s.turnDeadlineAt! - 1);
+    await guess(ctx, ctx.first, '9012');
+    expect((await ctx.state(ctx.roomId)).moves[0]).toMatchObject({
+      guess: '9012',
+      timedOut: false,
+    });
+  });
+
+  it('SET_SECRET vs setup expiry: at the deadline the server-generated secret wins', async () => {
+    const ctx = await lobby();
+    await ctx.manager.connect(alice.userId, ctx.roomId);
+    await ctx.manager.connect(bob.userId, ctx.roomId);
+    await ctx.manager.start(alice.userId, ctx.roomId, aid());
+    const s = await ctx.state(ctx.roomId);
+    vi.setSystemTime(s.setupDeadlineAt!);
+    const r = await code(
+      ctx.manager.gameAction(alice.userId, {
+        roomId: ctx.roomId,
+        actionId: aid(),
+        clientVersion: s.version,
+        action: { type: 'SET_SECRET', code: '1234' },
+      }),
+    );
+    expect(r).toBe('GAME_ALREADY_STARTED');
+    expect((await ctx.state(ctx.roomId)).players.every((p) => p.autoSecret)).toBe(true);
+  });
+
+  it('two simultaneous guesses: exactly one is applied', async () => {
+    const ctx = await playing();
+    const v = (await ctx.state(ctx.roomId)).version;
+    const mk = (who: string, g: string) =>
+      ctx.manager.gameAction(who, {
+        roomId: ctx.roomId,
+        actionId: aid(),
+        clientVersion: v,
+        action: { type: 'GUESS', guess: g },
+      });
+    const results = await Promise.all([
+      code(mk(ctx.first.userId, '9012')),
+      code(mk(ctx.first.userId, '9013')),
+      code(mk(ctx.second.userId, '9014')),
+    ]);
+    expect(results.filter((r) => r === 'OK')).toHaveLength(1);
+    expect((await ctx.state(ctx.roomId)).moves).toHaveLength(1);
+  });
+
+  it('duplicate rematch votes start exactly one new game, with the other player first', async () => {
+    const ctx = await playing();
+    const firstBefore = (await ctx.state(ctx.roomId)).firstPlayerId;
+    await ctx.manager.gameAction(ctx.first.userId, {
+      roomId: ctx.roomId,
+      actionId: aid(),
+      clientVersion: 0,
+      action: { type: 'FORFEIT' },
+    });
+    const oldSession = (await ctx.raw(ctx.roomId)).game!.sessionId;
+    const idA = aid();
+    await Promise.all([
+      ctx.manager.rematch(alice.userId, ctx.roomId, idA),
+      ctx.manager.rematch(alice.userId, ctx.roomId, idA),
+      ctx.manager.rematch(alice.userId, ctx.roomId, aid()),
+    ]);
+    expect((await ctx.raw(ctx.roomId)).status).toBe('FINISHED');
+    const votes = await Promise.all([
+      code(ctx.manager.rematch(bob.userId, ctx.roomId, aid())),
+      code(ctx.manager.rematch(bob.userId, ctx.roomId, aid())),
+    ]);
+    expect(votes.sort()).toEqual(['OK', 'REMATCH_UNAVAILABLE']);
+    const room = await ctx.raw(ctx.roomId);
+    expect(room.status).toBe('IN_GAME');
+    expect(room.game!.sessionId).not.toBe(oldSession);
+    expect(room.game!.isRematch).toBe(true);
+    expect(room.gamesPlayed).toBe(1);
+    expect((room.game!.state as { firstPlayerId: string }).firstPlayerId).not.toBe(firstBefore);
+    expect(ctx.finished).toHaveLength(1);
+  });
+
+  it('rematch is unavailable before a game ends or once the opponent left', async () => {
+    const ctx = await playing();
+    expect(await code(ctx.manager.rematch(alice.userId, ctx.roomId, aid()))).toBe(
+      'REMATCH_UNAVAILABLE',
+    );
+    await ctx.manager.leave(bob.userId, ctx.roomId);
+    expect(await code(ctx.manager.rematch(alice.userId, ctx.roomId, aid()))).toBe(
+      'REMATCH_UNAVAILABLE',
+    );
+  });
+});
+
+describe('presence, disconnects and reconnects', () => {
+  it('disconnect beyond the grace period = abandoned loss', async () => {
+    const ctx = await playing();
+    await ctx.manager.disconnect(alice.userId, ctx.roomId);
+    const snap = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
+    expect(snap.players.find((p) => p.userId === alice.userId)).toMatchObject({
+      online: false,
+      graceDeadlineAt: Date.now() + GRACE_MS,
+    });
+    await vi.advanceTimersByTimeAsync(GRACE_MS);
+    const end = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
+    expect(end.game?.result).toEqual({ outcome: 'win', winnerId: bob.userId, reason: 'abandoned' });
+    expect(end.game?.view.phase).toBe('ABANDONED');
+    expect(ctx.finished).toHaveLength(1);
+  });
+
+  it('reconnecting within the grace period restores the player', async () => {
+    const ctx = await playing();
+    await ctx.manager.disconnect(alice.userId, ctx.roomId);
+    await vi.advanceTimersByTimeAsync(GRACE_MS / 2);
+    const snap = await ctx.manager.connect(alice.userId, ctx.roomId);
+    expect(snap.players.find((p) => p.userId === alice.userId)).toMatchObject({
+      online: true,
+      graceDeadlineAt: null,
+    });
+    expect(snap.game?.result).toBeNull();
+    expect(snap.game?.view.mySecret).toBe('1234');
+    await vi.advanceTimersByTimeAsync(GRACE_MS);
+    const later = await ctx.manager.getSnapshot(alice.userId, ctx.roomId);
+    expect(later.game?.result?.reason).not.toBe('abandoned');
+  });
+
+  it('reconnect exactly at the grace deadline: the expiry wins', async () => {
+    const ctx = await playing();
+    await ctx.manager.disconnect(alice.userId, ctx.roomId);
+    const deadline = Date.now() + GRACE_MS;
+    vi.setSystemTime(deadline);
+    const snap = await ctx.manager.connect(alice.userId, ctx.roomId);
+    expect(snap.game?.result).toMatchObject({ winnerId: bob.userId, reason: 'abandoned' });
+  });
+
+  it('a second tab keeps the player online when one connection drops', async () => {
+    const ctx = await playing();
+    await ctx.manager.connect(alice.userId, ctx.roomId);
+    await ctx.manager.disconnect(alice.userId, ctx.roomId);
+    const snap = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
+    expect(snap.players.find((p) => p.userId === alice.userId)).toMatchObject({
+      online: true,
+      graceDeadlineAt: null,
+    });
+  });
+
+  it('a player who never connects when the game starts gets the same grace period', async () => {
+    const ctx = await lobby();
+    await ctx.manager.connect(alice.userId, ctx.roomId);
+    await ctx.manager.start(alice.userId, ctx.roomId, aid());
+    await vi.advanceTimersByTimeAsync(GRACE_MS);
+    expect((await ctx.manager.getSnapshot(alice.userId, ctx.roomId)).game?.result).toMatchObject({
+      winnerId: alice.userId,
+      reason: 'abandoned',
+    });
+  });
+
+  it('leaving mid-game is an immediate forfeit; the other player stays as host in the lobby', async () => {
+    const ctx = await playing();
+    await ctx.manager.leave(alice.userId, ctx.roomId);
+    expect(ctx.finished[0]!.result).toEqual({
+      outcome: 'win',
+      winnerId: bob.userId,
+      reason: 'forfeit',
+    });
+    const snap = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
+    expect(snap.status).toBe('LOBBY');
+    expect(snap.hostId).toBe(bob.userId);
+    // Leave is idempotent.
+    await ctx.manager.leave(alice.userId, ctx.roomId);
+    expect(ctx.finished).toHaveLength(1);
+  });
+
+  it('disconnect racing the game end does not start a grace timer', async () => {
+    const ctx = await playing();
+    await Promise.all([
+      ctx.manager.gameAction(alice.userId, {
+        roomId: ctx.roomId,
+        actionId: aid(),
+        clientVersion: 0,
+        action: { type: 'FORFEIT' },
+      }),
+      ctx.manager.disconnect(alice.userId, ctx.roomId),
+    ]);
+    const snap = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
+    expect(snap.game?.result?.reason).toBe('forfeit');
+    expect(snap.players.every((p) => p.graceDeadlineAt === null)).toBe(true);
+    await vi.advanceTimersByTimeAsync(GRACE_MS * 2);
+    expect(ctx.finished).toHaveLength(1);
+  });
+
+  it('getActiveRoom resumes the game after an app reopen', async () => {
+    const ctx = await playing();
+    const active = await ctx.manager.getActiveRoom(alice.userId);
+    expect(active?.roomId).toBe(ctx.roomId);
+    expect(active?.status).toBe('IN_GAME');
+    expect(await ctx.manager.getActiveRoom(carol.userId)).toBeNull();
+  });
+
+  it('versions increase monotonically across every published change', async () => {
+    const ctx = await playing();
+    await guess(ctx, ctx.first, '9012');
+    const versions = ctx.changes.map((c) => c.room.version);
+    for (let i = 1; i < versions.length; i++)
+      expect(versions[i]!).toBeGreaterThan(versions[i - 1]!);
+  });
+});
+
+describe('production randomness', () => {
+  it('the default CSPRNG source works and stays in [0, 1)', async () => {
+    const { RoomManager } = await import('../../src/rooms/roomManager.js');
+    const { InMemoryRoomStore } = await import('../../src/rooms/InMemoryRoomStore.js');
+    const { pino } = await import('pino');
+    const m = new RoomManager(
+      new InMemoryRoomStore(),
+      { roomChanged() {}, userRemoved() {}, gameFinished() {}, persistRoom() {} },
+      pino({ level: 'silent' }),
+      { roomTtlMs: TTL_MS, disconnectGraceMs: GRACE_MS },
+    );
+    const room = await m.createRoom(alice, 'crack-the-code', {});
+    await m.joinByInvite(bob, room.inviteToken);
+    await m.setReady(bob.userId, room.roomId, true, aid());
+    const started = await m.start(alice.userId, room.roomId, aid());
+    expect([alice.userId, bob.userId]).toContain(started.game!.view.firstPlayerId);
+    m.shutdown();
+  });
+});

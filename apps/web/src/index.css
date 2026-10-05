@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+
+/*
+ * Theme tokens. Telegram injects --tg-theme-* (theme params) and --tg-*safe-area-inset-*
+ * variables onto <html>; we map them to app tokens with fallbacks for plain browsers.
+ */
+:root {
+  --rr-bg: var(--tg-theme-bg-color, #0d0f1c);
+  --rr-surface: var(--tg-theme-secondary-bg-color, #171a2e);
+  --rr-card: var(--tg-theme-section-bg-color, #1d2140);
+  --rr-text: var(--tg-theme-text-color, #f3f4ff);
+  --rr-muted: var(--tg-theme-hint-color, #8d93b8);
+  --rr-accent: var(--tg-theme-button-color, #6d4aff);
+  --rr-accent-text: var(--tg-theme-button-text-color, #ffffff);
+  --rr-link: var(--tg-theme-link-color, #8f7bff);
+  --rr-danger: var(--tg-theme-destructive-text-color, #ff5470);
+  --rr-separator: var(--tg-theme-section-separator-color, rgba(255, 255, 255, 0.08));
+
+  --rr-safe-top: calc(
+    max(var(--tg-safe-area-inset-top, 0px), env(safe-area-inset-top, 0px)) +
+      var(--tg-content-safe-area-inset-top, 0px)
+  );
+  --rr-safe-bottom: calc(
+    max(var(--tg-safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px)) +
+      var(--tg-content-safe-area-inset-bottom, 0px)
+  );
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.tg) {
+    --rr-bg: #f6f6fb;
+    --rr-surface: #ffffff;
+    --rr-card: #ffffff;
+    --rr-text: #15172a;
+    --rr-muted: #6b6f8e;
+    --rr-separator: rgba(0, 0, 0, 0.08);
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--rr-bg);
+  --color-surface: var(--rr-surface);
+  --color-card: var(--rr-card);
+  --color-text: var(--rr-text);
+  --color-muted: var(--rr-muted);
+  --color-accent: var(--rr-accent);
+  --color-accent-text: var(--rr-accent-text);
+  --color-link: var(--rr-link);
+  --color-danger: var(--rr-danger);
+  --color-separator: var(--rr-separator);
+  --color-bull: #22c55e;
+  --color-cow: #f5a524;
+  --font-display:
+    ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --animate-pop: pop 180ms ease-out;
+  --animate-shake: shake 360ms ease-in-out;
+  --animate-rise: rise 260ms ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-8px);
+  }
+  40%,
+  80% {
+    transform: translateX(8px);
+  }
+}
+@keyframes rise {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--rr-bg);
+  color: var(--rr-text);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
