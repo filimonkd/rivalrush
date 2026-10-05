@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { GameEndReason, GameResult } from './games.js';
 
 export const CRACK_THE_CODE_ID = 'crack-the-code' as const;
 
@@ -54,7 +55,8 @@ export type CtcPlayerAction = z.infer<typeof ctcActionSchema>;
 
 export type CtcPhase = 'SETUP' | 'PLAYING' | 'LAST_CHANCE' | 'FINISHED' | 'ABANDONED';
 
-export type CtcEndReason = 'cracked' | 'both_cracked' | 'out_of_guesses' | 'forfeit' | 'abandoned';
+/** Crack the Code uses the shared end reasons unchanged. */
+export type CtcEndReason = GameEndReason;
 
 export interface CtcMove {
   playerId: string;
@@ -65,12 +67,6 @@ export interface CtcMove {
   timedOut: boolean;
   at: number;
   turnNumber: number;
-}
-
-export interface GameResult {
-  outcome: 'win' | 'draw';
-  winnerId: string | null;
-  reason: CtcEndReason;
 }
 
 export interface CtcPlayerPublic {

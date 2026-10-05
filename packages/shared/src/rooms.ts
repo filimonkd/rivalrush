@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import type { CtcPlayerView, CtcSettings, GameResult } from './crackTheCode.js';
+import type { CcMove, CcPlayerAction, CcPlayerView, CcSettings } from './colorCipher.js';
+import type { CtcMove, CtcPlayerAction, CtcPlayerView, CtcSettings } from './crackTheCode.js';
+import type { GameResult } from './games.js';
 
 /**
  * Room lifecycle (see docs/state-machine.md):
@@ -17,7 +19,7 @@ export type RoomStatus = (typeof ROOM_STATUSES)[number];
 
 export const TERMINAL_ROOM_STATUSES: readonly RoomStatus[] = ['EXPIRED', 'CLOSED'];
 
-export const GAME_IDS = ['crack-the-code'] as const;
+export const GAME_IDS = ['crack-the-code', 'color-cipher'] as const;
 export type GameId = (typeof GAME_IDS)[number];
 
 export interface PlayerSeat {
@@ -32,14 +34,24 @@ export interface PlayerSeat {
   graceDeadlineAt: number | null;
 }
 
-export type RoomSettings = CtcSettings;
+/** Settings of the room's game (look at `gameType` to tell them apart). */
+export type RoomSettings = CtcSettings | CcSettings;
+
+/** A player's view of the running game; `view.gameId` tells the games apart. */
+export type GamePlayerView = CtcPlayerView | CcPlayerView;
+
+/** One entry of a game's secret-free move log (stored in match history). */
+export type GameMove = CtcMove | CcMove;
+
+/** Any player action the client can send in `game:action`. */
+export type PlayerAction = CtcPlayerAction | CcPlayerAction;
 
 export interface GameSnapshot {
   sessionId: string;
   gameType: GameId;
   version: number;
   /** Player-specific view. Built per recipient; never the raw state. */
-  view: CtcPlayerView;
+  view: GamePlayerView;
   result: GameResult | null;
 }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CtcEndReason } from './crackTheCode.js';
+import type { GameEndReason } from './games.js';
 import type { GameId, RoomSnapshot } from './rooms.js';
 import { actionIdSchema, inviteTokenSchema } from './rooms.js';
 import type { AppErrorPayload } from './errors.js';
@@ -41,7 +41,7 @@ export interface MatchSummary {
   roomId: string;
   gameType: GameId;
   outcome: MatchOutcome;
-  reason: CtcEndReason;
+  reason: GameEndReason;
   opponent: { userId: string; displayName: string; photoUrl: string | null } | null;
   turns: number;
   startedAt: string;
