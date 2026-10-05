@@ -44,7 +44,7 @@ export async function upsertTelegramUser(tg: TelegramUser, viaInvite: boolean): 
       },
       $setOnInsert: { telegramId: tg.id, isDev: false, 'acquisition.viaInvite': viaInvite },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
   return user!;
 }
@@ -59,7 +59,7 @@ export async function upsertDevUser(name: string): Promise<UserDoc> {
       $set: { firstName: name, displayName: name, lastSeenAt: new Date() },
       $setOnInsert: { telegramId, isDev: true },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
   return user!;
 }
