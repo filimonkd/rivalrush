@@ -67,7 +67,11 @@ start looks intentional rather than broken.
    TTL on `rooms.purgeAt` (30 days after expiry).
 2. **Render**: New → Blueprint → this repo (`render.yaml`, `plan: free`). Fill the
    `sync: false` variables (use a placeholder `WEBAPP_URL` for now). Note the service URL,
-   e.g. `https://rivalrush-api.onrender.com`.
+   e.g. `https://rivalrush-api.onrender.com`. If you created the service by hand instead of
+   from the blueprint, set Build Command to
+   `npm ci --include=dev && npm run build:shared && npm run build -w @rivalrush/server` and
+   Start Command to `node apps/server/dist/index.js` (without `--include=dev` the build
+   fails with "Could not find a declaration file for module 'express'").
 3. **Vercel** (Hobby): New Project → this repo → Root Directory `apps/web` (uses
    `apps/web/vercel.json`: installs at the repo root, builds shared + web, outputs `dist`, SPA
    rewrites). Set `VITE_API_URL` and `VITE_BOT_USERNAME` for Production.

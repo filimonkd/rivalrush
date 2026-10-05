@@ -12,7 +12,9 @@ services:
     region: frankfurt
     numInstances: 1 # MUST stay 1 until a Redis RoomStore + Socket.IO adapter exist
     autoDeploy: false # set "Auto-Deploy: After CI Checks Pass" in the dashboard
-    buildCommand: npm ci && npm run build:shared && npm run build -w @rivalrush/server
+    # --include=dev: NODE_ENV=production makes npm skip devDependencies, but the build needs
+    # TypeScript and the @types packages.
+    buildCommand: npm ci --include=dev && npm run build:shared && npm run build -w @rivalrush/server
     startCommand: node apps/server/dist/index.js
     healthCheckPath: /health
     envVars:
