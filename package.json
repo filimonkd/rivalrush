@@ -2,7 +2,7 @@
   "name": "rivalrush",
   "version": "0.1.0",
   "private": true,
-  "description": "RivalRush \u2014 Quick games. Real rivals. Telegram Mini App monorepo.",
+  "description": "RivalRush — Quick games. Real rivals. Telegram Mini App monorepo.",
   "type": "module",
   "workspaces": [
     "packages/shared",
