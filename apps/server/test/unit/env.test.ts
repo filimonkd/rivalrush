@@ -50,6 +50,16 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ ...prod, BOT_MODE: 'polling' })).toThrow(/WEBAPP_URL/);
   });
 
+  it('URL settings: tolerates pasted spaces/quotes, treats empty as unset, explains bad values', () => {
+    expect(loadConfig({ WEBAPP_URL: '  "https://rivalrush.vercel.app"  ' }).webAppUrl).toBe(
+      'https://rivalrush.vercel.app',
+    );
+    expect(loadConfig({ WEBAPP_URL: '' }).webAppUrl).toBeNull();
+    expect(() => loadConfig({ WEBAPP_URL: 'rivalrush.vercel.app' })).toThrow(
+      /WEBAPP_URL: must be a full address starting with https:\/\/.*got "rivalrush.vercel.app"/,
+    );
+  });
+
   it('reports invalid values as a ConfigError', () => {
     expect(() => loadConfig({ PORT: 'abc' })).toThrow(ConfigError);
   });
