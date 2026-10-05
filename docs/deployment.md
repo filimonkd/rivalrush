@@ -1,8 +1,11 @@
 # Deployment and operations
 
-**Status: configuration is in the repo; nothing is deployed yet.** Everything below runs on
-**free tiers only**: MongoDB Atlas M0, Render Free, Vercel Hobby, a free uptime pinger and
-Telegram (free). You need accounts there; no payment details are required by this setup.
+**Status: deployed.** Production runs on **free tiers only**: Vercel Hobby (web), Render Free
+(API + Socket.IO + bot webhook), MongoDB Atlas M0 (database) and Telegram (bot
+`@rivalrushbot` with the Main Mini App enabled). The product owner signed in, invited a
+second account and played a full duel in real Telegram on 5 Oct 2026. What has and has not
+been verified in production is tracked in [status.md](status.md) and
+[testing.md](testing.md#production-manual-qa). Day-2 operations: [runbook.md](runbook.md).
 
 > Free-tier numbers (sleep after ~15 min idle, ~1 min wake-up, 750 free instance hours a
 > month on Render; 512 MB storage on Atlas M0) are from the providers' published terms at the
@@ -56,7 +59,7 @@ start looks intentional rather than broken.
 `VITE_API_URL=https://<render service>.onrender.com`, `VITE_BOT_USERNAME=<bot>`. **Never** set
 `VITE_DEV_LOGIN` in Vercel, and never put tokens or URIs in `VITE_*`.
 
-## Go-live order (all free)
+## Go-live order (all free; done once)
 
 1. **MongoDB Atlas**: create a free **M0** cluster. Database Access: create users
    `rivalrush_prod` (readWrite on `rivalrush`) and `rivalrush_staging` (readWrite on
@@ -78,23 +81,25 @@ start looks intentional rather than broken.
 4. Update Render `WEBAPP_URL` and `CLIENT_ORIGINS` to the Vercel production domain and
    redeploy. On boot the server registers the Telegram webhook
    (`<RENDER_EXTERNAL_URL>/telegram/webhook`) and the Play menu button.
-5. **BotFather**: enable the Main Mini App with the Vercel URL ([telegram.md](telegram.md)).
+5. **BotFather**: `/mybots` → bot → Bot Settings → Configure Mini App → **Enable Mini App**
+   with the Vercel production URL ([telegram.md](telegram.md)). Without this, invite links
+   (`t.me/<bot>?startapp=…`) open with "bot invalid" even though the Play button works.
 6. **Keep-warm pinger** (free): UptimeRobot → New monitor → HTTP(s) →
    `https://<api>.onrender.com/health`, interval 5 min (or cron-job.org, every 10 min). This
    also gives you free downtime alerts by email.
 7. Smoke test: `curl https://<api>/health` → `{"status":"ok",…,"database":"up"}`, then `/start`
    the bot and run the manual QA plan.
 
-## Pre-production checklist
+## Production checklist
 
-- [ ] Render: `NODE_ENV=production`, `DEV_LOGIN_ENABLED=false` (boot fails otherwise)
-- [ ] `CLIENT_ORIGINS` = exact https Vercel origin(s)
+- [x] Render: `NODE_ENV=production`, `DEV_LOGIN_ENABLED=false` (the server refuses to boot otherwise, and it boots)
+- [x] `CLIENT_ORIGINS` = exact https Vercel origin(s) (sign-in from the Mini App works, so CORS accepts it)
 - [ ] `MONGODB_URI` points at the **production** DB; CI and local never use it
-- [ ] `BOT_TOKEN` only in Render; not in Vercel or the repo
+- [x] `BOT_TOKEN` only in Render; not in Vercel or the repo (the web build only reads `VITE_API_URL`, `VITE_BOT_USERNAME`, `VITE_DEV_LOGIN`)
 - [ ] Exactly **one** Render instance (Free plan), and the uptime pinger is running
 - [ ] `/health` returns 200 with `database: "up"`
-- [ ] WebSocket connects from the Mini App (the lobby shows the opponent coming online)
-- [ ] No debug endpoints exist (there are none; `/api/auth/dev` is absent in production)
+- [x] WebSocket connects from the Mini App (live games work in production)
+- [x] No debug endpoints exist (there are none; `/api/auth/dev` is absent in production)
 
 ## Monitoring
 
@@ -127,13 +132,4 @@ ends every game in progress** (players see "This room is gone" with a Home butto
 
 ## Operations runbook
 
-| Symptom                                        | Check                                           | Action                                                                                                            |
-| ---------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Bot doesn't answer `/start`                    | Render logs for `telegram webhook setup failed` | Verify `BOT_TOKEN`; redeploy to re-register the webhook; don't run a polling dev server with the production token |
-| First open takes ~1 min                        | Pinger status                                   | The free instance was asleep; check the pinger is active and hitting `/health`                                    |
-| Render suspended the service                   | Render dashboard: free hours used               | Only one free service may be kept awake; stop pinging any others                                                  |
-| Mini App shows "Couldn't sign you in"          | `auth.failed` log `why`                         | `bad_signature`: wrong `BOT_TOKEN` for this bot. `expired`: device clock or stale launch, so reopen               |
-| "Reconnecting…" never clears                   | Browser console / CORS                          | `CLIENT_ORIGINS` must match the Vercel origin exactly                                                             |
-| Health 503                                     | `database: down`                                | Atlas status, network access list, credentials                                                                    |
-| Stats missing after games                      | `match.record_failed`                           | Atlas reachability; results that failed after all retries are logged with their sessionId                         |
-| Players see "This room is gone" after a deploy | expected                                        | Live rooms were in memory; they start a new duel                                                                  |
+Moved to [runbook.md](runbook.md).

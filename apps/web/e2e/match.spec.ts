@@ -192,6 +192,63 @@ test('two friends play a full Crack the Code match, rematch, reconnect and finis
   await ctxB.close();
 });
 
+test('a declined rematch frees the room for someone new, with nothing of the old game', async ({
+  browser,
+}) => {
+  const ctxA = await browser.newContext();
+  const ctxB = await browser.newContext();
+  const ctxC = await browser.newContext();
+  const alice = await ctxA.newPage();
+  const bob = await ctxB.newPage();
+  const carol = await ctxC.newPage();
+
+  await signIn(alice, 'Alina');
+  await alice.getByTestId('start-duel').click();
+  await alice.getByTestId('create-room').click();
+  const invite = (await alice.getByTestId('invite-link').textContent())!.trim();
+  await signIn(bob, 'Boris');
+  await bob.goto(new URL(invite).pathname);
+  await bob.getByTestId('join-game').click();
+  await bob.getByTestId('ready-toggle').click();
+  await alice.getByTestId('start-game').click();
+  await expect(alice.getByTestId('lock-secret')).toBeVisible();
+
+  // Alice gives up during setup.
+  alice.once('dialog', (d) => void d.accept());
+  await alice.getByTestId('give-up').click();
+  await expect(bob.getByTestId('result-title')).toHaveText('You won! 🏆');
+
+  // Bob steps out to Home: the room waits for him there.
+  await bob.goto('/');
+  await expect(bob.getByText('Game over — rematch?')).toBeVisible();
+
+  // Alice asks for a rematch; Bob comes back, sees it, and leaves instead.
+  await alice.getByTestId('rematch').click();
+  await expect(alice.getByTestId('rematch-waiting')).toBeVisible();
+  await bob.getByRole('button', { name: 'Back to the game' }).click();
+  await expect(bob.getByTestId('rematch')).toContainText('Alina wants a rematch');
+  await bob.getByRole('button', { name: 'Leave' }).click();
+  await expect(bob).toHaveURL(/\/$/);
+
+  // Alice is back in an open lobby with the same invite.
+  await expect(alice.getByTestId('waiting-opponent')).toBeVisible();
+  await expect(alice.getByTestId('invite-link')).toHaveText(invite);
+
+  // Carol joins through the old link and starts a clean game (no old moves, no result).
+  await signIn(carol, 'Carla');
+  await carol.goto(new URL(invite).pathname);
+  await expect(carol.getByTestId('challenge-title')).toHaveText('Alina challenged you');
+  await carol.getByTestId('join-game').click();
+  await carol.getByTestId('ready-toggle').click();
+  await alice.getByTestId('start-game').click();
+  await expect(carol.getByTestId('lock-secret')).toBeVisible();
+  await expect(carol.getByTestId('result-sheet')).toHaveCount(0);
+
+  await ctxA.close();
+  await ctxB.close();
+  await ctxC.close();
+});
+
 test('old and bogus invite links explain themselves', async ({ page }) => {
   await signIn(page, 'Carol');
   await page.goto('/join/NoSuchInviteToken000');

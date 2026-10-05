@@ -11,16 +11,17 @@ rematch → stats
 
 ## Status
 
-| Area                                                               | Status                                                                                                                  |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| Game engine + Crack the Code rules                                 | Implemented, tested                                                                                                     |
-| Server: Telegram auth, rooms, Socket.IO, timers, reconnect, stats  | Implemented, tested (unit + integration on a real MongoDB replica set)                                                  |
-| Web Mini App (all MVP screens)                                     | Implemented, tested (two-browser Playwright E2E with dev login)                                                         |
-| CI (GitHub Actions)                                                | Configured                                                                                                              |
-| Vercel Hobby / Render Free / Atlas M0 / BotFather (all free tiers) | **Configured in repo, not yet deployed**: needs your accounts and secrets, see [docs/deployment.md](docs/deployment.md) |
-| Inside real Telegram on phones                                     | **Not yet verified**: see the manual QA plan in [docs/testing.md](docs/testing.md)                                      |
+| Area                                                               | Status                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Game engine + Crack the Code rules                                 | Implemented, tested                                                                                                                                                                                                                      |
+| Server: Telegram auth, rooms, Socket.IO, timers, reconnect, stats  | Implemented, tested (unit + integration on a real MongoDB replica set)                                                                                                                                                                   |
+| Web Mini App (all MVP screens)                                     | Implemented, tested (two-browser Playwright E2E with dev login)                                                                                                                                                                          |
+| CI (GitHub Actions)                                                | Green on every PR: lint, format, typecheck, unit, integration, build, E2E                                                                                                                                                                |
+| Vercel Hobby / Render Free / Atlas M0 / BotFather (all free tiers) | **Deployed**: see [docs/deployment.md](docs/deployment.md) and [docs/runbook.md](docs/runbook.md)                                                                                                                                        |
+| Inside real Telegram                                               | **Core duel verified in production** (sign-in, invite, join, full match). Rematch, reconnect, timers and stats are covered by automated tests but not yet checked on phones; see [docs/testing.md](docs/testing.md#production-manual-qa) |
 
-Full status, verified claims and known gaps: [docs/status.md](docs/status.md).
+Full status, verified claims and known gaps: [docs/status.md](docs/status.md). Beta readiness:
+[docs/mvp-readiness.md](docs/mvp-readiness.md).
 
 ## Repository layout
 
@@ -66,5 +67,5 @@ profiles to play against yourself. Testing inside Telegram needs an HTTPS tunnel
 [REST API](docs/api.md) · [WebSocket protocol](docs/websocket.md) ·
 [Telegram](docs/telegram.md) · [Security](docs/security.md) · [Testing & QA](docs/testing.md) ·
 [Local development](docs/local-development.md) · [CI/CD](docs/ci-cd.md) ·
-[Deployment & operations](docs/deployment.md) · [Roadmap](docs/roadmap.md) ·
-[Status](docs/status.md)
+[Deployment](docs/deployment.md) · [Runbook](docs/runbook.md) · [Roadmap](docs/roadmap.md) ·
+[Status](docs/status.md) · [MVP readiness](docs/mvp-readiness.md)

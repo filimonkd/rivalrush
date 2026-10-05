@@ -2,19 +2,23 @@
 
 ## Automated
 
-| Suite              | Location                                   | What it proves                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------ | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shared schemas     | `packages/shared/test`                     | Invite `start_param` round trip and rejection of junk; settings ranges; action schemas reject extra fields (no fake winner)                                                                                                                                                                                                                                                                                                                  |
-| Scoring            | `apps/server/test/unit/ctc-rules.test.ts`  | Bulls/cows incl. the worked example, exact match, permutations, repeated guess digits; generated secrets are valid and can lead with 0                                                                                                                                                                                                                                                                                                       |
-| Game rules         | `.../ctc-game.test.ts`                     | Setup, invalid/duplicate secret, auto secrets on timeout, alternation, invalid/duplicate guess, timeouts burn turns, equalizer win/draw/timeout, out-of-guesses draw, forfeit, abandon, finished rejects all, immutability, **60 random full games with no secret leak in any view**                                                                                                                                                         |
-| Telegram auth      | `.../telegram-auth.test.ts`                | Valid data; independent re-implementation of the algorithm; tampered; wrong bot; stale; future; malformed; duplicate fields                                                                                                                                                                                                                                                                                                                  |
-| Config             | `.../env.test.ts`                          | Production refuses dev login, weak secrets, missing DB/bot token, wildcard/http CORS                                                                                                                                                                                                                                                                                                                                                         |
-| RoomManager        | `.../room-manager.test.ts`                 | Create, join, full, invalid/expired/closed invite, duplicate join, one active room per user, host-only start, host hand-off, idempotent start/guess/secret/rematch, stale versions, server timers, **all race conditions** in [state-machine.md](state-machine.md), disconnect grace, reconnect, multi-tab presence, leave = forfeit, monotonic versions                                                                                     |
-| Bot                | `.../bot.test.ts`                          | /start, deep-link /start, /help, token never in errors                                                                                                                                                                                                                                                                                                                                                                                       |
-| REST integration   | `apps/server/test/integration/api.test.ts` | Real MongoDB replica set: auth flow, acquisition flag, room flow, persisted metadata hashes the invite, old invites, validation, 413, CORS + helmet, transactional idempotent stats + streaks, profile, logs contain no launch data                                                                                                                                                                                                          |
-| Socket integration | `.../socket.test.ts`                       | Bad/forged tokens rejected, non-members blocked, a full match (secrets, stale/duplicate actions, equalizer draw, recorded stats, rematch with swapped start), **no opponent secret in any snapshot before the end**, no secrets in logs, offline → resync → resume, leave = forfeit, throttling                                                                                                                                              |
-| Web logic          | `apps/web/test`                            | Snapshot ordering, event → toast mapping, server-time countdowns, invite links                                                                                                                                                                                                                                                                                                                                                               |
-| **E2E**            | `apps/web/e2e/match.spec.ts`               | Two Chromium browsers (mobile viewport) play the whole loop against the built server and the production web build: invite → join → ready → start → secrets → turns → duplicate guess → last chance draw → result with revealed codes → rematch (start swaps) → offline/online → app reopen lands back in game → give up → profile stats. **Scans every WebSocket frame for leaked opponent secrets.** Bogus invite → "Can't join this room". |
+| Suite              | Location                                           | What it proves                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shared schemas     | `packages/shared/test`                             | Invite `start_param` round trip and rejection of junk; settings ranges; action schemas reject extra fields (no fake winner)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Scoring            | `apps/server/test/unit/ctc-rules.test.ts`          | Bulls/cows incl. the worked example, exact match, permutations, repeated guess digits; generated secrets are valid and can lead with 0                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Game rules         | `.../ctc-game.test.ts`                             | Setup, invalid/duplicate secret, auto secrets on timeout, alternation, invalid/duplicate guess, timeouts burn turns, equalizer win/draw/timeout, out-of-guesses draw, forfeit, abandon, finished rejects all, immutability, **60 random full games with no secret leak in any view**                                                                                                                                                                                                                                                                                                   |
+| Telegram auth      | `.../telegram-auth.test.ts`                        | Valid data; independent re-implementation of the algorithm; tampered; wrong bot; stale; future; malformed; duplicate fields                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Config             | `.../env.test.ts`                                  | Production refuses dev login, weak secrets, missing DB/bot token, wildcard/http CORS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| RoomManager        | `.../room-manager.test.ts`                         | Create, join, full, invalid/expired/closed invite, duplicate join, one active room per user, host-only start, host hand-off, idempotent start/secret, stale versions, disconnect grace, reconnect, multi-tab presence, leave = forfeit, monotonic versions                                                                                                                                                                                                                                                                                                                             |
+| Bot                | `.../bot.test.ts`                                  | /start, deep-link /start, /help, token never in errors                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| REST integration   | `apps/server/test/integration/api.test.ts`         | Real MongoDB replica set: auth flow, acquisition flag, room flow, persisted metadata hashes the invite, old invites, validation, 413, CORS + helmet, transactional idempotent stats + streaks, profile, logs contain no launch data                                                                                                                                                                                                                                                                                                                                                    |
+| Socket integration | `.../socket.test.ts`                               | Bad/forged tokens rejected, non-members blocked, a full match (secrets, stale/duplicate actions, equalizer draw, recorded stats, rematch with swapped start), **no opponent secret in any snapshot before the end**, no secrets in logs, offline → resync → resume, leave = forfeit, throttling                                                                                                                                                                                                                                                                                        |
+| Race conditions    | `.../races.test.ts`                                | The 10 numbered concurrency cases below, each with its deterministic outcome                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Rematch            | `.../rematch.test.ts`                              | Rematch after a win, an out-of-guesses draw, a last-chance win, a last-chance draw and a forfeit: same room and players, new session, start swaps, nothing from the old game in the new views, stats counted once; alternation over several rematches; repeated votes; declined by leaving; newcomer sees nothing of the old match; offline while waiting; never returning = abandoned; vote racing a leave                                                                                                                                                                            |
+| Timers             | `.../timers.test.ts`                               | Deadlines from the server clock, timeout burns the turn and gives the next player a full turn, pushed to clients, a guess cancels the old deadline, late wake-up applies one timeout, clients cannot move timers, setup auto-secret at exactly 60 s, reconnect during the countdown / after a timeout / 1 ms before it, turn deadline vs reconnect grace at the same instant                                                                                                                                                                                                           |
+| Reliability        | `apps/server/test/integration/reliability.test.ts` | Real Socket.IO + MongoDB: duplicate action re-sent after reconnecting is applied once; stale client after reconnecting gets the authoritative snapshot; action racing a resync; non-members refused; forfeit → rematch → abandonment → rematch → leave produces three match records whose totals equal each player's stats and profile; replays of a recorded session change nothing; no endpoint writes stats                                                                                                                                                                         |
+| Web logic          | `apps/web/test`                                    | Snapshot ordering (late replies after reconnect or rematch never win), event → toast mapping, server-time countdowns, invite links                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **E2E**            | `apps/web/e2e/match.spec.ts`                       | Two Chromium browsers (mobile viewport) play the whole loop against the built server and the production web build: invite → join → ready → start → secrets → turns → duplicate guess → last chance draw → result with revealed codes → rematch (start swaps) → offline/online → app reopen lands back in game → give up → profile stats. **Scans every WebSocket frame for leaked opponent secrets.** Bogus invite → "Can't join this room". Second test: rematch declined by leaving → the host is back in the lobby with the same invite → a newcomer joins and starts a clean game. |
 
 Run: `npm test` (all unit + integration) and `npm run build -w @rivalrush/server && npm run test:e2e`.
 
@@ -22,43 +26,94 @@ Integration tests use `mongodb-memory-server` (one-node replica set, so transact
 Set `MONGODB_TEST_URI` to point at an existing replica set instead, or `MONGOMS_SYSTEM_BINARY`
 for a local `mongod`. Automated tests never touch staging or production databases.
 
-## Manual QA: two Telegram accounts
+## Race conditions and their deterministic outcomes
 
-The automated E2E uses dev login in desktop Chromium. These items need **real Telegram on two
-phones** (ideally one iOS, one Android) against staging or production. Record the date,
-devices, app version and pass/fail per row.
+Every room change runs under that room's lock and first applies any deadline that is already
+due. The order the server processes inputs in is the authoritative order. Tests:
+`apps/server/test/unit/races.test.ts` (numbered like this table).
 
-| #   | Step                                               | Expected                                                                 |
-| --- | -------------------------------------------------- | ------------------------------------------------------------------------ |
-| 1   | A sends `/start` to the bot                        | Welcome text + **Play** button; chat menu button says Play               |
-| 2   | Tap Play                                           | Mini App opens full height, no login screen                              |
-| 3   | Authentication                                     | Home says "Hey, <first name>"                                            |
-| 4   | Home                                               | Crack the Code hero, record card, coming-soon games                      |
-| 5   | Start a duel → pick 4 / 45 s / 10 → Create room    | Lobby: host seat + "Waiting for opponent"                                |
-| 6   | Send invite                                        | Telegram chat picker opens with the link and text                        |
-| 7   | B taps the link in the chat                        | App opens on "A challenged you"                                          |
-| 8   | B taps Join game                                   | A gets a buzz and a "B joined" toast                                     |
-| 9   | B taps I'm ready                                   | A's button becomes **Start game**                                        |
-| 10  | A starts                                           | Both see "Hide your code" with a 60 s timer                              |
-| 11  | Secret setup                                       | Used digits are disabled; Lock it in; other side sees "locked in"        |
-| 12  | Gameplay                                           | Only the player on turn sees the keypad; pegs match a hand-checked count |
-| 13  | Timer                                              | Let a turn expire → "Time's up — turn skipped"; guesses left decrease    |
-| 14  | Invalid guess                                      | Incomplete input cannot be submitted; the field shakes                   |
-| 15  | Duplicate guess                                    | "You already tried that one"                                             |
-| 16  | Win                                                | Second player cracks → "You won! 🏆"; both codes revealed                |
-| 17  | Loss                                               | Other phone shows "You lost"                                             |
-| 18  | Draw                                               | Both crack via last chance, or both run out → draw                       |
-| 19  | Last-chance rule                                   | First player cracks → other sees "Last chance — crack it to tie!"        |
-| 20  | Rematch                                            | Both tap Rematch → new game, other player first                          |
-| 21  | Background app 20 s mid-game                       | On return the board is current, no forfeit                               |
-| 22  | Reconnect                                          | "Reconnecting… your game is safe" banner clears on its own               |
-| 23  | Close fully, reopen from the bot                   | Lands back in the game                                                   |
-| 24  | Airplane mode > 60 s                               | Opponent wins with "Dropped out"                                         |
-| 25  | Full disconnect then return within 60 s            | Game continues                                                           |
-| 26  | Expired invite (room older than 2 h, or both left) | "Can't join this room"                                                   |
-| 27  | Old room link after a game                         | Correct message, no crash                                                |
-| 28  | Light Telegram theme                               | Readable, colors follow the theme                                        |
-| 29  | Dark Telegram theme                                | Same                                                                     |
-| 30  | Profiles                                           | Both show correct W/L/D, streak and recent games                         |
+| #   | Case                                         | Deterministic outcome                                                                                                                   |
+| --- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Two guesses arrive at the same time          | The first one processed is applied. The others get `STALE_GAME_VERSION` (version moved) or `NOT_YOUR_TURN`. Exactly one move.           |
+| 2   | Guess arrives exactly at the turn deadline   | The timeout wins (deadline is inclusive): the turn is burned, the guess gets `STALE_GAME_VERSION`. 1 ms earlier, the guess counts.      |
+| 3   | Secret arrives exactly at the setup deadline | The server-generated secret wins; the late secret gets `GAME_ALREADY_STARTED`.                                                          |
+| 4   | Same guess sent twice (re-tap, new actionId) | Applied once. The retry is `STALE_GAME_VERSION`; with a fresh version it is `NOT_YOUR_TURN`, and later `DUPLICATE_GUESS`.               |
+| 5   | Same actionId delivered twice                | Applied once; both replies succeed with the same board.                                                                                 |
+| 6   | Duplicate rematch requests                   | Repeated votes are no-ops; the agreeing vote starts exactly one new game; a late duplicate gets `REMATCH_UNAVAILABLE`.                  |
+| 7   | Reconnect exactly as the turn times out      | The timeout is applied first, then the player is marked online with a fresh snapshot showing the burned turn and the new deadline.      |
+| 8   | Disconnect while the game is finishing       | One result only; no grace timer starts for a finished game.                                                                             |
+| 9   | Host leaves while another player joins       | Join first: the joiner becomes host of an open lobby. Leave first: the empty room closes and the joiner gets `ROOM_CLOSED`. Never both. |
+| 9b  | Two players join the last seat at once       | One joins; the other gets `ROOM_FULL`.                                                                                                  |
+| 10a | "Ready" and "Start" at the same time         | Start succeeds only if Ready was processed first; otherwise `NOT_READY` and the room is READY.                                          |
+| 10b | Both players give up at once                 | The first forfeit decides (that player loses); the other gets `GAME_FINISHED`. One record.                                              |
+| 10c | Guess racing the opponent leaving            | The game ends exactly once, as a forfeit win for the player who stayed.                                                                 |
 
-**Current status:** not yet executed. It needs deployed URLs and two Telegram accounts.
+Also covered: a rematch vote racing the opponent leaving never starts a one-player game
+(`rematch.test.ts`); a turn deadline and a reconnect-grace expiry due at the same instant →
+the game deadline goes first (`timers.test.ts`); a game action racing a resync → both are
+answered and the client keeps the higher version (`reliability.test.ts` + web logic test).
+
+## Production manual QA
+
+Two Telegram accounts (A and B), ideally on two real phones (one iOS, one Android), against
+production (`@rivalrushbot`, Vercel + Render + Atlas). Record the date and devices for each run.
+
+Status: ✅ passed · ❌ failed · 🟡 not yet run. A ✅ means a person saw it work in real Telegram.
+
+**Run 1, 5 Oct 2026, product owner.** Devices not recorded. Result reported: "everything is
+working, I played a duel and Crack the Code works fine". The rows marked ✅ below are the ones
+that report covers; everything else is 🟡 until someone runs it.
+
+| #   | Area      | Step                                          | Expected                                                                 | Status |
+| --- | --------- | --------------------------------------------- | ------------------------------------------------------------------------ | ------ |
+| 1   | Auth      | A sends `/start` to the bot                   | Welcome text + **Play** button; chat menu button says Play               | ✅     |
+| 2   | Auth      | Tap Play                                      | Mini App opens full height, no login screen                              | ✅     |
+| 3   | Auth      | Automatic sign-in                             | Home says "Hey, <first name>"                                            | ✅     |
+| 4   | Room      | Start a duel → settings → Create room         | Lobby: host seat + "Waiting for opponent"                                | ✅     |
+| 5   | Invite    | Send invite                                   | Telegram chat picker opens with the link and text                        | ✅     |
+| 6   | Invite    | B taps the link                               | App opens on "A challenged you"                                          | ✅     |
+| 7   | Room      | B taps Join game                              | A gets a buzz and a "B joined" toast                                     | ✅     |
+| 8   | Room      | B taps I'm ready; A taps Start                | Both see "Hide your code" with a 60 s timer                              | ✅     |
+| 9   | Game      | Secret setup                                  | Used digits disabled; Lock it in; the other side sees "locked in"        | ✅     |
+| 10  | Game      | Valid guess                                   | Only the player on turn sees the keypad; pegs match a hand-checked count | ✅     |
+| 11  | Game      | Invalid guess (incomplete)                    | Cannot be submitted; the field shakes                                    | 🟡     |
+| 12  | Game      | Duplicate guess                               | "You already tried that one"                                             | 🟡     |
+| 13  | Game      | Let a turn run out                            | "Time's up — turn skipped"; the other player's turn; guesses left drop   | 🟡     |
+| 14  | Game      | Let setup run out without locking             | "Time ran out — we picked a code for you"                                | 🟡     |
+| 15  | Game      | Play to a result                              | Result sheet for both; both codes revealed                               | ✅     |
+| 15b | Game      | Win and loss on the two phones                | Second player cracks → "You won! 🏆" / "You lost"                        | 🟡     |
+| 16  | Game      | Last chance                                   | First player cracks → other sees "Last chance — crack it to tie!"        | 🟡     |
+| 17  | Game      | Draw                                          | Both crack via last chance → "It's a draw 🤝"                            | 🟡     |
+| 18  | Game      | Forfeit                                       | Give up → confirm → "You lost" / "You won! 🏆 · Gave up"                 | 🟡     |
+| 19  | Reconnect | Background Telegram 20 s mid-game, return     | Board is current, no forfeit                                             | 🟡     |
+| 20  | Reconnect | Airplane mode 20 s, then back                 | "Reconnecting…" banner, then clears; opponent saw "Lost connection"      | 🟡     |
+| 21  | Reconnect | Close the Mini App fully, reopen from the bot | Lands back in the game with the same code and board                      | 🟡     |
+| 22  | Reconnect | Airplane mode > 60 s                          | Opponent wins with "Dropped out"                                         | 🟡     |
+| 23  | Rematch   | After a win: both tap Rematch                 | New game; the other player goes first                                    | 🟡     |
+| 24  | Rematch   | After a draw / loss: rematch again            | Starting player keeps alternating                                        | 🟡     |
+| 25  | Rematch   | A taps Rematch, B taps Leave                  | A is back in the lobby with the invite; B on Home                        | 🟡     |
+| 26  | Profile   | Open Profile on both phones after a few games | W/L/D, win rate, streak and recent games match what happened             | 🟡     |
+| 27  | Profile   | All games                                     | History lists every game once, newest first                              | 🟡     |
+| 28  | UI        | Light Telegram theme                          | Readable; colors follow the theme                                        | 🟡     |
+| 29  | UI        | Dark Telegram theme                           | Same                                                                     | 🟡     |
+| 30  | UI        | Safe areas (notch / home indicator)           | Nothing hidden under system bars; result sheet buttons reachable         | 🟡     |
+| 31  | UI        | Haptics                                       | Buzz on join, your turn, win/loss, wrong input                           | 🟡     |
+| 32  | UI        | Telegram Back button                          | Goes to Home without leaving the game; Home shows "Back to the game"     | 🟡     |
+| 33  | UI        | Error messages                                | Plain-language toasts, no codes or stack traces                          | 🟡     |
+| 34  | Invites   | A third account opens a link to a full room   | "Someone already took this seat."                                        | 🟡     |
+| 35  | Invites   | Link to a room everyone left                  | "This room has closed. Ask your friend for a new invite."                | 🟡     |
+| 36  | Invites   | Link to a room idle > 2 h                     | "This room expired. Ask your friend for a new invite."                   | 🟡     |
+| 37  | Invites   | Old link after a server restart               | A clear "closed"/"doesn't work anymore" message, no crash                | 🟡     |
+
+### Production health checks (run from your own computer)
+
+The build sandbox cannot reach the production hosts, so these are for you to run:
+
+```bash
+curl -s https://<render-service>.onrender.com/health      # {"status":"ok",…,"database":"up"}
+curl -sI https://<vercel-domain>/ | head -1                # HTTP/2 200
+```
+
+In Atlas → Browse Collections → `rivalrush.matches`: one document per finished game; no
+`secret` fields. In Render → Logs: search for `match.recorded` after a game and make sure
+no 4-digit secret codes or `initData` appear.

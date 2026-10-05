@@ -57,8 +57,14 @@ created only when the host starts.
 | Reconnect exactly at the grace deadline                        | Expiry wins → `abandoned`                                                                       |
 | Disconnect while the game is ending                            | Game result stands; no grace timer starts on a finished game                                    |
 | Two users join the last seat at once                           | One joins, the other gets `ROOM_FULL`                                                           |
+| Host leaves while someone joins                                | Join first → joiner hosts an open lobby; leave first → room closes, joiner gets `ROOM_CLOSED`   |
+| Reconnect exactly at a turn deadline                           | Timeout applied first, then the player is online with the updated board                         |
+| Turn deadline and reconnect grace due at the same instant      | Game deadline first (it may end the game; then the grace expiry is moot)                        |
+| Rematch vote racing the opponent leaving                       | Never a one-player game: either the rematch starts and the leave forfeits it, or the vote fails |
 
-Every case above has a test in `apps/server/test/unit/room-manager.test.ts`.
+Every case above has a test in `apps/server/test/unit/` (`races.test.ts`, `rematch.test.ts`,
+`timers.test.ts`, `room-manager.test.ts`). The full numbered list with outcomes is in
+[testing.md](testing.md#race-conditions-and-their-deterministic-outcomes).
 
 ## Versions
 

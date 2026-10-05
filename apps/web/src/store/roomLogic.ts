@@ -74,6 +74,15 @@ export function describeEvent(
       return mine
         ? null
         : { text: `${nameOf(snap, e.actorId)} wants a rematch!`, kind: 'good', haptic: 'tap' };
+    case 'game_over':
+      // Covers a rival who leaves mid-game: their seat is gone, so no result sheet appears.
+      if (e.data?.winnerId === me && e.data.reason === 'forfeit')
+        return {
+          text: `${nameOf(snap, typeof e.data.loserId === 'string' ? e.data.loserId : null)} gave up — you win`,
+          kind: 'good',
+          haptic: 'success',
+        };
+      return null;
     case 'secret_locked':
       if (e.data?.auto && mine)
         return { text: 'Time ran out — we picked a code for you', kind: 'info' };
