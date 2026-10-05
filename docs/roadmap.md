@@ -10,9 +10,9 @@ rematch rate above 40%.
 
 ## Built
 
-| Feature                                        | Status                                                                                                                                      |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Color Cipher** (original color-pattern duel) | Merged to `main` (`a5d0781`), CI green. Production deployment and Telegram QA not yet verified ([color-cipher.md](color-cipher.md#release)) |
+| Feature                                        | Status                                                                                                                 |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Color Cipher** (original color-pattern duel) | Released (`a5d0781`) and verified in production on two phones, 5 Oct 2026 ([color-cipher.md](color-cipher.md#release)) |
 
 ## After the beta (default order; metrics decide)
 

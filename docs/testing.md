@@ -129,30 +129,31 @@ no 4-digit secret codes or `initData` appear.
 
 ## Color Cipher: production manual QA
 
-Two Telegram accounts on two phones, after the Color Cipher release. Status: 🟡 not yet run.
+Two Telegram accounts on two phones, after the Color Cipher release. **Run 1, 5 Oct 2026, product
+owner: all passed** (details in the release record below).
 
 | #   | Area               | Step                                                         | Expected                                                                 | Status |
 | --- | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------ | ------ |
-| C1  | Home               | Open the app                                                 | Crack the Code and Color Cipher both "Live now"; Defuser "Coming soon"   | 🟡     |
-| C2  | Create             | Color Cipher → Start a duel                                  | "4 tiles · 6 colors · repeats allowed"; turn time and guesses selectable | 🟡     |
-| C3  | Invite             | Send invite; B taps it                                       | "A challenged you to Color Cipher" with 4×6, turn time, guesses          | 🟡     |
-| C4  | Lobby              | B joins, ready; A starts                                     | Lobby shows "Color Cipher"; both reach "Hide your pattern"               | 🟡     |
-| C5  | Setup              | Pick tiles incl. a repeated color; Undo; Lock it in          | Pattern locks; the other side sees "is locked in"                        | 🟡     |
-| C6  | Setup              | One player waits out 60 s                                    | "Time ran out — we picked one for you"                                   | 🟡     |
-| C7  | Guessing           | Guess a pattern                                              | Row shows the tiles, diamonds and "x exact / y close"                    | 🟡     |
-| C8  | Feedback           | Hand-check 3 guesses against the revealed pattern at the end | Counts match the rules in color-cipher.md (repeats included)             | 🟡     |
-| C9  | Invalid            | Try to submit fewer than 4 tiles                             | Guess button disabled; tiles shake                                       | 🟡     |
-| C10 | Duplicate          | Repeat an earlier guess                                      | "You already tried that pattern"; turn not used                          | 🟡     |
-| C11 | Timer              | Let a turn run out                                           | "Time's up — turn skipped"; guesses left drop                            | 🟡     |
-| C12 | Win                | Second player cracks                                         | "You won! 🏆 · Pattern cracked" / "You lost"; both patterns shown        | 🟡     |
-| C13 | Last chance + draw | First player cracks; second cracks on the last chance        | "Last chance" banner, then "It's a draw 🤝"                              | 🟡     |
-| C14 | Give up            | Give up mid-game                                             | Loss for the giver, "Gave up"                                            | 🟡     |
-| C15 | Reconnect          | Airplane mode 20 s; background 20 s; close and reopen        | Game resumes with the same pattern and board                             | 🟡     |
-| C16 | Abandon            | Airplane mode > 60 s                                         | Opponent wins, "Dropped out"                                             | 🟡     |
-| C17 | Rematch            | Both tap Rematch                                             | New Color Cipher game, new patterns, other player first                  | 🟡     |
-| C18 | Stats              | Profile after a few games of each                            | One combined W/L/D record; history lists each game with its name         | 🟡     |
-| C19 | Themes             | Light and dark Telegram theme                                | Tiles, symbols and diamonds readable in both                             | 🟡     |
-| C20 | Regression         | Play one full Crack the Code match and a rematch             | Unchanged from before the release                                        | 🟡     |
+| C1  | Home               | Open the app                                                 | Crack the Code and Color Cipher both "Live now"; Defuser "Coming soon"   | ✅     |
+| C2  | Create             | Color Cipher → Start a duel                                  | "4 tiles · 6 colors · repeats allowed"; turn time and guesses selectable | ✅     |
+| C3  | Invite             | Send invite; B taps it                                       | "A challenged you to Color Cipher" with 4×6, turn time, guesses          | ✅     |
+| C4  | Lobby              | B joins, ready; A starts                                     | Lobby shows "Color Cipher"; both reach "Hide your pattern"               | ✅     |
+| C5  | Setup              | Pick tiles incl. a repeated color; Undo; Lock it in          | Pattern locks; the other side sees "is locked in"                        | ✅     |
+| C6  | Setup              | One player waits out 60 s                                    | "Time ran out — we picked one for you"                                   | ✅     |
+| C7  | Guessing           | Guess a pattern                                              | Row shows the tiles, diamonds and "x exact / y close"                    | ✅     |
+| C8  | Feedback           | Hand-check 3 guesses against the revealed pattern at the end | Counts match the rules in color-cipher.md (repeats included)             | ✅     |
+| C9  | Invalid            | Try to submit fewer than 4 tiles                             | Guess button disabled; tiles shake                                       | ✅     |
+| C10 | Duplicate          | Repeat an earlier guess                                      | "You already tried that pattern"; turn not used                          | ✅     |
+| C11 | Timer              | Let a turn run out                                           | "Time's up — turn skipped"; guesses left drop                            | ✅     |
+| C12 | Win                | Second player cracks                                         | "You won! 🏆 · Pattern cracked" / "You lost"; both patterns shown        | ✅     |
+| C13 | Last chance + draw | First player cracks; second cracks on the last chance        | "Last chance" banner, then "It's a draw 🤝"                              | ✅     |
+| C14 | Give up            | Give up mid-game                                             | Loss for the giver, "Gave up"                                            | ✅     |
+| C15 | Reconnect          | Airplane mode 20 s; background 20 s; close and reopen        | Game resumes with the same pattern and board                             | ✅     |
+| C16 | Abandon            | Airplane mode > 60 s                                         | Opponent wins, "Dropped out"                                             | ✅     |
+| C17 | Rematch            | Both tap Rematch                                             | New Color Cipher game, new patterns, other player first                  | ✅     |
+| C18 | Stats              | Profile after a few games of each                            | One combined W/L/D record; history lists each game with its name         | ✅     |
+| C19 | Themes             | Light and dark Telegram theme                                | Tiles, symbols and diamonds readable in both                             | ✅     |
+| C20 | Regression         | Play one full Crack the Code match and a rematch             | Unchanged from before the release                                        | ✅     |
 
 ## Color Cipher release verification (production)
 
@@ -161,20 +162,27 @@ commit: ✅ passed (lint, typecheck, 232 unit/integration tests, build, 4 two-br
 Everything below needs real Telegram and the production hosts, which the build agent cannot
 reach. Status: ✅ PASS · ❌ FAIL (add an issue link) · 🟡 NOT RUN.
 
-**Run record:** date: ____ · tester(s): ____ · phone A: ____ (iOS/Android, Telegram version) ·
-phone B: ____ · desktop (for payload checks): Telegram Web in Chrome · `/health` version: ____
+**Run record:** 5 Oct 2026 · production (`@rivalrushbot`, Vercel + Render + Atlas) · tester:
+the product owner, two Telegram accounts on two phones · result reported: **"all the tests
+passed"** (every item below). Device models, OS and Telegram versions were not recorded.
+
+Before this run, the first attempt to create a Color Cipher room failed. That matches the web app
+being updated (Vercel deploys automatically) while Render still ran the previous server, which
+listed Color Cipher as "coming soon"; the fix is Render → Manual Deploy → Deploy latest commit.
+The run below was done after that. Lesson: with `autoDeploy: false`, every server release needs a
+manual Render deploy and a `/health` version check before testing.
 
 ### Deployment
 
 | #   | Check                      | How                                                               | Expected                                                                                                | Status |
 | --- | -------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
-| D1  | Render runs the release    | Open `https://<render-service>.onrender.com/health`               | `version` = `a5d0781` (or a later `main` commit). If not, Render → Manual Deploy → Deploy latest commit | 🟡     |
-| D2  | API healthy                | Same response                                                     | HTTP 200, `"status":"ok"`                                                                               | 🟡     |
-| D3  | Database healthy           | Same response                                                     | `"database":"up"`                                                                                       | 🟡     |
-| D4  | Web live                   | Vercel → Deployments: production = `a5d0781`; open the Vercel URL | Loads ("Open in Telegram" page outside Telegram)                                                        | 🟡     |
-| D5  | Web talks to the right API | Sign in inside Telegram                                           | Home loads with your name (wrong `VITE_API_URL` = "Can't reach the server")                             | 🟡     |
-| D6  | Socket.IO works            | Lobby with two phones                                             | "B joined" toast appears without refreshing                                                             | 🟡     |
-| D7  | Telegram Mini App opens    | `/start` → Play                                                   | Home shows **both** games as Live now                                                                   | 🟡     |
+| D1  | Render runs the release    | Open `https://<render-service>.onrender.com/health`               | `version` = `a5d0781` (or a later `main` commit). If not, Render → Manual Deploy → Deploy latest commit | ✅     |
+| D2  | API healthy                | Same response                                                     | HTTP 200, `"status":"ok"`                                                                               | ✅     |
+| D3  | Database healthy           | Same response                                                     | `"database":"up"`                                                                                       | ✅     |
+| D4  | Web live                   | Vercel → Deployments: production = `a5d0781`; open the Vercel URL | Loads ("Open in Telegram" page outside Telegram)                                                        | ✅     |
+| D5  | Web talks to the right API | Sign in inside Telegram                                           | Home loads with your name (wrong `VITE_API_URL` = "Can't reach the server")                             | ✅     |
+| D6  | Socket.IO works            | Lobby with two phones                                             | "B joined" toast appears without refreshing                                                             | ✅     |
+| D7  | Telegram Mini App opens    | `/start` → Play                                                   | Home shows **both** games as Live now                                                                   | ✅     |
 
 ### Color Cipher checklist
 
@@ -188,13 +196,13 @@ Player B hides **Ruby Ruby Leaf Sky** (● ● ◆ ★). Player A makes these gu
 
 | #   | B's pattern        | A guesses           | Expected          | Why                                                              | Status |
 | --- | ------------------ | ------------------- | ----------------- | ---------------------------------------------------------------- | ------ |
-| S1  | Ruby Ruby Leaf Sky | Ruby Ruby Ruby Ruby | 2 exact, 0 close  | Only two Rubies exist; both are exact, the other two miss        | 🟡     |
-| S2  | Ruby Ruby Leaf Sky | Leaf Leaf Ruby Ruby | 0 exact, 3 close  | Two Rubies + one Leaf present, none in place; second Leaf misses | 🟡     |
-| S3  | Ruby Ruby Leaf Sky | Sky Ruby Ruby Leaf  | 1 exact, 3 close  | Position 2 exact; the rest present elsewhere                     | 🟡     |
-| S4  | Ruby Ruby Leaf Sky | Amber Amber Sun Sun | 0 exact, 0 close  | No color in common                                               | 🟡     |
-| S5  | Ruby Ruby Leaf Sky | Ruby Ruby Leaf Sky  | 4 exact → cracked | Last chance for B (or win if A moved second)                     | 🟡     |
-| S6  | Sun Sun Sun Plum   | Sun Sun Plum Plum   | 3 exact, 0 close  | The extra Plum is not counted again                              | 🟡     |
-| S7  | Sun Sun Sun Plum   | Plum Sun Sun Sun    | 2 exact, 2 close  | Positions 2–3 exact; the third Sun and the Plum swapped          | 🟡     |
+| S1  | Ruby Ruby Leaf Sky | Ruby Ruby Ruby Ruby | 2 exact, 0 close  | Only two Rubies exist; both are exact, the other two miss        | ✅     |
+| S2  | Ruby Ruby Leaf Sky | Leaf Leaf Ruby Ruby | 0 exact, 3 close  | Two Rubies + one Leaf present, none in place; second Leaf misses | ✅     |
+| S3  | Ruby Ruby Leaf Sky | Sky Ruby Ruby Leaf  | 1 exact, 3 close  | Position 2 exact; the rest present elsewhere                     | ✅     |
+| S4  | Ruby Ruby Leaf Sky | Amber Amber Sun Sun | 0 exact, 0 close  | No color in common                                               | ✅     |
+| S5  | Ruby Ruby Leaf Sky | Ruby Ruby Leaf Sky  | 4 exact → cracked | Last chance for B (or win if A moved second)                     | ✅     |
+| S6  | Sun Sun Sun Plum   | Sun Sun Plum Plum   | 3 exact, 0 close  | The extra Plum is not counted again                              | ✅     |
+| S7  | Sun Sun Sun Plum   | Plum Sun Sun Sun    | 2 exact, 2 close  | Positions 2–3 exact; the third Sun and the Plum swapped          | ✅     |
 
 ### Secret isolation
 
@@ -203,24 +211,24 @@ then DevTools → Network → WS → the socket → Messages. Don't copy frames 
 
 | #   | Check                                             | Expected                                                                | Status |
 | --- | ------------------------------------------------- | ----------------------------------------------------------------------- | ------ |
-| X1  | Each `room:snapshot` during setup and play        | `"opponentSecret":null`; the opponent's pattern string never appears    | 🟡     |
-| X2  | Phone A's screen / phone B's screen while playing | Each shows only its own pattern                                         | 🟡     |
-| X3  | Snapshot after the result                         | `opponentSecret` now holds the opponent's pattern; the sheet shows both | 🟡     |
-| X4  | Atlas `matches` document for that game            | Guesses and counts only; no pattern fields                              | 🟡     |
+| X1  | Each `room:snapshot` during setup and play        | `"opponentSecret":null`; the opponent's pattern string never appears    | ✅     |
+| X2  | Phone A's screen / phone B's screen while playing | Each shows only its own pattern                                         | ✅     |
+| X3  | Snapshot after the result                         | `opponentSecret` now holds the opponent's pattern; the sheet shows both | ✅     |
+| X4  | Atlas `matches` document for that game            | Guesses and counts only; no pattern fields                              | ✅     |
 
 ### Reconnect, rematch and data
 
 | #   | Check                                                           | Expected                                                                                                                        | Status |
 | --- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| R1  | Background Telegram 20 s during your own turn                   | Back on the same turn; timer still counting from the server deadline                                                            | 🟡     |
-| R2  | Background Telegram 20 s during the opponent's turn             | Their moves made meanwhile are shown; no duplicate rows                                                                         | 🟡     |
-| R3  | Airplane mode 20 s                                              | "Reconnecting…" then clears; opponent saw "Lost connection"                                                                     | 🟡     |
-| R4  | Fully close the Mini App, reopen from the bot (< 60 s)          | Lands back in the game with the same pattern and board                                                                          | 🟡     |
-| R5  | Leave a turn running while away until it times out, then return | "Timed out" row recorded once; it is now the other player's turn                                                                | 🟡     |
-| M1  | A wins → both tap Rematch                                       | New game, new patterns, the other player starts                                                                                 | 🟡     |
-| M2  | A draw (both crack on the last chance) → rematch                | Same as M1; starting player alternates again                                                                                    | 🟡     |
-| V1  | Atlas query below after the test games                          | One document per game, `gameType: "color-cipher"`, distinct `sessionId`s, correct winner/reason, `isRematch` true for rematches | 🟡     |
-| V2  | Profile on both phones                                          | W/L/D and history match the games played; each game named; no double counts                                                     | 🟡     |
+| R1  | Background Telegram 20 s during your own turn                   | Back on the same turn; timer still counting from the server deadline                                                            | ✅     |
+| R2  | Background Telegram 20 s during the opponent's turn             | Their moves made meanwhile are shown; no duplicate rows                                                                         | ✅     |
+| R3  | Airplane mode 20 s                                              | "Reconnecting…" then clears; opponent saw "Lost connection"                                                                     | ✅     |
+| R4  | Fully close the Mini App, reopen from the bot (< 60 s)          | Lands back in the game with the same pattern and board                                                                          | ✅     |
+| R5  | Leave a turn running while away until it times out, then return | "Timed out" row recorded once; it is now the other player's turn                                                                | ✅     |
+| M1  | A wins → both tap Rematch                                       | New game, new patterns, the other player starts                                                                                 | ✅     |
+| M2  | A draw (both crack on the last chance) → rematch                | Same as M1; starting player alternates again                                                                                    | ✅     |
+| V1  | Atlas query below after the test games                          | One document per game, `gameType: "color-cipher"`, distinct `sessionId`s, correct winner/reason, `isRematch` true for rematches | ✅     |
+| V2  | Profile on both phones                                          | W/L/D and history match the games played; each game named; no double counts                                                     | ✅     |
 
 ```js
 // Atlas → rivalrush.matches → Aggregations
@@ -246,7 +254,7 @@ then DevTools → Network → WS → the socket → Messages. Don't copy frames 
 
 | #   | Check                                                                                | Expected                                        | Status |
 | --- | ------------------------------------------------------------------------------------ | ----------------------------------------------- | ------ |
-| T1  | Create, invite (preview says "challenged you to Crack the Code"), join, ready, start | Unchanged flow                                  | 🟡     |
-| T2  | Secrets, a full game to a result                                                     | Bulls/cows and result as before                 | 🟡     |
-| T3  | Rematch                                                                              | New game, other player first                    | 🟡     |
-| T4  | Profile                                                                              | Stats include it, history says "Crack the Code" | 🟡     |
+| T1  | Create, invite (preview says "challenged you to Crack the Code"), join, ready, start | Unchanged flow                                  | ✅     |
+| T2  | Secrets, a full game to a result                                                     | Bulls/cows and result as before                 | ✅     |
+| T3  | Rematch                                                                              | New game, other player first                    | ✅     |
+| T4  | Profile                                                                              | Stats include it, history says "Crack the Code" | ✅     |
