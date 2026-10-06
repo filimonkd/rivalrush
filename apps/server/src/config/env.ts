@@ -76,6 +76,8 @@ const envSchema = z.object({
 
   CLIENT_ORIGINS: z.string().default('http://localhost:5173'),
   DEV_LOGIN_ENABLED: bool,
+  /** Dev/test only: register the Defuser server plug-in (no UI yet; never advertised). */
+  DEFUSER_ENABLED: bool,
   DEFUSER_FIXED_SEED: fixedSeed,
 
   DISCONNECT_GRACE_SECONDS: z.coerce.number().int().min(10).max(600).default(60),
@@ -106,6 +108,8 @@ export interface AppConfig {
   authMaxAgeSeconds: number;
   clientOrigins: string[];
   devLoginEnabled: boolean;
+  /** Registers the Defuser plug-in. Dev/test only; refused in production. */
+  defuserEnabled: boolean;
   /** Test only; refused in production. Never log the value. */
   defuserFixedSeed: string | null;
   disconnectGraceMs: number;
@@ -137,6 +141,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (isProduction) {
     const problems: string[] = [];
     if (e.DEV_LOGIN_ENABLED) problems.push('DEV_LOGIN_ENABLED must be false in production');
+    if (e.DEFUSER_ENABLED) problems.push('DEFUSER_ENABLED must be false in production');
     if (e.DEFUSER_FIXED_SEED) problems.push('DEFUSER_FIXED_SEED must not be set in production');
     if (!e.BOT_TOKEN) problems.push('BOT_TOKEN is required');
     if (!e.JWT_SECRET || e.JWT_SECRET.length < 32)
@@ -175,6 +180,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     authMaxAgeSeconds: e.AUTH_MAX_AGE_SECONDS,
     clientOrigins,
     devLoginEnabled: e.DEV_LOGIN_ENABLED,
+    defuserEnabled: e.DEFUSER_ENABLED,
     defuserFixedSeed: e.DEFUSER_FIXED_SEED ?? null,
     disconnectGraceMs: e.DISCONNECT_GRACE_SECONDS * 1000,
     roomTtlMs: e.ROOM_TTL_MINUTES * 60_000,

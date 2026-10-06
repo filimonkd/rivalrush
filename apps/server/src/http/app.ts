@@ -1,4 +1,4 @@
-import type { HealthResponse } from '@rivalrush/shared';
+import type { GameCatalogEntry, HealthResponse } from '@rivalrush/shared';
 import cors from 'cors';
 import express, { type Express } from 'express';
 import { rateLimit } from 'express-rate-limit';
@@ -7,7 +7,7 @@ import type { Logger } from 'pino';
 import { isValidWebhookSecret, WEBHOOK_PATH, type TelegramBot, type TgUpdate } from '../bot/bot.js';
 import type { AppConfig } from '../config/env.js';
 import { isDatabaseUp } from '../db/connection.js';
-import { listGames } from '../games/registry.js';
+import { listGames as defaultListGames } from '../games/registry.js';
 import type { RoomRepository } from '../rooms/roomRepository.js';
 import type { RoomManager } from '../rooms/roomManager.js';
 import { VERSION } from '../version.js';
@@ -21,12 +21,21 @@ export interface AppDeps {
   logger: Logger;
   rooms: RoomManager;
   roomRepo: RoomRepository;
+  /** The games catalog (defaults to the production-safe registry). */
+  listGames?: () => GameCatalogEntry[];
   bot?: TelegramBot | null;
 }
 
 const rateLimited = { error: { code: 'RATE_LIMITED', message: 'Slow down a little.' } };
 
-export function createApp({ config, logger, rooms, roomRepo, bot = null }: AppDeps): Express {
+export function createApp({
+  config,
+  logger,
+  rooms,
+  roomRepo,
+  listGames = defaultListGames,
+  bot = null,
+}: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
   if (config.trustProxy > 0) app.set('trust proxy', config.trustProxy);

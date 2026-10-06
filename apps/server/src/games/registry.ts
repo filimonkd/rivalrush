@@ -1,20 +1,55 @@
-import type { GameCatalogEntry } from '@rivalrush/shared';
+import { DEFUSER_ID, type GameCatalogEntry } from '@rivalrush/shared';
 import { colorCipher } from './color-cipher/game.js';
 import { crackTheCode } from './crack-the-code/game.js';
+import { createDefuser, defuser } from './defuser/game.js';
 import type { AnyGameDefinition } from './engine/types.js';
 
-/**
- * Playable games. Adding a game = adding its plug-in here.
- *
- * Defuser is deliberately NOT here yet: its server plug-in exists (games/defuser/game.ts) but
- * it has no UI (docs/defuser.md, "Implementation status"). Creating a Defuser room therefore
- * fails with GAME_NOT_AVAILABLE, and the catalog keeps it `coming_soon`. Tests reach the
- * plug-in through RoomManager's injectable `games` lookup.
- */
-const LIVE_GAMES: Record<string, AnyGameDefinition> = {
+/** The duels: always registered. */
+const DUELS: Record<string, AnyGameDefinition> = {
   [crackTheCode.id]: crackTheCode,
   [colorCipher.id]: colorCipher,
 };
+
+export interface GameRegistryOptions {
+  /**
+   * Registers Defuser (docs/defuser.md). Off by default: Defuser has no UI yet, so the server
+   * only registers it in development and test, where tests and E2E create Defuser rooms
+   * explicitly. Config refuses it in production; this factory refuses it too.
+   */
+  defuserEnabled?: boolean;
+  /** Dev/test only: every Defuser game uses this 128-bit seed. Refused in production. */
+  defuserFixedSeed?: string | null;
+  isProduction?: boolean;
+}
+
+export interface GameRegistry {
+  get(id: string): AnyGameDefinition | null;
+  list(): GameCatalogEntry[];
+}
+
+/**
+ * Builds the set of games this server can run. Adding a game = adding its plug-in here.
+ *
+ * Defuser is registered only when explicitly enabled, and is never advertised: its catalog
+ * entry stays `coming_soon` either way, so the app never offers it to ordinary users. With it
+ * unregistered, creating a Defuser room fails with GAME_NOT_AVAILABLE.
+ */
+export function createGameRegistry(opts: GameRegistryOptions = {}): GameRegistry {
+  const wantsDefuser = opts.defuserEnabled === true;
+  const fixedSeed = opts.defuserFixedSeed ?? undefined;
+  if (opts.isProduction && (wantsDefuser || fixedSeed)) {
+    throw new Error('Defuser is not available in production: refusing to register it');
+  }
+  const games: Record<string, AnyGameDefinition> = { ...DUELS };
+  if (wantsDefuser) {
+    // Without a fixed seed, every game seeds itself from the platform's CSPRNG-backed random().
+    games[DEFUSER_ID] = fixedSeed ? createDefuser({ fixedSeed }) : defuser;
+  }
+  return {
+    get: (id) => (Object.hasOwn(games, id) ? games[id]! : null),
+    list: () => CATALOG.map((g) => ({ ...g })),
+  };
+}
 
 const CATALOG: GameCatalogEntry[] = [
   {
@@ -43,10 +78,13 @@ const CATALOG: GameCatalogEntry[] = [
   },
 ];
 
+/** The production-safe default: the duels only. */
+const defaultRegistry = createGameRegistry();
+
 export function getGame(id: string): AnyGameDefinition | null {
-  return Object.hasOwn(LIVE_GAMES, id) ? LIVE_GAMES[id]! : null;
+  return defaultRegistry.get(id);
 }
 
 export function listGames(): GameCatalogEntry[] {
-  return CATALOG.map((g) => ({ ...g }));
+  return defaultRegistry.list();
 }

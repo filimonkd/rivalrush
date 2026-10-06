@@ -40,6 +40,14 @@ describe('loadConfig', () => {
     expect(message).not.toContain(seed);
   });
 
+  it('DEFUSER_ENABLED is off by default and refused in production', () => {
+    expect(loadConfig({}).defuserEnabled).toBe(false);
+    expect(loadConfig({ NODE_ENV: 'test', DEFUSER_ENABLED: 'true' }).defuserEnabled).toBe(true);
+    expect(() => loadConfig({ ...prod, DEFUSER_ENABLED: 'true' })).toThrow(
+      /DEFUSER_ENABLED must be false in production/,
+    );
+  });
+
   it('parses DEFUSER_FIXED_SEED outside production and rejects a malformed one without echoing it', () => {
     const seed = 'fedcba9876543210fedcba9876543210';
     expect(loadConfig({}).defuserFixedSeed).toBeNull();
