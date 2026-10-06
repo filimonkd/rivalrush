@@ -9,6 +9,7 @@ import {
   startTestServer,
   type TestEnv,
 } from '../helpers/integration.js';
+import { duelView } from '../helpers/views.js';
 
 /** Color Cipher over the real stack: REST + Socket.IO + MongoDB, using only existing endpoints. */
 
@@ -94,7 +95,7 @@ describe('Color Cipher over Socket.IO', () => {
       clientVersion: 0,
       action: { type: 'SET_SECRET', pattern: B_PATTERN },
     });
-    const view = afterB.data!.game!.view;
+    const view = duelView(afterB.data!.game!.view);
     expect(view.gameId).toBe('color-cipher');
     expect(view.phase).toBe('PLAYING');
     let gv = afterB.data!.game!.version;
@@ -120,7 +121,7 @@ describe('Color Cipher over Socket.IO', () => {
       clientVersion: gv,
       action: { type: 'GUESS', pattern: '5555' },
     });
-    expect(g1.data!.game!.view.moves.at(-1)).toMatchObject({ exact: 0, partial: 0 });
+    expect(duelView(g1.data!.game!.view).moves.at(-1)).toMatchObject({ exact: 0, partial: 0 });
     gv = g1.data!.game!.version;
 
     // Stale client → refused with the authoritative snapshot.
@@ -146,7 +147,7 @@ describe('Color Cipher over Socket.IO', () => {
       clientVersion: gv,
       action: { type: 'GUESS', pattern: firstTarget },
     });
-    expect(crack.data!.game!.view.phase).toBe('LAST_CHANCE');
+    expect(duelView(crack.data!.game!.view).phase).toBe('LAST_CHANCE');
     gv = crack.data!.game!.version;
     const last = await emit<RoomSnapshot>(second, 'game:action', {
       roomId,
@@ -159,7 +160,7 @@ describe('Color Cipher over Socket.IO', () => {
       winnerId: null,
       reason: 'both_cracked',
     });
-    expect(last.data!.game!.view.opponentSecret).toMatch(/^[0-5]{4}$/);
+    expect(duelView(last.data!.game!.view).opponentSecret).toMatch(/^[0-5]{4}$/);
 
     // No pushed snapshot revealed an opponent pattern before the end.
     await new Promise((r) => setTimeout(r, 100));
@@ -169,10 +170,10 @@ describe('Color Cipher over Socket.IO', () => {
     ] as const) {
       for (const snap of snaps) {
         if (!snap.game || snap.game.result) continue;
-        expect(snap.game.view.opponentSecret).toBeNull();
+        expect(duelView(snap.game.view).opponentSecret).toBeNull();
         const scrubbed = {
           ...snap,
-          game: { ...snap.game, view: { ...snap.game.view, moves: [] } },
+          game: { ...snap.game, view: { ...duelView(snap.game.view), moves: [] } },
         };
         expect(JSON.stringify(scrubbed)).not.toContain(opp);
       }
@@ -201,8 +202,8 @@ describe('Color Cipher over Socket.IO', () => {
     await emit(sa, 'room:rematch', { roomId, actionId: actionId() });
     const rm = await emit<RoomSnapshot>(sb, 'room:rematch', { roomId, actionId: actionId() });
     expect(rm.data!.gameType).toBe('color-cipher');
-    expect(rm.data!.game!.view.phase).toBe('SETUP');
-    expect(rm.data!.game!.view.firstPlayerId).not.toBe(view.firstPlayerId);
+    expect(duelView(rm.data!.game!.view).phase).toBe('SETUP');
+    expect(duelView(rm.data!.game!.view).firstPlayerId).not.toBe(view.firstPlayerId);
 
     // Patterns never reach the logs.
     const logs = env.logLines.join('');
@@ -263,7 +264,7 @@ describe('Color Cipher over Socket.IO', () => {
       knownVersion: 0,
     });
     expect(rs.data!.changed).toBe(true);
-    const view = rs.data!.room.game!.view;
+    const view = duelView(rs.data!.room.game!.view);
     expect(view).toMatchObject({ gameId: 'color-cipher', phase: 'PLAYING', mySecret: A_PATTERN });
     expect(view.opponentSecret).toBeNull();
     expect(rs.data!.room.players.find((p) => p.userId === a.user.id)).toMatchObject({

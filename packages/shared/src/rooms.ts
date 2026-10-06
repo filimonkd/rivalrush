@@ -1,7 +1,12 @@
 import { z } from 'zod';
 import type { CcMove, CcPlayerAction, CcPlayerView, CcSettings } from './colorCipher.js';
 import type { CtcMove, CtcPlayerAction, CtcPlayerView, CtcSettings } from './crackTheCode.js';
-import type { DefuserMove, DefuserPlayerAction, DefuserSettings } from './defuser.js';
+import type {
+  DefuserMove,
+  DefuserPlayerAction,
+  DefuserPlayerView,
+  DefuserSettings,
+} from './defuser.js';
 import type { AnyGameResult } from './games.js';
 
 /**
@@ -39,12 +44,8 @@ export interface PlayerSeat {
 /** Settings of the room's game (look at `gameType` to tell them apart). */
 export type RoomSettings = CtcSettings | CcSettings | DefuserSettings;
 
-/**
- * A player's view of the running game; `view.gameId` tells the games apart.
- * `DefuserPlayerView` (defuser.ts) joins this union in the integration phase, together with
- * the plug-in that builds it; no Defuser view can be produced before then.
- */
-export type GamePlayerView = CtcPlayerView | CcPlayerView;
+/** A player's view of the running game; `view.gameId` tells the games apart. */
+export type GamePlayerView = CtcPlayerView | CcPlayerView | DefuserPlayerView;
 
 /** One entry of a game's secret-free move log (stored in match history). */
 export type GameMove = CtcMove | CcMove | DefuserMove;
@@ -111,7 +112,13 @@ export type RoomEventType =
   | 'last_chance'
   | 'game_over'
   | 'rematch_requested'
-  | 'rematch_started';
+  | 'rematch_started'
+  // Defuser (spec section 10): public, secret-free facts only.
+  | 'device_armed'
+  | 'panel_solved'
+  | 'fault'
+  | 'role_changed'
+  | 'sheets_reassigned';
 
 export interface RoomEvent {
   type: RoomEventType;

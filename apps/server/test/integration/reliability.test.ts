@@ -12,6 +12,7 @@ import {
   waitFor,
   type TestEnv,
 } from '../helpers/integration.js';
+import { duelView } from '../helpers/views.js';
 
 /**
  * Reconnect/resync and stats over the real stack (HTTP + Socket.IO + MongoDB replica set).
@@ -69,7 +70,7 @@ async function lockIn(sa: Socket, sb: Socket, roomId: string, aId: string) {
     clientVersion: 0,
     action: { type: 'SET_SECRET', code: '5678' },
   });
-  const view = r.data!.game!.view;
+  const view = duelView(r.data!.game!.view);
   expect(view.phase).toBe('PLAYING');
   const aFirst = view.currentTurn === aId;
   return {
@@ -102,9 +103,9 @@ describe('reconnect and resync over Socket.IO', () => {
     await emit(again, 'game:resync', { roomId });
     const retry = await emit<RoomSnapshot>(again, 'game:action', payload);
     expect(retry.ok).toBe(true);
-    expect(retry.data!.game!.view.moves).toHaveLength(1);
+    expect(duelView(retry.data!.game!.view).moves).toHaveLength(1);
     const state = await env.http().get(`/api/rooms/${roomId}`).set(auth(firstToken)).expect(200);
-    expect((state.body as RoomSnapshot).game!.view.moves).toHaveLength(1);
+    expect(duelView((state.body as RoomSnapshot).game!.view).moves).toHaveLength(1);
   });
 
   it('a stale client after reconnecting is refused and handed the authoritative snapshot', async () => {
@@ -128,8 +129,8 @@ describe('reconnect and resync over Socket.IO', () => {
       action: { type: 'GUESS', guess: '9013' },
     });
     expect(stale.error?.code).toBe('STALE_GAME_VERSION');
-    expect(stale.snapshot!.game!.view.moves).toHaveLength(1);
-    expect(stale.snapshot!.game!.view.opponentSecret).toBeNull();
+    expect(duelView(stale.snapshot!.game!.view).moves).toHaveLength(1);
+    expect(duelView(stale.snapshot!.game!.view).opponentSecret).toBeNull();
     // With the fresh version the same move goes through.
     const ok = await emit<RoomSnapshot>(back, 'game:action', {
       roomId,
@@ -138,7 +139,7 @@ describe('reconnect and resync over Socket.IO', () => {
       action: { type: 'GUESS', guess: '9013' },
     });
     expect(ok.ok).toBe(true);
-    expect(ok.data!.game!.view.moves).toHaveLength(2);
+    expect(duelView(ok.data!.game!.view).moves).toHaveLength(2);
   });
 
   it('a game action arriving while a resync is in flight: both answered, newest state wins', async () => {
@@ -163,7 +164,7 @@ describe('reconnect and resync over Socket.IO', () => {
     const resyncVersion = rs.data!.room?.version ?? rs.data!.version!;
     const newest = Math.max(resyncVersion, act.data!.version);
     expect(newest).toBe(act.data!.version);
-    expect(act.data!.game!.view.moves).toHaveLength(1);
+    expect(duelView(act.data!.game!.view).moves).toHaveLength(1);
   });
 
   it('subscribing to a room you are not in, or with a forged id, is refused', async () => {
