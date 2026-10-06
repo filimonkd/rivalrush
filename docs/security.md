@@ -30,6 +30,16 @@ production. Production boot fails if the flag is set. Dev users have negative `t
 they can never collide with real accounts. The web app shows dev login only when built with
 `VITE_DEV_LOGIN=true`; never set that in Vercel.
 
+## Defuser flags (dev/test only)
+
+`DEFUSER_ENABLED` registers the Defuser server plug-in and `DEFUSER_FIXED_SEED` makes every game
+predictable. Production boot fails if either is set, and the game registry refuses to build with
+either when `isProduction` is true, so neither can be switched on by a code path that skips the
+config. The seed is never echoed in an error and never logged; the startup warning does not
+include it. Defuser state, the Charge, the Codebook and the solution are built into per-role views
+only (see [defuser.md](defuser.md)); the match document keeps the seed in a `select: false` field
+that no API returns.
+
 ## Known limitations
 
 - JWTs cannot be revoked before expiry (7 days); rotate `JWT_SECRET` to log everyone out.
