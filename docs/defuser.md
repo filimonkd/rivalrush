@@ -1,8 +1,9 @@
 # Defuser
 
-**Status: FOUNDATION IN PROGRESS. Not playable.** Defuser has no game plug-in, no UI and no
-production availability. Creating a Defuser room fails with `GAME_NOT_AVAILABLE`, and the
-catalog lists it as `coming_soon`.
+**Status: SERVER PLUG-IN BUILT. Not playable.** The server-side game (state machine, drop-out
+procedure, per-role views) exists and is tested, but Defuser has no UI and no production
+availability. It is not in the live game registry, so creating a Defuser room fails with
+`GAME_NOT_AVAILABLE`, and the catalog lists it as `coming_soon`.
 
 The authoritative game design is the _Defuser — Game Design Specification_ (Claude Doc, with
 its consistency audits and correction log). This file records what is built in the repository.
@@ -11,32 +12,34 @@ where it disagrees with the specification, the specification wins.
 
 ## Implementation status
 
-| Area                                                                                                                  | State                                                   | Where                                                 |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------- |
-| Co-op result model (`CoopResult`: outcome, reason, panelsSolved, faults, msRemaining, individual)                     | Implemented, tested                                     | `packages/shared/src/games.ts`                        |
-| Defuser shared contract (id, settings, sheet catalogue, rule data, Charge, actions, moves, view types)                | Implemented (types only; no view is built yet)          | `packages/shared/src/defuser.ts`                      |
-| Sheet renderer (rule data → deterministic sheet text)                                                                 | Implemented, tested                                     | `packages/shared/src/defuserSheets.ts`                |
-| Starting-player rotation for 2–4 players                                                                              | Implemented, tested (2-player swap unchanged)           | `apps/server/src/rooms/rotation.ts`                   |
-| Player names snapshotted at game start; co-op player records and server-only generator info passed to match recording | Implemented, tested                                     | `rooms/roomManager.ts`, `matches/matchService.ts`     |
-| `stats.coop {played, wins, losses, dropped}`; co-op never touches competitive stats                                   | Implemented; unit-tested here, integration-tested in CI | `matches/matchService.ts`, `users/*`                  |
-| History: teammates, roles, co-op summary; seed stored `select: false`, never in any API                               | Implemented; integration-tested in CI                   | `matches/Match.model.ts`, `users/userService.ts`      |
-| Deterministic PRNG (xoshiro128**, 128-bit seed from 3 × 47 platform random bits)                                      | Implemented, tested                                     | `apps/server/src/games/defuser/prng.ts`               |
-| Fuse Lines, Glyph Ledger, Coolant Valve: generator, solver, constraints, safe template                                | Implemented, tested                                     | `apps/server/src/games/defuser/{fuse,glyph,valve}.ts` |
-| Edition pipeline (retry up to 200, safe template, sheet limits, sheet assignment)                                     | Implemented, tested                                     | `apps/server/src/games/defuser/edition.ts`            |
-| `GameDefinition` (state machine, actions, views, drop-out procedure, timers)                                          | **Not implemented** (next phase)                        | —                                                     |
-| Room and Socket.IO integration, `DefuserPlayerView` in snapshots                                                      | **Not implemented**                                     | —                                                     |
-| Operator console, Analyst Codebook, debrief, result UI                                                                | **Not implemented**                                     | —                                                     |
-| `DEFUSER_FIXED_SEED` E2E hook, production activation                                                                  | **Not implemented**                                     | —                                                     |
+| Area                                                                                                                  | State                                                                                                                               | Where                                                                               |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Co-op result model (`CoopResult`: outcome, reason, panelsSolved, faults, msRemaining, individual)                     | Implemented, tested                                                                                                                 | `packages/shared/src/games.ts`                                                      |
+| Defuser shared contract (id, settings, sheet catalogue, rule data, Charge, actions, moves, view types)                | Implemented (types only; no view is built yet)                                                                                      | `packages/shared/src/defuser.ts`                                                    |
+| Sheet renderer (rule data → deterministic sheet text)                                                                 | Implemented, tested                                                                                                                 | `packages/shared/src/defuserSheets.ts`                                              |
+| Starting-player rotation for 2–4 players                                                                              | Implemented, tested (2-player swap unchanged)                                                                                       | `apps/server/src/rooms/rotation.ts`                                                 |
+| Player names snapshotted at game start; co-op player records and server-only generator info passed to match recording | Implemented, tested                                                                                                                 | `rooms/roomManager.ts`, `matches/matchService.ts`                                   |
+| `stats.coop {played, wins, losses, dropped}`; co-op never touches competitive stats                                   | Implemented; unit-tested here, integration-tested in CI                                                                             | `matches/matchService.ts`, `users/*`                                                |
+| History: teammates, roles, co-op summary; seed stored `select: false`, never in any API                               | Implemented; integration-tested in CI                                                                                               | `matches/Match.model.ts`, `users/userService.ts`                                    |
+| Deterministic PRNG (xoshiro128**, 128-bit seed from 3 × 47 platform random bits)                                      | Implemented, tested                                                                                                                 | `apps/server/src/games/defuser/prng.ts`                                             |
+| Fuse Lines, Glyph Ledger, Coolant Valve: generator, solver, constraints, safe template                                | Implemented, tested                                                                                                                 | `apps/server/src/games/defuser/{fuse,glyph,valve}.ts`                               |
+| Edition pipeline (retry up to 200, safe template, sheet limits, sheet assignment)                                     | Implemented, tested                                                                                                                 | `apps/server/src/games/defuser/edition.ts`                                          |
+| `GameDefinition`: state machine, actions, validation order, views, drop-out procedure, rejoin, timers                 | Implemented, tested (unit, room-level with a fake clock, 3-client Socket.IO; Mongo recording in CI)                                 | `apps/server/src/games/defuser/{game,state,transitions,dropout,views}.ts`           |
+| Room and Socket.IO integration: `DefuserPlayerView` in snapshots, 5 new room events                                   | Implemented and tested through RoomManager's injectable `games` lookup. **Not registered**: the live registry still refuses Defuser | `packages/shared/src/rooms.ts`, `rooms/roomManager.ts`, `websocket/socketServer.ts` |
+| Operator console, Analyst Codebook, debrief, result UI                                                                | **Not implemented**                                                                                                                 | —                                                                                   |
+| `DEFUSER_FIXED_SEED` config (parsed, refused in production, startup warning without the value)                        | Implemented, tested. Not yet read by a registered game or the Playwright config                                                     | `config/env.ts`, `index.ts`                                                         |
+| Registering the plug-in, activation in production, Playwright E2E                                                     | **Not implemented**                                                                                                                 | —                                                                                   |
 
 ### Generator verification
 
-| Suite                                                                                                                                                                                                                                                                                                       | Seeds / samples                              | Runs                                                                         |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
-| `defuser-generator.test.ts`: G1 (one answer, by an independent oracle), G2 (Charge + sheets give the answer), G3 (wording reads back to the rule data), G4 (each sheet genuinely changes the answer), G5 (assignment), G6 (team sizes), ranges, ties, distribution targets, Valve independence (chi-square) | 5,000 seeds                                  | every `npm test`                                                             |
-| same, full                                                                                                                                                                                                                                                                                                  | 100,000 seeds                                | `npm run test:defuser:full -w @rivalrush/server`; CI job "Defuser generator" |
-| `defuser-oracle.test.ts`: production solver vs a separately written oracle on arbitrary (also invalid) panels                                                                                                                                                                                               | 20,000 per panel (200,000 in the full suite) | as above                                                                     |
-| `defuser-golden.test.ts`: 20 fixed seeds reproduce identical editions                                                                                                                                                                                                                                       | 20 seeds                                     | every `npm test`                                                             |
-| `defuser-prng`, `defuser-panels`, `defuser-security`, `coop-platform`                                                                                                                                                                                                                                       | —                                            | every `npm test`                                                             |
+| Suite                                                                                                                                                                                                                                                                                                                                                                                 | Seeds / samples                              | Runs                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
+| `defuser-generator.test.ts`: G1 (one answer, by an independent oracle), G2 (Charge + sheets give the answer), G3 (wording reads back to the rule data), G4 (each sheet genuinely changes the answer), G5 (assignment), G6 (team sizes), ranges, ties, distribution targets, Valve independence (chi-square)                                                                           | 5,000 seeds                                  | every `npm test`                                                             |
+| same, full                                                                                                                                                                                                                                                                                                                                                                            | 100,000 seeds                                | `npm run test:defuser:full -w @rivalrush/server`; CI job "Defuser generator" |
+| `defuser-oracle.test.ts`: production solver vs a separately written oracle on arbitrary (also invalid) panels                                                                                                                                                                                                                                                                         | 20,000 per panel (200,000 in the full suite) | as above                                                                     |
+| `defuser-golden.test.ts`: 20 fixed seeds reproduce identical editions                                                                                                                                                                                                                                                                                                                 | 20 seeds                                     | every `npm test`                                                             |
+| `defuser-game` (creation, countdown, error precedence, every transition, events, +1 version), `defuser-dropout` (all 19 scenarios, rejoin, G6 over every drop-out sequence for 2–4 players), `defuser-views` (exact key lists per role, 2,000 editions; 10,000 in the full suite), `defuser-room` (RoomManager with a fake clock, rotation, races), `defuser-socket` (3 real clients) | 2,000 editions per PR                        | every `npm test`                                                             |
+| `defuser-prng`, `defuser-panels`, `defuser-security`, `coop-platform`                                                                                                                                                                                                                                                                                                                 | —                                            | every `npm test`                                                             |
 
 **Changing the generator:** any change to generated editions fails the golden test. If it is
 intended, bump `GENERATOR_VERSION` in `edition.ts`, regenerate the fixture with
@@ -52,6 +55,30 @@ explain why in the commit.
 - The Valve answer is statistically independent of plate, lamp and gauge.
 
 ### Decisions made while building
+
+Server plug-in phase:
+
+- Every Defuser action is version-independent (there are no turns), so `STALE_GAME_VERSION` never
+  applies. The platform still deduplicates by `actionId`.
+- Refusals use `INVALID_ACTION` with `details.rule` (`not_operator`, `inactive`, `not_inactive`,
+  `already_ready`, `line_cut`, `key_lit`, `panel_solved`, `already_tried`). Phase errors use
+  `GAME_NOT_STARTED` and `GAME_ALREADY_STARTED`. A refused action changes nothing and bumps nothing.
+- A late briefing timer still arms from the briefing deadline itself, so the countdown never
+  starts late. A last solve at the detonation millisecond loses, because the platform applies
+  `$TIMEOUT` before any action.
+- Platform fix from spec section 14: when a grace expiry's `$ABANDON` is refused (the player had
+  already timed out), RoomManager now marks the room dirty, so the cleared grace deadline is saved
+  and cannot replay. The test fails without the fix.
+- The Charge and sheet contents are absent from every view during BRIEFING. After the end every
+  member gets the debrief view. Views are built field by field; tests pin the exact key list per role.
+- Snapshots are built through `RoomManager.snapshotFor`, so the socket layer uses the same game
+  lookup as everything else.
+- `DEFUSER_FIXED_SEED` is parsed and refused in production, but nothing reads it yet: the plug-in
+  is only constructed with a fixed seed in tests until the registration phase.
+- Duel tests read snapshot views through a `duelView` helper, since a snapshot view may now be a
+  Defuser view. No duel assertion changed.
+
+Foundation phase:
 
 - Duel types stay exactly as they were: `GameResult` is still the duel result. The co-op variant
   is `CoopResult`, and the platform uses the union `AnyGameResult`.
