@@ -1,16 +1,30 @@
 import { z } from 'zod';
-import type { GameEndReason } from './games.js';
+import type { AnyGameEndReason, CoopIndividualResult } from './games.js';
 import type { GameId, RoomSnapshot } from './rooms.js';
 import { actionIdSchema, inviteTokenSchema } from './rooms.js';
 import type { AppErrorPayload } from './errors.js';
 
+/** Co-op (Defuser) counters. Co-op games never touch the competitive fields. */
+export interface CoopStats {
+  /** Co-op games the player was in at the start. */
+  played: number;
+  /** Team DEFUSED while the player was active. */
+  wins: number;
+  /** Team DETONATED while the player was active. */
+  losses: number;
+  /** Games the player dropped out of (timed out without rejoining, or left). */
+  dropped: number;
+}
+
 export interface UserStats {
+  /** Competitive (duel) games only. */
   gamesPlayed: number;
   wins: number;
   losses: number;
   draws: number;
   currentStreak: number;
   bestStreak: number;
+  coop: CoopStats;
 }
 
 export interface PublicUser {
@@ -34,16 +48,41 @@ export interface AuthResponse {
   inviteToken: string | null;
 }
 
-export type MatchOutcome = 'win' | 'loss' | 'draw';
+/** A player's result in one match: duel outcomes, or a co-op individual result. */
+export type MatchOutcome = 'win' | 'loss' | 'draw' | CoopIndividualResult;
+
+export interface MatchTeammate {
+  userId: string;
+  displayName: string;
+  photoUrl: string | null;
+  /** Starting role (Defuser: operator or analyst). */
+  role: string;
+}
+
+/** Co-op part of a history row, from the viewer's point of view. Never contains game secrets. */
+export interface MatchCoopSummary {
+  role: string;
+  /** How the viewer's role changed during the game, if it did. */
+  roleChange: 'promoted' | 'rejoined' | null;
+  panelsSolved: number;
+  faults: number;
+  msRemaining: number;
+}
 
 export interface MatchSummary {
   sessionId: string;
   roomId: string;
   gameType: GameId;
   outcome: MatchOutcome;
-  reason: GameEndReason;
+  reason: AnyGameEndReason;
+  /** Duels: the other player. Co-op: null. */
   opponent: { userId: string; displayName: string; photoUrl: string | null } | null;
+  /** Duels: the viewer's turns. Co-op: accepted Operator inputs in the whole game. */
   turns: number;
+  /** Co-op: everyone else in the game. Duels: empty. */
+  teammates: MatchTeammate[];
+  /** Co-op only; null for duels. */
+  coop: MatchCoopSummary | null;
   startedAt: string;
   endedAt: string;
 }

@@ -1,4 +1,10 @@
-import type { GameMove, GameResult } from '@rivalrush/shared';
+import {
+  isCoopResult,
+  type AnyGameResult,
+  type CoopIndividualResult,
+  type CoopPlayerRecord,
+  type GameMove,
+} from '@rivalrush/shared';
 import mongoose, { Types } from 'mongoose';
 import type { Logger } from 'pino';
 import { UserModel } from '../users/User.model.js';
@@ -11,24 +17,62 @@ export interface FinishedSession {
   gameType: string;
   settings: Record<string, unknown>;
   isRematch: boolean;
-  players: Array<{ userId: string; displayName: string; photoUrl: string | null }>;
-  result: GameResult;
+  players: Array<{
+    userId: string;
+    displayName: string;
+    photoUrl: string | null;
+    /** Co-op games only: roles and final status (from the game's own state). */
+    coop?: CoopPlayerRecord;
+  }>;
+  result: AnyGameResult;
   moves: GameMove[];
   startedAt: number;
   endedAt: number;
+  /** Generated-puzzle games only. Stored with `select: false`; never returned by any API. */
+  generator?: { version: number; seed: string };
 }
 
-type Outcome = 'win' | 'loss' | 'draw';
+export type Outcome = 'win' | 'loss' | 'draw' | CoopIndividualResult;
 
-export function outcomeFor(result: GameResult, userId: string): Outcome {
+export function outcomeFor(result: AnyGameResult, userId: string): Outcome {
+  if (isCoopResult(result)) {
+    // Every player in the game at the start has an individual result. A missing one would be a
+    // plug-in bug; count it as a played game only, never as a win or a loss.
+    return result.individual[userId] ?? 'coop_unfinished';
+  }
   if (result.outcome === 'draw') return 'draw';
   return result.winnerId === userId ? 'win' : 'loss';
 }
 
+/** Co-op history counts accepted Operator inputs for the whole team (docs/defuser.md 17). */
+function turnsFor(s: FinishedSession, userId: string): number {
+  if (isCoopResult(s.result))
+    return s.moves.filter((m) => 'kind' in m && m.kind === 'input').length;
+  return s.moves.filter((m) => m.playerId === userId).length;
+}
+
 const n = (field: string) => ({ $ifNull: [`$stats.${field}`, 0] });
 
+/**
+ * Co-op results update only `stats.coop`. They never read or write the competitive fields
+ * (gamesPlayed, wins, losses, draws, currentStreak, bestStreak), so a co-op game neither
+ * extends nor resets a streak.
+ */
+function coopStatsUpdate(outcome: CoopIndividualResult) {
+  const set: Record<string, unknown> = {
+    'stats.coop.played': { $add: [n('coop.played'), 1] },
+  };
+  if (outcome === 'coop_win') set['stats.coop.wins'] = { $add: [n('coop.wins'), 1] };
+  if (outcome === 'coop_loss') set['stats.coop.losses'] = { $add: [n('coop.losses'), 1] };
+  if (outcome === 'coop_dropped') set['stats.coop.dropped'] = { $add: [n('coop.dropped'), 1] };
+  return [{ $set: set }];
+}
+
 /** Aggregation-pipeline update so streaks are computed atomically from the stored values. */
-function statsUpdate(outcome: Outcome) {
+export function statsUpdate(outcome: Outcome) {
+  if (outcome !== 'win' && outcome !== 'loss' && outcome !== 'draw') {
+    return coopStatsUpdate(outcome);
+  }
   const set: Record<string, unknown> = {
     'stats.gamesPlayed': { $add: [n('gamesPlayed'), 1] },
   };
@@ -79,10 +123,12 @@ export async function recordMatch(s: FinishedSession): Promise<'recorded' | 'dup
               displayName: p.displayName,
               photoUrl: p.photoUrl,
               outcome: outcomeFor(s.result, p.userId),
-              turns: s.moves.filter((m) => m.playerId === p.userId).length,
+              turns: turnsFor(s, p.userId),
+              ...(p.coop ? { coop: p.coop } : {}),
             })),
             result: s.result,
             moves: s.moves.map((m) => ({ ...m, at: new Date(m.at) })),
+            ...(s.generator ? { generator: s.generator } : {}),
             startedAt: new Date(s.startedAt),
             endedAt: new Date(s.endedAt),
           },

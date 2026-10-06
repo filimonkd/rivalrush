@@ -1,6 +1,7 @@
 import type { RoomEvent } from '@rivalrush/shared';
 import { pino } from 'pino';
 import type { CtcState } from '../../src/games/crack-the-code/game.js';
+import type { AnyGameDefinition } from '../../src/games/engine/types.js';
 import type { FinishedSession } from '../../src/matches/matchService.js';
 import { InMemoryRoomStore } from '../../src/rooms/InMemoryRoomStore.js';
 import { RoomManager, type RemovalReason } from '../../src/rooms/roomManager.js';
@@ -24,10 +25,16 @@ export const carol: SeatIdentity = {
   photoUrl: null,
 };
 
+export const dave: SeatIdentity = {
+  userId: 'dddddddddddddddddddddddd',
+  displayName: 'Dave',
+  photoUrl: null,
+};
+
 export const GRACE_MS = 60_000;
 export const TTL_MS = 120 * 60_000;
 
-export function makeManager(seed = 1) {
+export function makeManager(seed = 1, games?: (id: string) => AnyGameDefinition | null) {
   const store = new InMemoryRoomStore();
   const changes: Array<{ room: LiveRoom; events: RoomEvent[] }> = [];
   const removed: Array<{ roomId: string; userId: string; reason: RemovalReason }> = [];
@@ -42,7 +49,12 @@ export function makeManager(seed = 1) {
       persistRoom: (room) => persisted.push(structuredClone(room)),
     },
     pino({ level: 'silent' }),
-    { roomTtlMs: TTL_MS, disconnectGraceMs: GRACE_MS, random: seededRandom(seed) },
+    {
+      roomTtlMs: TTL_MS,
+      disconnectGraceMs: GRACE_MS,
+      random: seededRandom(seed),
+      ...(games ? { games } : {}),
+    },
   );
   const raw = async (roomId: string) => (await store.get(roomId))!;
   const state = async (roomId: string) => (await raw(roomId)).game!.state as CtcState;

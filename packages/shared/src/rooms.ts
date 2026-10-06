@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import type { CcMove, CcPlayerAction, CcPlayerView, CcSettings } from './colorCipher.js';
 import type { CtcMove, CtcPlayerAction, CtcPlayerView, CtcSettings } from './crackTheCode.js';
-import type { GameResult } from './games.js';
+import type { DefuserMove, DefuserPlayerAction, DefuserSettings } from './defuser.js';
+import type { AnyGameResult } from './games.js';
 
 /**
  * Room lifecycle (see docs/state-machine.md):
@@ -19,7 +20,8 @@ export type RoomStatus = (typeof ROOM_STATUSES)[number];
 
 export const TERMINAL_ROOM_STATUSES: readonly RoomStatus[] = ['EXPIRED', 'CLOSED'];
 
-export const GAME_IDS = ['crack-the-code', 'color-cipher'] as const;
+/** Every game the platform knows. Defuser is known but not playable yet (no plug-in). */
+export const GAME_IDS = ['crack-the-code', 'color-cipher', 'defuser'] as const;
 export type GameId = (typeof GAME_IDS)[number];
 
 export interface PlayerSeat {
@@ -35,16 +37,20 @@ export interface PlayerSeat {
 }
 
 /** Settings of the room's game (look at `gameType` to tell them apart). */
-export type RoomSettings = CtcSettings | CcSettings;
+export type RoomSettings = CtcSettings | CcSettings | DefuserSettings;
 
-/** A player's view of the running game; `view.gameId` tells the games apart. */
+/**
+ * A player's view of the running game; `view.gameId` tells the games apart.
+ * `DefuserPlayerView` (defuser.ts) joins this union in the integration phase, together with
+ * the plug-in that builds it; no Defuser view can be produced before then.
+ */
 export type GamePlayerView = CtcPlayerView | CcPlayerView;
 
 /** One entry of a game's secret-free move log (stored in match history). */
-export type GameMove = CtcMove | CcMove;
+export type GameMove = CtcMove | CcMove | DefuserMove;
 
 /** Any player action the client can send in `game:action`. */
-export type PlayerAction = CtcPlayerAction | CcPlayerAction;
+export type PlayerAction = CtcPlayerAction | CcPlayerAction | DefuserPlayerAction;
 
 export interface GameSnapshot {
   sessionId: string;
@@ -52,7 +58,7 @@ export interface GameSnapshot {
   version: number;
   /** Player-specific view. Built per recipient; never the raw state. */
   view: GamePlayerView;
-  result: GameResult | null;
+  result: AnyGameResult | null;
 }
 
 export interface RoomSnapshot {

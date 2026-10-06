@@ -1,5 +1,12 @@
 import { createHash } from 'node:crypto';
-import type { MatchSummary, ProfileResponse, PublicUser, UserStats } from '@rivalrush/shared';
+import type {
+  MatchCoopSummary,
+  MatchSummary,
+  MatchTeammate,
+  ProfileResponse,
+  PublicUser,
+  UserStats,
+} from '@rivalrush/shared';
 import { isValidObjectId } from 'mongoose';
 import type { TelegramUser } from '../auth/telegramAuth.js';
 import { AppError } from '../errors.js';
@@ -80,6 +87,13 @@ export function toStats(user: UserDoc): UserStats {
     draws: s.draws ?? 0,
     currentStreak: s.currentStreak ?? 0,
     bestStreak: s.bestStreak ?? 0,
+    // Users recorded before co-op existed have no `coop` block: all zero.
+    coop: {
+      played: s.coop?.played ?? 0,
+      wins: s.coop?.wins ?? 0,
+      losses: s.coop?.losses ?? 0,
+      dropped: s.coop?.dropped ?? 0,
+    },
   };
 }
 
@@ -117,7 +131,30 @@ export async function recentMatches(userId: string, limit = 10): Promise<MatchSu
     .lean();
   return docs.map((m) => {
     const me = m.players.find((p) => String(p.userId) === userId)!;
-    const opp = m.players.find((p) => String(p.userId) !== userId);
+    const isCoop = m.result?.kind === 'coop';
+    const others = m.players.filter((p) => String(p.userId) !== userId);
+    const opp = isCoop ? undefined : others[0];
+    const teammates: MatchTeammate[] = isCoop
+      ? others.map((p) => ({
+          userId: String(p.userId),
+          displayName: p.displayName,
+          photoUrl: p.photoUrl ?? null,
+          role: p.coop?.startRole ?? '',
+        }))
+      : [];
+    let coop: MatchCoopSummary | null = null;
+    if (isCoop) {
+      const rec = me.coop;
+      const promoted = !!rec && rec.finalRole !== rec.startRole;
+      coop = {
+        role: rec?.startRole ?? '',
+        roleChange: rec?.rejoined ? 'rejoined' : promoted ? 'promoted' : null,
+        panelsSolved: m.result?.panelsSolved ?? 0,
+        faults: m.result?.faults ?? 0,
+        msRemaining: m.result?.msRemaining ?? 0,
+      };
+    }
+    // Only whitelisted fields are mapped: the server-only `generator` (seed) never appears here.
     return {
       sessionId: m.sessionId,
       roomId: m.roomId,
@@ -132,6 +169,8 @@ export async function recentMatches(userId: string, limit = 10): Promise<MatchSu
           }
         : null,
       turns: me.turns,
+      teammates,
+      coop,
       startedAt: m.startedAt.toISOString(),
       endedAt: m.endedAt.toISOString(),
     };

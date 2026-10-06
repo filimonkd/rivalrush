@@ -8,6 +8,19 @@ const statsSchema = new Schema(
     draws: { type: Number, default: 0, min: 0 },
     currentStreak: { type: Number, default: 0, min: 0 },
     bestStreak: { type: Number, default: 0, min: 0 },
+    /** Co-op (Defuser) counters. Never mixed into the competitive fields above. */
+    coop: {
+      type: new Schema(
+        {
+          played: { type: Number, default: 0, min: 0 },
+          wins: { type: Number, default: 0, min: 0 },
+          losses: { type: Number, default: 0, min: 0 },
+          dropped: { type: Number, default: 0, min: 0 },
+        },
+        { _id: false },
+      ),
+      default: () => ({}),
+    },
   },
   { _id: false },
 );

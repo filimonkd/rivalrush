@@ -1,7 +1,8 @@
 import {
   COLOR_CIPHER_ID,
   CRACK_THE_CODE_ID,
-  type GameEndReason,
+  DEFUSER_ID,
+  type AnyGameEndReason,
   type GameId,
   type RoomSettings,
 } from '@rivalrush/shared';
@@ -47,13 +48,25 @@ export const GAMES: Record<GameId, GameInfo> = {
       { value: String(num(s, 'maxGuesses')), label: 'guesses' },
     ],
   },
+  // Not playable yet (no server plug-in): present so history and labels can name it.
+  [DEFUSER_ID]: {
+    id: DEFUSER_ID,
+    name: 'Defuser',
+    tagline: 'Your crew vs. the clock.',
+    blurb: 'Co-op · 2–4 players · best on a voice call',
+    secretNoun: 'Charge',
+    summary: () => [],
+  },
 };
 
 export function gameInfo(id: string): GameInfo {
   return GAMES[id as GameId] ?? GAMES[CRACK_THE_CODE_ID];
 }
 
-export function reasonLabel(reason: GameEndReason, gameType: string = CRACK_THE_CODE_ID): string {
+export function reasonLabel(
+  reason: AnyGameEndReason,
+  gameType: string = CRACK_THE_CODE_ID,
+): string {
   switch (reason) {
     case 'cracked':
       return gameType === COLOR_CIPHER_ID ? 'Pattern cracked' : 'Code cracked';
@@ -64,6 +77,12 @@ export function reasonLabel(reason: GameEndReason, gameType: string = CRACK_THE_
     case 'forfeit':
       return 'Gave up';
     case 'abandoned':
-      return 'Dropped out';
+      return gameType === DEFUSER_ID ? 'Not enough players' : 'Dropped out';
+    case 'defused':
+      return 'Defused';
+    case 'faults':
+      return '3 faults';
+    case 'timer':
+      return 'Time ran out';
   }
 }

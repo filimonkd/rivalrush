@@ -1,4 +1,5 @@
 import type { InvitePreview, PlayerSeat, RoomSnapshot } from '@rivalrush/shared';
+import type { AnyGameDefinition } from '../games/engine/types.js';
 import { getGame } from '../games/registry.js';
 import type { LiveRoom } from './types.js';
 
@@ -19,10 +20,15 @@ function seatView(room: LiveRoom, s: LiveRoom['seats'][number]): PlayerSeat {
  * Builds the snapshot for ONE viewer. The raw game state never leaves the server: the
  * game's getPlayerView decides what this viewer may see (their own secret only).
  */
-export function buildSnapshot(room: LiveRoom, viewerId: string, now: number): RoomSnapshot {
+export function buildSnapshot(
+  room: LiveRoom,
+  viewerId: string,
+  now: number,
+  lookupGame: (id: string) => AnyGameDefinition | null = getGame,
+): RoomSnapshot {
   let game: RoomSnapshot['game'] = null;
   if (room.game) {
-    const def = getGame(room.game.gameType);
+    const def = lookupGame(room.game.gameType);
     if (!def) throw new Error(`game plug-in missing: ${room.game.gameType}`);
     game = {
       sessionId: room.game.sessionId,

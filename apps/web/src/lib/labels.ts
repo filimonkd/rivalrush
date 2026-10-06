@@ -1,9 +1,19 @@
-import type { ErrorCode } from '@rivalrush/shared';
+import type { ErrorCode, MatchOutcome } from '@rivalrush/shared';
 
 export { reasonLabel } from './games';
 
-export function outcomeLabel(outcome: 'win' | 'loss' | 'draw'): string {
-  return outcome === 'win' ? 'Win' : outcome === 'loss' ? 'Loss' : 'Draw';
+const OUTCOME_LABELS: Record<MatchOutcome, string> = {
+  win: 'Win',
+  loss: 'Loss',
+  draw: 'Draw',
+  coop_win: 'Defused',
+  coop_loss: 'Detonated',
+  coop_unfinished: 'Unfinished',
+  coop_dropped: 'Dropped out',
+};
+
+export function outcomeLabel(outcome: MatchOutcome): string {
+  return OUTCOME_LABELS[outcome];
 }
 
 const JOIN_ERRORS: Partial<Record<ErrorCode | 'NETWORK_ERROR', string>> = {
