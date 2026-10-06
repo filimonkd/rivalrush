@@ -48,6 +48,9 @@ export function colorLabel(color: ColorId): string {
   return `${c.name} ${c.symbol}`;
 }
 
+/** "an Amber", "a Ruby". */
+const article = (color: ColorId): string =>
+  /^[AEIOU]/.test(DEFUSER_COLORS[color].name) ? 'an' : 'a';
 const lampName = (lamp: ValveLamp): string => lamp[0]!.toUpperCase() + lamp.slice(1);
 const two = (n: number): string => String(n).padStart(2, '0');
 const levels = (n: number): string => (n === 1 ? 'one level' : 'two levels');
@@ -63,7 +66,7 @@ export function fuseConditionText(c: FuseCondition): string {
     case 'endColor':
       return `the ${c.end} bead is ${colorLabel(c.color)}`;
     case 'colorAbove':
-      return `a ${colorLabel(c.upper)} bead is directly above a ${colorLabel(c.lower)} bead`;
+      return `${article(c.upper)} ${colorLabel(c.upper)} bead is directly above ${article(c.lower)} ${colorLabel(c.lower)} bead`;
   }
 }
 

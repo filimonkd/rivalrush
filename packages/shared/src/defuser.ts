@@ -132,7 +132,8 @@ export function sheetIdOf(panel: PanelId, type: SheetType): SheetId {
 /** Sheet size limits checked by the generator and the tests (spec section 6). */
 export const SHEET_LIMITS = {
   procedureItems: 6,
-  procedureItemChars: 90,
+  // The longest possible Ladder rule renders at 98 characters (spec 6, rev 3).
+  procedureItemChars: 100,
   referenceRows: 6,
   referenceColumns: 4,
   referenceNoteChars: 60,
