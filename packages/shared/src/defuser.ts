@@ -4,8 +4,8 @@ import type { CoopPlayerStatus, CoopResult } from './games.js';
 
 /**
  * Defuser shared contract (docs/defuser.md). Only types, schemas, the sheet catalogue and the
- * rule-data shapes live here: the generator and the solver are server-only. Status: foundation
- * only. There is no playable Defuser yet.
+ * rule-data shapes live here: the generator, the solver and the game plug-in are server-only.
+ * Status: server plug-in built, no UI, not available in production (docs/defuser.md).
  */
 export const DEFUSER_ID = 'defuser' as const;
 
@@ -344,7 +344,7 @@ export type DefuserMove =
       ok: boolean;
       /** Epoch ms. */
       at: number;
-      /** Ms since the Charge was armed. */
+      /** Ms since the Charge was armed (0 during the briefing). */
       atMs: number;
     }
   | {
@@ -363,6 +363,14 @@ export interface DefuserRosterEntry {
   ready: boolean;
 }
 
+/** The team's known-wrong entries (positions and levels only). Cut lines are all wrong cuts. */
+export interface DefuserTriedEntries {
+  fuse: number[];
+  /** A wrong first key is `{first, second: null}`; a wrong second key after a right first. */
+  glyph: Array<{ first: number; second: number | null }>;
+  valve: Array<{ level: number; vent: Vent }>;
+}
+
 /** Fields every view carries (spec section 18). */
 export interface DefuserSharedView {
   gameId: typeof DEFUSER_ID;
@@ -372,34 +380,37 @@ export interface DefuserSharedView {
   me: string;
   editionLabel: string;
   roster: DefuserRosterEntry[];
+  /** Every sheet with its current holders (a rejoin can give a sheet two holders). */
   sheetIndex: Array<{ sheet: SheetId; holders: string[] }>;
   faults: number;
   solved: Record<PanelId, boolean>;
+  /** Every cut Fuse line (wrong cuts and, once solved, the correct one). Positions only. */
+  cutLines: number[];
+  tried: DefuserTriedEntries;
+  /** Absolute server times in ms (compare with the snapshot's serverTime). */
   briefingDeadlineAt: number | null;
   deadlineAt: number | null;
   result: CoopResult | null;
 }
 
-export interface DefuserTriedEntries {
-  fuse: number[];
-  glyph: Array<{ first: number; second: number | null }>;
-  valve: Array<{ level: number; vent: Vent }>;
-}
-
 /**
- * Per-recipient views (spec section 18). Types only in this phase: the plug-in that builds
- * them comes next.
+ * Per-recipient views (spec section 18), built by the server plug-in. During BRIEFING no view
+ * carries the Charge or sheet contents: `charge` is null and `sheets` is empty until ARMED.
  */
 export type DefuserPlayerView =
   | (DefuserSharedView & {
       kind: 'operator';
-      charge: DefuserCharge;
-      cutLines: number[];
+      charge: DefuserCharge | null;
+      /** The correctly pressed first Glyph key, while waiting for the second. */
       litKey: number | null;
-      tried: DefuserTriedEntries;
     })
   | (DefuserSharedView & { kind: 'analyst'; sheets: SheetData[] })
-  | (DefuserSharedView & { kind: 'inactive'; canRejoin: boolean })
+  | (DefuserSharedView & {
+      kind: 'inactive';
+      canRejoin: boolean;
+      /** The sheets a rejoin would give copies of (ids only, no contents). */
+      initialSheets: SheetId[];
+    })
   | (DefuserSharedView & {
       kind: 'debrief';
       charge: DefuserCharge;
@@ -407,3 +418,8 @@ export type DefuserPlayerView =
       solution: DefuserSolution;
       moves: DefuserMove[];
     });
+
+/** The secret-free view: the shared fields without a viewer or the edition label. */
+export type DefuserPublicView = Omit<DefuserSharedView, 'me' | 'editionLabel'> & {
+  kind: 'public';
+};

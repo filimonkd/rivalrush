@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { aid, alice, bob, carol, GRACE_MS, makeManager } from '../helpers/manager.js';
 import { code, guess, lobby, opponentSecretOf, playing } from '../helpers/scenarios.js';
+import { duelView } from '../helpers/views.js';
 
 /**
  * Concurrency edge cases. Every room mutation runs under that room's lock and first applies
@@ -129,8 +130,8 @@ describe('race conditions', () => {
       ctx.manager.gameAction(ctx.first.userId, payload),
     ]);
     // Both replies succeed with the same board; the move exists once.
-    expect(a.game!.view.moves).toHaveLength(1);
-    expect(b.game!.view.moves).toHaveLength(1);
+    expect(duelView(a.game!.view).moves).toHaveLength(1);
+    expect(duelView(b.game!.view).moves).toHaveLength(1);
     expect((await ctx.state(ctx.roomId)).moves).toHaveLength(1);
   });
 
@@ -169,11 +170,11 @@ describe('race conditions', () => {
     const s = await ctx.state(ctx.roomId);
     vi.setSystemTime(s.turnDeadlineAt!);
     const snap = await ctx.manager.connect(ctx.first.userId, ctx.roomId);
-    expect(snap.game!.view.moves).toEqual([
+    expect(duelView(snap.game!.view).moves).toEqual([
       expect.objectContaining({ playerId: ctx.first.userId, timedOut: true }),
     ]);
-    expect(snap.game!.view.currentTurn).toBe(ctx.second.userId);
-    expect(snap.game!.view.turnDeadlineAt).toBe(s.turnDeadlineAt! + 45_000);
+    expect(duelView(snap.game!.view).currentTurn).toBe(ctx.second.userId);
+    expect(duelView(snap.game!.view).turnDeadlineAt).toBe(s.turnDeadlineAt! + 45_000);
     expect(snap.players.find((p) => p.userId === ctx.first.userId)).toMatchObject({
       online: true,
       graceDeadlineAt: null,

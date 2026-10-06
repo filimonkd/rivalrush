@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { aid, alice, bob, carol, GRACE_MS, makeManager, TTL_MS } from '../helpers/manager.js';
 import { code, guess, lobby, playing } from '../helpers/scenarios.js';
+import { duelView } from '../helpers/views.js';
 
 const T0 = new Date('2026-10-05T12:00:00Z').getTime();
 
@@ -117,7 +118,7 @@ describe('host + start', () => {
     await manager.setReady(bob.userId, room.roomId, true, aid());
     const started = await manager.start(alice.userId, room.roomId, aid());
     expect(started.status).toBe('IN_GAME');
-    expect(started.game?.view.phase).toBe('SETUP');
+    expect(duelView(started.game?.view).phase).toBe('SETUP');
   });
 
   it('duplicate start (same actionId) applies once; a second start is rejected', async () => {
@@ -152,7 +153,7 @@ describe('gameplay through the manager', () => {
     await guess(ctx, ctx.first, '9012');
     await guess(ctx, ctx.second, '9012');
     const snap = await guess(ctx, ctx.first, target);
-    expect(snap.game?.view.phase).toBe('LAST_CHANCE');
+    expect(duelView(snap.game?.view).phase).toBe('LAST_CHANCE');
     const end = await guess(ctx, ctx.second, '9013');
     expect(end.status).toBe('FINISHED');
     expect(end.game?.result).toEqual({
@@ -177,11 +178,11 @@ describe('gameplay through the manager', () => {
       for (const viewer of [alice, bob]) {
         const snap = await ctx.manager.getSnapshot(viewer.userId, ctx.roomId);
         const opp = viewer === alice ? '5678' : '1234';
-        expect(snap.game?.view.opponentSecret).toBeNull();
+        expect(duelView(snap.game?.view).opponentSecret).toBeNull();
         expect(
           JSON.stringify({
             ...snap,
-            game: { ...snap.game, view: { ...snap.game!.view, moves: [] } },
+            game: { ...snap.game, view: { ...duelView(snap.game!.view), moves: [] } },
           }),
         ).not.toContain(opp);
       }
@@ -338,7 +339,7 @@ describe('presence, disconnects and reconnects', () => {
     await vi.advanceTimersByTimeAsync(GRACE_MS);
     const end = await ctx.manager.getSnapshot(bob.userId, ctx.roomId);
     expect(end.game?.result).toEqual({ outcome: 'win', winnerId: bob.userId, reason: 'abandoned' });
-    expect(end.game?.view.phase).toBe('ABANDONED');
+    expect(duelView(end.game?.view).phase).toBe('ABANDONED');
     expect(ctx.finished).toHaveLength(1);
   });
 
@@ -352,7 +353,7 @@ describe('presence, disconnects and reconnects', () => {
       graceDeadlineAt: null,
     });
     expect(snap.game?.result).toBeNull();
-    expect(snap.game?.view.mySecret).toBe('1234');
+    expect(duelView(snap.game?.view).mySecret).toBe('1234');
     await vi.advanceTimersByTimeAsync(GRACE_MS);
     const later = await ctx.manager.getSnapshot(alice.userId, ctx.roomId);
     expect(later.game?.result?.reason).not.toBe('abandoned');
@@ -437,7 +438,7 @@ describe('production randomness', () => {
     await m.joinByInvite(bob, room.inviteToken);
     await m.setReady(bob.userId, room.roomId, true, aid());
     const started = await m.start(alice.userId, room.roomId, aid());
-    expect([alice.userId, bob.userId]).toContain(started.game!.view.firstPlayerId);
+    expect([alice.userId, bob.userId]).toContain(duelView(started.game!.view).firstPlayerId);
     m.shutdown();
   });
 });

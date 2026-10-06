@@ -17,7 +17,6 @@ import type { ZodType } from 'zod';
 import { verifySession } from '../auth/jwt.js';
 import { AppError, toErrorPayload } from '../errors.js';
 import type { RemovalReason, RoomManager } from '../rooms/roomManager.js';
-import { buildSnapshot } from '../rooms/roomViews.js';
 import type { LiveRoom } from '../rooms/types.js';
 import { TokenBucket } from './rateLimiter.js';
 
@@ -90,7 +89,7 @@ export class SocketLayer {
     for (const seat of room.seats) {
       // Each player gets a snapshot built for them alone (their own secret only).
       const channel = this.io.to(userChannel(seat.userId));
-      channel.emit('room:snapshot', buildSnapshot(room, seat.userId, now));
+      channel.emit('room:snapshot', this.rooms.snapshotFor(room, seat.userId, now));
       for (const e of events) channel.emit('room:event', e);
     }
   }

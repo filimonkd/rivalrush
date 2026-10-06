@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CcState } from '../../src/games/color-cipher/game.js';
 import { aid, alice, bob, carol, GRACE_MS, makeManager } from '../helpers/manager.js';
 import { code } from '../helpers/scenarios.js';
+import { duelView } from '../helpers/views.js';
 
 /**
  * Color Cipher through the unchanged platform: RoomManager, timers, presence, rematch and
@@ -102,10 +103,13 @@ describe('Color Cipher on the platform', () => {
     await ctx.guess(ctx.first, '5555');
     for (const viewer of [alice, bob]) {
       const snap = await ctx.manager.getSnapshot(viewer.userId, ctx.roomId);
-      expect(snap.game!.view.opponentSecret).toBeNull();
-      const scrubbed = { ...snap, game: { ...snap.game, view: { ...snap.game!.view, moves: [] } } };
+      expect(duelView(snap.game!.view).opponentSecret).toBeNull();
+      const scrubbed = {
+        ...snap,
+        game: { ...snap.game, view: { ...duelView(snap.game!.view), moves: [] } },
+      };
       expect(JSON.stringify(scrubbed)).not.toContain(opponentPattern(viewer.userId));
-      expect(snap.game!.view.mySecret).toBe(PATTERNS[viewer.userId]);
+      expect(duelView(snap.game!.view).mySecret).toBe(PATTERNS[viewer.userId]);
     }
   });
 
@@ -130,7 +134,7 @@ describe('Color Cipher on the platform', () => {
       clientVersion: s.version,
       action: { type: 'GUESS', pattern: '1111' },
     });
-    expect(again.game!.view.moves).toHaveLength(1);
+    expect(duelView(again.game!.view).moves).toHaveLength(1);
     expect(
       await code(
         ctx.manager.gameAction(ctx.second.userId, {
@@ -171,18 +175,18 @@ describe('Color Cipher on the platform', () => {
     await ctx.manager.disconnect(ctx.first.userId, ctx.roomId);
     await vi.advanceTimersByTimeAsync(20_000);
     let snap = await ctx.manager.connect(ctx.first.userId, ctx.roomId);
-    expect(snap.game!.view.currentTurn).toBe(ctx.first.userId);
+    expect(duelView(snap.game!.view).currentTurn).toBe(ctx.first.userId);
     expect(snap.players.every((p) => p.graceDeadlineAt === null)).toBe(true);
     // Opponent's turn: the first player drops while waiting, returns after their timeout.
     await ctx.guess(ctx.first, '5555');
     await ctx.manager.disconnect(ctx.first.userId, ctx.roomId);
     await vi.advanceTimersByTimeAsync(TURN_MS + 1_000);
     snap = await ctx.manager.connect(ctx.first.userId, ctx.roomId);
-    expect(snap.game!.view.moves.at(-1)).toMatchObject({
+    expect(duelView(snap.game!.view).moves.at(-1)).toMatchObject({
       playerId: ctx.second.userId,
       timedOut: true,
     });
-    expect(snap.game!.view.currentTurn).toBe(ctx.first.userId);
+    expect(duelView(snap.game!.view).currentTurn).toBe(ctx.first.userId);
     expect(snap.game!.result).toBeNull();
   });
 

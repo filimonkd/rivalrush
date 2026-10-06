@@ -10,6 +10,7 @@ import {
   waitFor,
   type TestEnv,
 } from '../helpers/integration.js';
+import { duelView } from '../helpers/views.js';
 
 let env: TestEnv;
 beforeAll(async () => {
@@ -129,7 +130,7 @@ describe('a full Crack the Code match over Socket.IO', () => {
       clientVersion: gv,
       action: { type: 'SET_SECRET', code: '5678' },
     });
-    const view = afterB.data!.game!.view;
+    const view = duelView(afterB.data!.game!.view);
     expect(view.phase).toBe('PLAYING');
     gv = afterB.data!.game!.version;
 
@@ -166,7 +167,7 @@ describe('a full Crack the Code match over Socket.IO', () => {
       action: { type: 'GUESS', guess: '9012' },
     });
     expect(dup.ok).toBe(true);
-    expect(dup.data!.game!.view.moves).toHaveLength(1);
+    expect(duelView(dup.data!.game!.view).moves).toHaveLength(1);
 
     // A stale client gets STALE_GAME_VERSION plus the authoritative snapshot.
     const stale = await emit<RoomSnapshot>(second.s, 'game:action', {
@@ -192,7 +193,7 @@ describe('a full Crack the Code match over Socket.IO', () => {
       clientVersion: gv,
       action: { type: 'GUESS', guess: first.code },
     });
-    expect(crack.data!.game!.view.phase).toBe('LAST_CHANCE');
+    expect(duelView(crack.data!.game!.view).phase).toBe('LAST_CHANCE');
     gv = crack.data!.game!.version;
     const last = await emit<RoomSnapshot>(second.s, 'game:action', {
       roomId,
@@ -206,7 +207,7 @@ describe('a full Crack the Code match over Socket.IO', () => {
       winnerId: null,
       reason: 'both_cracked',
     });
-    expect(last.data!.game!.view.opponentSecret).toMatch(/^\d{4}$/);
+    expect(duelView(last.data!.game!.view).opponentSecret).toMatch(/^\d{4}$/);
 
     // Secrets: no snapshot either player received before the end reveals the opponent code.
     await new Promise((r) => setTimeout(r, 100));
@@ -216,12 +217,14 @@ describe('a full Crack the Code match over Socket.IO', () => {
     ] as const) {
       for (const snap of snaps) {
         if (!snap.game || snap.game.result) continue;
-        expect(snap.game.view.opponentSecret).toBeNull();
+        expect(duelView(snap.game.view).opponentSecret).toBeNull();
         const scrubbed = {
           ...snap,
-          game: { ...snap.game, view: { ...snap.game.view, moves: [] } },
+          game: { ...snap.game, view: { ...duelView(snap.game.view), moves: [] } },
         };
-        expect(JSON.stringify(scrubbed)).not.toContain(oppCode);
+        // A secret only ever appears as a quoted JSON string; a bare substring would also match
+        // digits inside a timestamp (e.g. a deadline ending in ...1234).
+        expect(JSON.stringify(scrubbed)).not.toContain(`"${oppCode}"`);
       }
     }
     expect(eventsB.map((e) => e.type)).toEqual(
@@ -237,12 +240,12 @@ describe('a full Crack the Code match over Socket.IO', () => {
     expect(ua!.stats).toMatchObject({ gamesPlayed: 1, draws: 1 });
 
     // Rematch: both vote → a new session in the same room, other player first.
-    const firstPlayerBefore = last.data!.game!.view.firstPlayerId;
+    const firstPlayerBefore = duelView(last.data!.game!.view).firstPlayerId;
     await emit(sa, 'room:rematch', { roomId, actionId: actionId() });
     const rm = await emit<RoomSnapshot>(sb, 'room:rematch', { roomId, actionId: actionId() });
     expect(rm.data!.status).toBe('IN_GAME');
     expect(rm.data!.game!.sessionId).not.toBe(last.data!.game!.sessionId);
-    expect(rm.data!.game!.view.firstPlayerId).not.toBe(firstPlayerBefore);
+    expect(duelView(rm.data!.game!.view).firstPlayerId).not.toBe(firstPlayerBefore);
     expect(rm.data!.gamesPlayed).toBe(1);
 
     // Secrets never appear in logs.
@@ -294,8 +297,10 @@ describe('reconnect and resync', () => {
       online: true,
       graceDeadlineAt: null,
     });
-    expect(back.game!.view.players.find((p) => p.userId === b.user.id)!.hasSecret).toBe(true);
-    expect(back.game!.view.opponentSecret).toBeNull();
+    expect(duelView(back.game!.view).players.find((p) => p.userId === b.user.id)!.hasSecret).toBe(
+      true,
+    );
+    expect(duelView(back.game!.view).opponentSecret).toBeNull();
 
     const same = await emit<{ changed: boolean }>(sa2, 'game:resync', {
       roomId,
