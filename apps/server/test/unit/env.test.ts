@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { ConfigError, loadConfig } from '../../src/config/env.js';
 
@@ -25,6 +26,34 @@ describe('loadConfig', () => {
 
   it('refuses to start in production with dev login enabled', () => {
     expect(() => loadConfig({ ...prod, DEV_LOGIN_ENABLED: 'true' })).toThrow(/DEV_LOGIN_ENABLED/);
+  });
+
+  it('refuses to start in production with DEFUSER_FIXED_SEED, without echoing it', () => {
+    const seed = '0123456789abcdef0123456789abcdef';
+    let message = '';
+    try {
+      loadConfig({ ...prod, DEFUSER_FIXED_SEED: seed });
+    } catch (err) {
+      message = (err as Error).message;
+    }
+    expect(message).toMatch(/DEFUSER_FIXED_SEED must not be set in production/);
+    expect(message).not.toContain(seed);
+  });
+
+  it('parses DEFUSER_FIXED_SEED outside production and rejects a malformed one without echoing it', () => {
+    const seed = 'fedcba9876543210fedcba9876543210';
+    expect(loadConfig({}).defuserFixedSeed).toBeNull();
+    expect(loadConfig({ DEFUSER_FIXED_SEED: '' }).defuserFixedSeed).toBeNull();
+    expect(loadConfig({ NODE_ENV: 'test', DEFUSER_FIXED_SEED: seed }).defuserFixedSeed).toBe(seed);
+    const bad = 'SECRETSECRETSECRET';
+    let message = '';
+    try {
+      loadConfig({ DEFUSER_FIXED_SEED: bad });
+    } catch (err) {
+      message = (err as Error).message;
+    }
+    expect(message).toMatch(/DEFUSER_FIXED_SEED/);
+    expect(message).not.toContain(bad);
   });
 
   it.each([
@@ -62,5 +91,12 @@ describe('loadConfig', () => {
 
   it('reports invalid values as a ConfigError', () => {
     expect(() => loadConfig({ PORT: 'abc' })).toThrow(ConfigError);
+  });
+});
+
+describe('deployment files', () => {
+  it('render.yaml never sets DEFUSER_FIXED_SEED', () => {
+    const yaml = readFileSync(new URL('../../../../render.yaml', import.meta.url), 'utf8');
+    expect(yaml).not.toContain('DEFUSER_FIXED_SEED');
   });
 });

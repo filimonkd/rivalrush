@@ -24,6 +24,12 @@ async function main(): Promise<void> {
     'starting RivalRush server',
   );
 
+  if (config.defuserFixedSeed) {
+    // Never the value: it would make every Defuser game predictable. (Config already refuses
+    // this in production.)
+    logger.warn({ event: 'defuser.fixed_seed' }, 'Defuser fixed seed is active (test only)');
+  }
+
   const db = await connectDatabase({
     uri: config.mongoUri,
     dbName: config.mongoDbName,

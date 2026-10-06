@@ -31,6 +31,18 @@ const webUrl = z.preprocess(
     .optional(),
 );
 
+/**
+ * Dev/test only (docs/defuser.md, spec section 18): a 128-bit seed that makes every Defuser game
+ * predictable, so a browser E2E can know the answers. A secret-like value: never echoed or logged.
+ */
+const fixedSeed = z.preprocess(
+  cleanEnvValue,
+  z
+    .string()
+    .regex(/^[0-9a-f]{32}$/, 'must be 32 lowercase hex characters')
+    .optional(),
+);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
@@ -64,6 +76,7 @@ const envSchema = z.object({
 
   CLIENT_ORIGINS: z.string().default('http://localhost:5173'),
   DEV_LOGIN_ENABLED: bool,
+  DEFUSER_FIXED_SEED: fixedSeed,
 
   DISCONNECT_GRACE_SECONDS: z.coerce.number().int().min(10).max(600).default(60),
   ROOM_TTL_MINUTES: z.coerce
@@ -93,6 +106,8 @@ export interface AppConfig {
   authMaxAgeSeconds: number;
   clientOrigins: string[];
   devLoginEnabled: boolean;
+  /** Test only; refused in production. Never log the value. */
+  defuserFixedSeed: string | null;
   disconnectGraceMs: number;
   roomTtlMs: number;
 }
@@ -103,7 +118,7 @@ const DEV_JWT_SECRET = 'dev-only-insecure-jwt-secret-change-me-0000';
 
 /**
  * Validates the environment. In production it refuses to start with insecure settings:
- * dev login on, missing/weak secrets, wildcard CORS, or no database.
+ * dev login on, a fixed Defuser seed, missing/weak secrets, wildcard CORS, or no database.
  */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = envSchema.safeParse(env);
@@ -122,6 +137,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (isProduction) {
     const problems: string[] = [];
     if (e.DEV_LOGIN_ENABLED) problems.push('DEV_LOGIN_ENABLED must be false in production');
+    if (e.DEFUSER_FIXED_SEED) problems.push('DEFUSER_FIXED_SEED must not be set in production');
     if (!e.BOT_TOKEN) problems.push('BOT_TOKEN is required');
     if (!e.JWT_SECRET || e.JWT_SECRET.length < 32)
       problems.push('JWT_SECRET must be at least 32 characters');
@@ -159,6 +175,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     authMaxAgeSeconds: e.AUTH_MAX_AGE_SECONDS,
     clientOrigins,
     devLoginEnabled: e.DEV_LOGIN_ENABLED,
+    defuserFixedSeed: e.DEFUSER_FIXED_SEED ?? null,
     disconnectGraceMs: e.DISCONNECT_GRACE_SECONDS * 1000,
     roomTtlMs: e.ROOM_TTL_MINUTES * 60_000,
   };
