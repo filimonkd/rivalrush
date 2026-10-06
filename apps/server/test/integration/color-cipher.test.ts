@@ -175,7 +175,8 @@ describe('Color Cipher over Socket.IO', () => {
           ...snap,
           game: { ...snap.game, view: { ...duelView(snap.game.view), moves: [] } },
         };
-        expect(JSON.stringify(scrubbed)).not.toContain(opp);
+        // Quoted: a bare substring could also match digits inside a timestamp.
+        expect(JSON.stringify(scrubbed)).not.toContain(`"${opp}"`);
       }
     }
 
@@ -237,7 +238,7 @@ describe('Color Cipher over Socket.IO', () => {
         const r = await env.http().get(path).set(auth(token)).expect(200);
         const body = JSON.stringify(r.body);
         expect(body).toContain(mine);
-        expect(body).not.toContain(theirs);
+        expect(body).not.toContain(`"${theirs}"`);
       }
     }
   });

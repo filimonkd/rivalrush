@@ -222,7 +222,9 @@ describe('a full Crack the Code match over Socket.IO', () => {
           ...snap,
           game: { ...snap.game, view: { ...duelView(snap.game.view), moves: [] } },
         };
-        expect(JSON.stringify(scrubbed)).not.toContain(oppCode);
+        // A secret only ever appears as a quoted JSON string; a bare substring would also match
+        // digits inside a timestamp (e.g. a deadline ending in ...1234).
+        expect(JSON.stringify(scrubbed)).not.toContain(`"${oppCode}"`);
       }
     }
     expect(eventsB.map((e) => e.type)).toEqual(
