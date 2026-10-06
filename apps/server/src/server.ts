@@ -7,6 +7,7 @@ import {
 import type { Logger } from 'pino';
 import type { TelegramBot } from './bot/bot.js';
 import type { AppConfig } from './config/env.js';
+import type { AnyGameDefinition } from './games/engine/types.js';
 import { createApp } from './http/app.js';
 import { MatchRecorder, recordMatch, type FinishedSession } from './matches/matchService.js';
 import { InMemoryRoomStore } from './rooms/InMemoryRoomStore.js';
@@ -31,6 +32,8 @@ export interface ServerOverrides {
   recordMatch?: (s: FinishedSession) => Promise<'recorded' | 'duplicate'>;
   /** Telegram bot; when set, the app serves its webhook endpoint. */
   bot?: TelegramBot | null;
+  /** Game lookup (tests only: games that aren't in the live registry yet). */
+  games?: (id: string) => AnyGameDefinition | null;
 }
 
 /** Composition root: wires HTTP, Socket.IO, RoomManager and persistence. Does not listen. */
@@ -67,6 +70,7 @@ export function buildServer(
       disconnectGraceMs: config.disconnectGraceMs,
       ...(overrides.now ? { now: overrides.now } : {}),
       ...(overrides.random ? { random: overrides.random } : {}),
+      ...(overrides.games ? { games: overrides.games } : {}),
     },
   );
   sockets.attach(rooms);

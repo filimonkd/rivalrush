@@ -99,6 +99,11 @@ export class RoomManager {
     return buildSnapshot(room, userId, this.now(), this.lookupGame);
   }
 
+  /** One viewer's snapshot of a room (the socket layer's per-recipient broadcast). */
+  snapshotFor(room: LiveRoom, viewerId: string, now: number): RoomSnapshot {
+    return buildSnapshot(room, viewerId, now, this.lookupGame);
+  }
+
   async getActiveRoom(userId: string): Promise<RoomSnapshot | null> {
     const room = await this.store.findActiveByMember(userId);
     return room ? buildSnapshot(room, userId, this.now(), this.lookupGame) : null;
@@ -420,6 +425,9 @@ export class RoomManager {
       } else {
         const seat = room.seats.find((s) => s.userId === due.userId)!;
         seat.graceDeadlineAt = null;
+        // Saved even if the game refuses the $ABANDON (a co-op player who already timed out),
+        // so the cleared deadline never replays.
+        ctx.dirty = true;
         this.logger.info(
           { event: 'game.abandoned', roomId: room.roomId, userId: due.userId },
           'grace period expired',

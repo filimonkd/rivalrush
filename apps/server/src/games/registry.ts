@@ -6,9 +6,10 @@ import type { AnyGameDefinition } from './engine/types.js';
 /**
  * Playable games. Adding a game = adding its plug-in here.
  *
- * Defuser is deliberately NOT here yet: only its shared contract and puzzle generator exist
- * (docs/defuser.md, "Implementation status"). Creating a Defuser room therefore fails with
- * GAME_NOT_AVAILABLE, and the catalog keeps it `coming_soon`.
+ * Defuser is deliberately NOT here yet: its server plug-in exists (games/defuser/game.ts) but
+ * it has no UI (docs/defuser.md, "Implementation status"). Creating a Defuser room therefore
+ * fails with GAME_NOT_AVAILABLE, and the catalog keeps it `coming_soon`. Tests reach the
+ * plug-in through RoomManager's injectable `games` lookup.
  */
 const LIVE_GAMES: Record<string, AnyGameDefinition> = {
   [crackTheCode.id]: crackTheCode,
