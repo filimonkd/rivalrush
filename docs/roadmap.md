@@ -16,17 +16,17 @@ rematch rate above 40%.
 
 ## After the beta (default order; metrics decide)
 
-| Feature                                      | Where it plugs in                                                                                              | Effort |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------ |
-| Rich invite card                             | Bot `savePreparedInlineMessage` + `WebApp.shareMessage` in the lobby                                           | S      |
-| 3-screen how-to-play, branded loading screen | Web + BotFather                                                                                                | S      |
-| Global and per-group leaderboards            | `users.stats.wins` index exists; group boards from the signed `chat_instance`                                  | S      |
-| **Defuser** (asymmetric 2–4 players)         | Per-role `getPlayerView`; `maxPlayers > 2` already supported by rooms                                          | L      |
-| Team games                                   | `teamId` per seat; results gain a winner list                                                                  | M      |
-| Matchmaking                                  | A per-game queue that pairs players and calls `RoomManager.createRoom`                                         | M      |
-| Tournaments                                  | Tournament model + bracket service creating rooms; results from the match recorder                             | L      |
-| Telegram Stars                               | Cosmetic themes / entry fees via `openInvoice` (XTR)                                                           | M      |
-| Spectators                                   | `getPublicView` already exists and has no secrets; add a spectator seat type                                   | M      |
-| Redis + horizontal scaling                   | `RedisRoomStore`, Socket.IO Redis adapter, timers → job queue, Redis rate limits and room locks, bot → webhook | M      |
+| Feature                                      | Where it plugs in                                                                                                                                     | Effort |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| Rich invite card                             | Bot `savePreparedInlineMessage` + `WebApp.shareMessage` in the lobby                                                                                  | S      |
+| 3-screen how-to-play, branded loading screen | Web + BotFather                                                                                                                                       | S      |
+| Global and per-group leaderboards            | `users.stats.wins` index exists; group boards from the signed `chat_instance`                                                                         | S      |
+| **Defuser** (cooperative 2–4 players)        | Design and feasibility done ([defuser.md](defuser.md)): 4 additive platform changes + a co-op stats decision; build only if the beta shows group play | L      |
+| Team games                                   | `teamId` per seat; results gain a winner list                                                                                                         | M      |
+| Matchmaking                                  | A per-game queue that pairs players and calls `RoomManager.createRoom`                                                                                | M      |
+| Tournaments                                  | Tournament model + bracket service creating rooms; results from the match recorder                                                                    | L      |
+| Telegram Stars                               | Cosmetic themes / entry fees via `openInvoice` (XTR)                                                                                                  | M      |
+| Spectators                                   | `getPublicView` already exists and has no secrets; add a spectator seat type                                                                          | M      |
+| Redis + horizontal scaling                   | `RedisRoomStore`, Socket.IO Redis adapter, timers → job queue, Redis rate limits and room locks, bot → webhook                                        | M      |
 
 Not implemented now, by design.
