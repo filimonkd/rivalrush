@@ -1,4 +1,9 @@
-import type { AppErrorPayload, GameResult, RoomEventType } from '@rivalrush/shared';
+import type {
+  AnyGameResult,
+  AppErrorPayload,
+  CoopPlayerRecord,
+  RoomEventType,
+} from '@rivalrush/shared';
 
 /**
  * The game plug-in contract. A game is pure rules: no network, database, Telegram or
@@ -62,14 +67,24 @@ export interface GameDefinition<S, Settings, PlayerView, PublicView> {
   applyAction(state: S, actor: Actor, action: unknown, ctx: ApplyContext): ApplyResult<S>;
   getPlayerView(state: S, playerId: string): PlayerView;
   getPublicView(state: S): PublicView;
-  /** Null while the game is running. */
-  getResult(state: S): GameResult | null;
+  /** Null while the game is running. Duels return a `GameResult`; co-op games a `CoopResult`. */
+  getResult(state: S): AnyGameResult | null;
   /** Monotonic game-state version, bumped by every accepted change. */
   getVersion(state: S): number;
   /** The next server-side deadline, if any (setup timer, turn timer). */
   getNextDeadline(state: S): Deadline | null;
   /** Secret-free move log for match history. */
   getMoves(state: S): unknown[];
+  /**
+   * Co-op games only: each player's roles and final status for match history, read when the
+   * game ends. Duels omit it.
+   */
+  getCoopPlayerRecords?(state: S): Record<string, CoopPlayerRecord>;
+  /**
+   * Games with a generated puzzle only: what is needed to regenerate it for debugging. Stored
+   * server-side with the match (never returned by any API). Duels omit it.
+   */
+  getGeneratorInfo?(state: S): { version: number; seed: string } | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

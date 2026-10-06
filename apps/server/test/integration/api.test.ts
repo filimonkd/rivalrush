@@ -112,7 +112,15 @@ describe('authenticated REST', () => {
     expect(me.body.displayName).toBe('Meera');
     const stats = await env.http().get('/api/me/stats').set(auth(a.token)).expect(200);
     expect(stats.body).toEqual({
-      stats: { gamesPlayed: 0, wins: 0, losses: 0, draws: 0, currentStreak: 0, bestStreak: 0 },
+      stats: {
+        gamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        coop: { played: 0, wins: 0, losses: 0, dropped: 0 },
+      },
       winRate: 0,
     });
     const games = await env.http().get('/api/games').set(auth(a.token)).expect(200);

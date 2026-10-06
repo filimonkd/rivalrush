@@ -2,6 +2,8 @@ export * from './errors.js';
 export * from './games.js';
 export * from './crackTheCode.js';
 export * from './colorCipher.js';
+export * from './defuser.js';
+export * from './defuserSheets.js';
 export * from './rooms.js';
 export * from './api.js';
 export * from './socket.js';

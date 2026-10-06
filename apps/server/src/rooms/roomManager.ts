@@ -3,7 +3,7 @@ import {
   TERMINAL_ROOM_STATUSES,
   type GameMove,
   type GameId,
-  type GameResult,
+  type AnyGameResult,
   type InvitePreview,
   type RoomEvent,
   type RoomEventType,
@@ -21,6 +21,7 @@ import { KeyedLock } from './keyedLock.js';
 import type { RoomStore } from './RoomStore.js';
 import { buildInvitePreview, buildSnapshot } from './roomViews.js';
 import { TimerRegistry } from './timers.js';
+import { nextStartingPlayer } from './rotation.js';
 import type { LiveRoom, Seat } from './types.js';
 
 export type RemovalReason = 'left' | 'expired' | 'closed';
@@ -44,6 +45,8 @@ export interface RoomManagerOptions {
   terminalRetentionMs?: number;
   now?: () => number;
   random?: () => number;
+  /** Game lookup. Defaults to the registry; tests inject games that aren't playable yet. */
+  games?: (id: string) => AnyGameDefinition | null;
 }
 
 interface OpContext {
@@ -72,6 +75,7 @@ export class RoomManager {
   private readonly timers: TimerRegistry;
   private readonly now: () => number;
   private readonly random: () => number;
+  private readonly lookupGame: (id: string) => AnyGameDefinition | null;
   private readonly retentionMs: number;
 
   constructor(
@@ -82,6 +86,7 @@ export class RoomManager {
   ) {
     this.now = opts.now ?? Date.now;
     this.random = opts.random ?? defaultRandom;
+    this.lookupGame = opts.games ?? getGame;
     this.retentionMs = opts.terminalRetentionMs ?? 30 * 60_000;
     this.timers = new TimerRegistry(this.now);
   }
@@ -91,12 +96,12 @@ export class RoomManager {
   async getSnapshot(userId: string, roomId: string): Promise<RoomSnapshot> {
     const room = await this.requireRoom(roomId);
     this.requireMember(room, userId);
-    return buildSnapshot(room, userId, this.now());
+    return buildSnapshot(room, userId, this.now(), this.lookupGame);
   }
 
   async getActiveRoom(userId: string): Promise<RoomSnapshot | null> {
     const room = await this.store.findActiveByMember(userId);
-    return room ? buildSnapshot(room, userId, this.now()) : null;
+    return room ? buildSnapshot(room, userId, this.now(), this.lookupGame) : null;
   }
 
   async getInvitePreview(userId: string, inviteToken: string): Promise<InvitePreview | null> {
@@ -111,7 +116,7 @@ export class RoomManager {
     gameType: string,
     rawSettings: unknown,
   ): Promise<RoomSnapshot> {
-    const def = getGame(gameType);
+    const def = this.lookupGame(gameType);
     if (!def) throw new AppError('GAME_NOT_AVAILABLE');
     let settings;
     try {
@@ -157,7 +162,7 @@ export class RoomManager {
         'room created',
       );
       this.hooks.persistRoom(room);
-      return buildSnapshot(room, user.userId, now);
+      return buildSnapshot(room, user.userId, now, this.lookupGame);
     });
   }
 
@@ -366,7 +371,7 @@ export class RoomManager {
       }
       await this.commit(room, ctx, startVersion);
       if (error) throw error;
-      return buildSnapshot(room, userId, ctx.now);
+      return buildSnapshot(room, userId, ctx.now, this.lookupGame);
     });
   }
 
@@ -492,6 +497,11 @@ export class RoomManager {
       sessionId: randomUUID(),
       gameType: room.gameType,
       players,
+      roster: room.seats.map((s) => ({
+        userId: s.userId,
+        displayName: s.displayName,
+        photoUrl: s.photoUrl,
+      })),
       isRematch,
       firstPlayerId: players[firstIdx]!,
       state,
@@ -522,34 +532,40 @@ export class RoomManager {
     room: LiveRoom,
     ctx: OpContext,
     def: AnyGameDefinition,
-    result: GameResult,
+    result: AnyGameResult,
   ): void {
     const game = room.game!;
     game.result = result;
     game.endedAt = ctx.now;
     room.status = 'FINISHED';
     room.gamesPlayed++;
-    room.nextFirstPlayerId = game.players.find((p) => p !== game.firstPlayerId) ?? null;
+    room.nextFirstPlayerId = nextStartingPlayer(game.players, game.firstPlayerId, (id) =>
+      room.seats.some((s) => s.userId === id),
+    );
     for (const s of room.seats) {
       s.wantsRematch = false;
       s.graceDeadlineAt = null;
     }
     this.touch(room, ctx);
     ctx.persist = true;
-    const byId = new Map(room.seats.map((s) => [s.userId, s]));
+    // Names come from the start-of-game snapshot, so a player who left mid-game keeps theirs.
+    const coop = def.getCoopPlayerRecords?.(game.state);
+    const generator = def.getGeneratorInfo?.(game.state) ?? null;
     ctx.finished.push({
       sessionId: game.sessionId,
       roomId: room.roomId,
       gameType: game.gameType,
       settings: { ...room.settings },
       isRematch: game.isRematch,
-      players: game.players.map((id) => ({
-        userId: id,
-        displayName: byId.get(id)?.displayName ?? 'Player',
-        photoUrl: byId.get(id)?.photoUrl ?? null,
+      players: game.roster.map((p) => ({
+        userId: p.userId,
+        displayName: p.displayName,
+        photoUrl: p.photoUrl,
+        ...(coop?.[p.userId] ? { coop: coop[p.userId] } : {}),
       })),
       result,
       moves: def.getMoves(game.state) as GameMove[],
+      ...(generator ? { generator } : {}),
       startedAt: game.startedAt,
       endedAt: ctx.now,
     });
@@ -706,7 +722,7 @@ export class RoomManager {
   }
 
   private def(gameType: string): AnyGameDefinition {
-    const def = getGame(gameType);
+    const def = this.lookupGame(gameType);
     if (!def) throw new AppError('GAME_NOT_AVAILABLE');
     return def;
   }

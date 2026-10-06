@@ -1,0 +1,5993 @@
+{
+  "generatorVersion": 1,
+  "editions": [
+    {
+      "seed": "00000000000000009e3779b97f4a7c15",
+      "analystCount": 1,
+      "edition": {
+        "seed": "00000000000000009e3779b97f4a7c15",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "LFL",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 2,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "dashed"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [6, 1, 3, 2, 4, 5]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                },
+                {
+                  "frame": 1,
+                  "mark": 3
+                },
+                {
+                  "frame": 2,
+                  "mark": 2
+                }
+              ],
+              "balance": 2
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 3
+              },
+              "first": "highest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [4, 6, 3, 5],
+              "markValues": [2, 3, 5, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "steady",
+              "gauge": 55
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 8,
+                  "to": 39,
+                  "delta": -1
+                },
+                {
+                  "from": 43,
+                  "to": 73,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "valve", "glyph"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              },
+              {
+                "frame": 2,
+                "mark": 2
+              }
+            ],
+            "balance": 2
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "steady",
+            "gauge": 55
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 1
+          },
+          "glyph": {
+            "first": 3,
+            "second": 1
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "00000000000000013c6ef372fe94f82a",
+      "analystCount": 2,
+      "edition": {
+        "seed": "00000000000000013c6ef372fe94f82a",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "N6L",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "dashed"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 4
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "dashed"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 1,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [5, 4, 1, 6, 2, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 1,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 2
+                }
+              ],
+              "balance": 7
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [4, 5, 1, 2],
+              "markValues": [0, 2, 4, 1]
+            }
+          },
+          "attempts": 2,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 2,
+              "lamp": "steady",
+              "gauge": 18
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 28,
+                  "to": 61,
+                  "delta": 1
+                },
+                {
+                  "from": 69,
+                  "to": 98,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "valve", "fuse"],
+        "assignment": [
+          ["fuse.procedure", "glyph.procedure", "valve.reference"],
+          ["fuse.reference", "glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 1,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 2
+              }
+            ],
+            "balance": 7
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "steady",
+            "gauge": 18
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 3,
+            "second": 2
+          },
+          "valve": {
+            "level": 3,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000001daa66d2c7ddf743f",
+      "analystCount": 3,
+      "edition": {
+        "seed": "0000000000000001daa66d2c7ddf743f",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "2WK",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 1
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "dashed"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 1,
+                    "end": "top"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [4, 5, 1, 2, 3, 6]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 1,
+                  "mark": 0
+                },
+                {
+                  "frame": 2,
+                  "mark": 3
+                },
+                {
+                  "frame": 2,
+                  "mark": 2
+                },
+                {
+                  "frame": 2,
+                  "mark": 1
+                }
+              ],
+              "balance": 11
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "highest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [3, 4, 6, 5],
+              "markValues": [0, 4, 5, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 0,
+              "lamp": "off",
+              "gauge": 10
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 35,
+                  "to": 65,
+                  "delta": 1
+                },
+                {
+                  "from": 67,
+                  "to": 98,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "fuse", "valve"],
+        "assignment": [
+          ["fuse.reference", "glyph.procedure"],
+          ["fuse.procedure", "valve.reference"],
+          ["glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 1,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 3
+              },
+              {
+                "frame": 2,
+                "mark": 2
+              },
+              {
+                "frame": 2,
+                "mark": 1
+              }
+            ],
+            "balance": 11
+          },
+          "valve": {
+            "plate": 0,
+            "lamp": "off",
+            "gauge": 10
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 1
+          },
+          "glyph": {
+            "first": 4,
+            "second": 3
+          },
+          "valve": {
+            "level": 5,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000278dde6e5fd29f054",
+      "analystCount": 1,
+      "edition": {
+        "seed": "000000000000000278dde6e5fd29f054",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "73X",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 4
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [6, 4, 5, 3, 2, 1]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 2
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 0,
+                  "mark": 1
+                }
+              ],
+              "balance": 20
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addSharedFrame",
+                "amount": 2
+              },
+              "first": "closest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [2, 5, 6, 1],
+              "markValues": [0, 4, 1, 5]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 0,
+              "lamp": "pulsing",
+              "gauge": 75
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 70,
+                  "to": 98,
+                  "delta": 1
+                },
+                {
+                  "from": 36,
+                  "to": 67,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["valve", "fuse", "glyph"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 2
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 0,
+                "mark": 1
+              }
+            ],
+            "balance": 20
+          },
+          "valve": {
+            "plate": 0,
+            "lamp": "pulsing",
+            "gauge": 75
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 4,
+            "second": 2
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "00000000000000031715609f7c746c69",
+      "analystCount": 2,
+      "edition": {
+        "seed": "00000000000000031715609f7c746c69",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "NVM",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 4
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [5, 1, 4, 3, 6, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 2,
+                  "mark": 1
+                },
+                {
+                  "frame": 1,
+                  "mark": 0
+                },
+                {
+                  "frame": 2,
+                  "mark": 3
+                }
+              ],
+              "balance": 8
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addSharedFrame",
+                "amount": 2
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [2, 3, 5, 6],
+              "markValues": [0, 1, 3, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 2,
+              "lamp": "pulsing",
+              "gauge": 47
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 1,
+                  "to": 32,
+                  "delta": 1
+                },
+                {
+                  "from": 53,
+                  "to": 87,
+                  "delta": -2
+                }
+              ],
+              "flip": {
+                "kind": "levelEven"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["valve", "fuse", "glyph"],
+        "assignment": [
+          ["fuse.reference", "glyph.procedure", "valve.procedure"],
+          ["fuse.procedure", "glyph.reference", "valve.reference"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 1,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 3
+              }
+            ],
+            "balance": 8
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "pulsing",
+            "gauge": 47
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 4
+          },
+          "glyph": {
+            "first": 3,
+            "second": 2
+          },
+          "valve": {
+            "level": 2,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000003b54cda58fbbee87e",
+      "analystCount": 3,
+      "edition": {
+        "seed": "0000000000000003b54cda58fbbee87e",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "8CN",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "solid"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 0,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 1,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [3, 4, 1, 5, 6, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 2,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 1,
+                  "mark": 3
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                }
+              ],
+              "balance": 23
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "closest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [5, 3, 2, 6],
+              "markValues": [4, 3, 5, 0]
+            }
+          },
+          "attempts": 2,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 1,
+              "lamp": "pulsing",
+              "gauge": 24
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 12,
+                  "to": 38,
+                  "delta": 1
+                },
+                {
+                  "from": 69,
+                  "to": 95,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "pulsing"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "valve", "glyph"],
+        "assignment": [
+          ["fuse.procedure", "valve.reference"],
+          ["glyph.reference", "valve.procedure"],
+          ["fuse.reference", "glyph.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "solid"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              }
+            ],
+            "balance": 23
+          },
+          "valve": {
+            "plate": 1,
+            "lamp": "pulsing",
+            "gauge": 24
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 4,
+            "second": 3
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000004538454127b096493",
+      "analystCount": 1,
+      "edition": {
+        "seed": "0000000000000004538454127b096493",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "VVW",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 1,
+                  "style": "dashed"
+                },
+                {
+                  "color": 1,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "dashed"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [4, 2, 6, 5, 1, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 0,
+                  "mark": 3
+                },
+                {
+                  "frame": 2,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                }
+              ],
+              "balance": 2
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "highest",
+              "second": "closest"
+            },
+            "reference": {
+              "frameValues": [2, 5, 4, 6],
+              "markValues": [3, 4, 1, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 2,
+              "lamp": "pulsing",
+              "gauge": 50
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 67,
+                  "to": 95,
+                  "delta": 2
+                },
+                {
+                  "from": 36,
+                  "to": 65,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "glyph", "valve"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 1,
+                "style": "dashed"
+              },
+              {
+                "color": 1,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 0,
+                "mark": 3
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              }
+            ],
+            "balance": 2
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "pulsing",
+            "gauge": 50
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 4,
+            "second": 2
+          },
+          "valve": {
+            "level": 5,
+            "vent": "vent"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000004f1bbcdcbfa53e0a8",
+      "analystCount": 2,
+      "edition": {
+        "seed": "0000000000000004f1bbcdcbfa53e0a8",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "5P2",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 0,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "dashedExactly",
+                    "count": 1
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "bottom"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [1, 2, 3, 6, 5, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 2
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 1
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                }
+              ],
+              "balance": 12
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addSharedFrame",
+                "amount": 2
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [1, 5, 2, 6],
+              "markValues": [5, 2, 4, 1]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "pulsing",
+              "gauge": 96
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 29,
+                  "to": 55,
+                  "delta": -1
+                },
+                {
+                  "from": 65,
+                  "to": 99,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "valve", "fuse"],
+        "assignment": [
+          ["fuse.procedure", "glyph.procedure", "valve.reference"],
+          ["fuse.reference", "glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 2
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "pulsing",
+            "gauge": 96
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 4
+          },
+          "glyph": {
+            "first": 3,
+            "second": 1
+          },
+          "valve": {
+            "level": 3,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "00000000000000058ff34785799e5cbd",
+      "analystCount": 3,
+      "edition": {
+        "seed": "00000000000000058ff34785799e5cbd",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "BWL",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 1,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "dashedExactly",
+                    "count": 2
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [4, 5, 6, 3, 1, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 3
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 1
+                }
+              ],
+              "balance": 10
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 1
+              },
+              "first": "closest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [4, 3, 2, 1],
+              "markValues": [4, 0, 3, 5]
+            }
+          },
+          "attempts": 2,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 2,
+              "lamp": "off",
+              "gauge": 48
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 66,
+                  "to": 99,
+                  "delta": 2
+                },
+                {
+                  "from": 37,
+                  "to": 61,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["valve", "glyph", "fuse"],
+        "assignment": [
+          ["glyph.reference", "valve.procedure"],
+          ["fuse.reference", "glyph.procedure"],
+          ["fuse.procedure", "valve.reference"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 3
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 1
+              }
+            ],
+            "balance": 10
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 48
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 1
+          },
+          "glyph": {
+            "first": 1,
+            "second": 3
+          },
+          "valve": {
+            "level": 5,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "00000000000000062e2ac13ef8e8d8d2",
+      "analystCount": 1,
+      "edition": {
+        "seed": "00000000000000062e2ac13ef8e8d8d2",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "LGQ",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "dashed"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 2,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 5,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [1, 3, 5, 2, 6, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 1,
+                  "mark": 1
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 2
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                }
+              ],
+              "balance": 13
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "lowest",
+              "second": "closest"
+            },
+            "reference": {
+              "frameValues": [5, 1, 2, 3],
+              "markValues": [5, 0, 4, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 1,
+              "lamp": "off",
+              "gauge": 24
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 23,
+                  "to": 52,
+                  "delta": -2
+                },
+                {
+                  "from": 60,
+                  "to": 88,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "levelEven"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "valve", "glyph"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "dashed"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 1,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 2
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              }
+            ],
+            "balance": 13
+          },
+          "valve": {
+            "plate": 1,
+            "lamp": "off",
+            "gauge": 24
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 1,
+            "second": 4
+          },
+          "valve": {
+            "level": 1,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000006cc623af8783354e7",
+      "analystCount": 2,
+      "edition": {
+        "seed": "0000000000000006cc623af8783354e7",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "5Z7",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [2, 6, 4, 5, 1, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 2,
+                  "mark": 1
+                },
+                {
+                  "frame": 2,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 2
+                },
+                {
+                  "frame": 2,
+                  "mark": 3
+                }
+              ],
+              "balance": 9
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [2, 6, 3, 5],
+              "markValues": [4, 1, 0, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 0,
+              "lamp": "steady",
+              "gauge": 38
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 71,
+                  "to": 98,
+                  "delta": -1
+                },
+                {
+                  "from": 35,
+                  "to": 69,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "valve", "fuse"],
+        "assignment": [
+          ["fuse.procedure", "glyph.procedure", "valve.reference"],
+          ["fuse.reference", "glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 2
+              },
+              {
+                "frame": 2,
+                "mark": 3
+              }
+            ],
+            "balance": 9
+          },
+          "valve": {
+            "plate": 0,
+            "lamp": "steady",
+            "gauge": 38
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 3,
+            "second": 4
+          },
+          "valve": {
+            "level": 5,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "00000000000000076a99b4b1f77dd0fc",
+      "analystCount": 3,
+      "edition": {
+        "seed": "00000000000000076a99b4b1f77dd0fc",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "9W4",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 2,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [3, 5, 2, 1, 6, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 2,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 3
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                }
+              ],
+              "balance": 2
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "highest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [3, 5, 6, 1],
+              "markValues": [3, 0, 2, 1]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "steady",
+              "gauge": 7
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 63,
+                  "to": 94,
+                  "delta": 2
+                },
+                {
+                  "from": 3,
+                  "to": 36,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "glyph", "valve"],
+        "assignment": [
+          ["fuse.procedure", "glyph.reference"],
+          ["glyph.procedure", "valve.reference"],
+          ["fuse.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 3
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              }
+            ],
+            "balance": 2
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "steady",
+            "gauge": 7
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 5
+          },
+          "glyph": {
+            "first": 1,
+            "second": 3
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000808d12e6b76c84d11",
+      "analystCount": 1,
+      "edition": {
+        "seed": "000000000000000808d12e6b76c84d11",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "5E2",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "dashed"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [2, 4, 6, 3, 1, 5]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 2,
+                  "mark": 3
+                }
+              ],
+              "balance": 5
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addSharedFrame",
+                "amount": 2
+              },
+              "first": "closest",
+              "second": "highest"
+            },
+            "reference": {
+              "frameValues": [6, 4, 3, 1],
+              "markValues": [3, 5, 4, 0]
+            }
+          },
+          "attempts": 3,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "pulsing",
+              "gauge": 12
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 19,
+                  "to": 49,
+                  "delta": 2
+                },
+                {
+                  "from": 64,
+                  "to": 90,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "gaugeIn",
+                "from": 24,
+                "to": 43
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["valve", "glyph", "fuse"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 2,
+                "mark": 3
+              }
+            ],
+            "balance": 5
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "pulsing",
+            "gauge": 12
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 4,
+            "second": 1
+          },
+          "valve": {
+            "level": 3,
+            "vent": "vent"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000008a708a824f612c926",
+      "analystCount": 2,
+      "edition": {
+        "seed": "0000000000000008a708a824f612c926",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "332",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [3, 5, 2, 1, 4, 6]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 3
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                }
+              ],
+              "balance": 7
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addSharedFrame",
+                "amount": 2
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [2, 1, 3, 6],
+              "markValues": [3, 1, 5, 0]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 0,
+              "lamp": "pulsing",
+              "gauge": 15
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 66,
+                  "to": 98,
+                  "delta": -1
+                },
+                {
+                  "from": 30,
+                  "to": 57,
+                  "delta": 2
+                }
+              ],
+              "flip": {
+                "kind": "gaugeIn",
+                "from": 29,
+                "to": 48
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "valve", "glyph"],
+        "assignment": [
+          ["fuse.procedure", "glyph.procedure", "valve.reference"],
+          ["fuse.reference", "glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 3
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              }
+            ],
+            "balance": 7
+          },
+          "valve": {
+            "plate": 0,
+            "lamp": "pulsing",
+            "gauge": 15
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 1
+          },
+          "glyph": {
+            "first": 1,
+            "second": 3
+          },
+          "valve": {
+            "level": 3,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000009454021de755d453b",
+      "analystCount": 3,
+      "edition": {
+        "seed": "0000000000000009454021de755d453b",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "SD4",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 1,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "lowest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [1, 6, 3, 2, 5, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 3
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                },
+                {
+                  "frame": 2,
+                  "mark": 3
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                }
+              ],
+              "balance": 25
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 0
+              },
+              "first": "closest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [6, 3, 4, 5],
+              "markValues": [1, 4, 0, 3]
+            }
+          },
+          "attempts": 3,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "steady",
+              "gauge": 50
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 19,
+                  "to": 43,
+                  "delta": 2
+                },
+                {
+                  "from": 59,
+                  "to": 92,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "off"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "valve", "fuse"],
+        "assignment": [
+          ["glyph.procedure", "valve.reference"],
+          ["fuse.reference", "valve.procedure"],
+          ["fuse.procedure", "glyph.reference"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 3
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              },
+              {
+                "frame": 2,
+                "mark": 3
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              }
+            ],
+            "balance": 25
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "steady",
+            "gauge": 50
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 5
+          },
+          "glyph": {
+            "first": 4,
+            "second": 3
+          },
+          "valve": {
+            "level": 5,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "0000000000000009e3779b97f4a7c150",
+      "analystCount": 1,
+      "edition": {
+        "seed": "0000000000000009e3779b97f4a7c150",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "E92",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "dashed"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 0,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "dashedExactly",
+                    "count": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "solid"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [6, 1, 2, 4, 5, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 1,
+                  "mark": 3
+                },
+                {
+                  "frame": 2,
+                  "mark": 1
+                },
+                {
+                  "frame": 2,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 0
+                }
+              ],
+              "balance": 22
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 0
+              },
+              "first": "lowest",
+              "second": "highest"
+            },
+            "reference": {
+              "frameValues": [1, 2, 5, 3],
+              "markValues": [1, 3, 0, 2]
+            }
+          },
+          "attempts": 2,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 0,
+              "lamp": "off",
+              "gauge": 38
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 5,
+                  "to": 35,
+                  "delta": 2
+                },
+                {
+                  "from": 60,
+                  "to": 93,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "gaugeIn",
+                "from": 54,
+                "to": 73
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "valve", "glyph"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "dashed"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 1,
+                "mark": 3
+              },
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 0
+              }
+            ],
+            "balance": 22
+          },
+          "valve": {
+            "plate": 0,
+            "lamp": "off",
+            "gauge": 38
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 1,
+            "second": 3
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000a81af155173f23d65",
+      "analystCount": 2,
+      "edition": {
+        "seed": "000000000000000a81af155173f23d65",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "GT3",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 1
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 4
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 0,
+                    "lower": 4
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [5, 4, 1, 6, 3, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 1,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 3
+                },
+                {
+                  "frame": 1,
+                  "mark": 3
+                }
+              ],
+              "balance": 10
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "highest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [6, 4, 3, 1],
+              "markValues": [1, 0, 5, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 1,
+              "lamp": "off",
+              "gauge": 56
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 70,
+                  "to": 99,
+                  "delta": 2
+                },
+                {
+                  "from": 15,
+                  "to": 47,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "lampIs",
+                "lamp": "steady"
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "fuse", "valve"],
+        "assignment": [
+          ["fuse.reference", "glyph.procedure", "valve.procedure"],
+          ["fuse.procedure", "glyph.reference", "valve.reference"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 1,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 3
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 10
+          },
+          "valve": {
+            "plate": 1,
+            "lamp": "off",
+            "gauge": 56
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 5
+          },
+          "glyph": {
+            "first": 1,
+            "second": 3
+          },
+          "valve": {
+            "level": 3,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000b1fe68f0af33cb97a",
+      "analystCount": 3,
+      "edition": {
+        "seed": "000000000000000b1fe68f0af33cb97a",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "43M",
+        "analystCount": 3,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 3,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "dashed"
+                },
+                {
+                  "color": 5,
+                  "style": "solid"
+                },
+                {
+                  "color": 2,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 1,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 2
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 1,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "top"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 5,
+                    "lower": 3
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [2, 5, 6, 1, 4, 3]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 3,
+                  "mark": 3
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 3,
+                  "mark": 1
+                },
+                {
+                  "frame": 0,
+                  "mark": 1
+                }
+              ],
+              "balance": 14
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 1
+              },
+              "first": "closest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [3, 6, 1, 2],
+              "markValues": [0, 3, 4, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 1,
+              "lamp": "pulsing",
+              "gauge": 98
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 26,
+                  "to": 60,
+                  "delta": -2
+                },
+                {
+                  "from": 62,
+                  "to": 88,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "gaugeIn",
+                "from": 17,
+                "to": 36
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "fuse", "valve"],
+        "assignment": [
+          ["fuse.reference", "glyph.procedure"],
+          ["fuse.procedure", "valve.reference"],
+          ["glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "dashed"
+              },
+              {
+                "color": 5,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 3,
+                "mark": 3
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 3,
+                "mark": 1
+              },
+              {
+                "frame": 0,
+                "mark": 1
+              }
+            ],
+            "balance": 14
+          },
+          "valve": {
+            "plate": 1,
+            "lamp": "pulsing",
+            "gauge": 98
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 4,
+            "second": 1
+          },
+          "valve": {
+            "level": 3,
+            "vent": "vent"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000bbe1e08c47287358f",
+      "analystCount": 1,
+      "edition": {
+        "seed": "000000000000000bbe1e08c47287358f",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "PV5",
+        "analystCount": 1,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "solid"
+                },
+                {
+                  "color": 4,
+                  "style": "solid"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 3,
+                  "style": "dashed"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 3,
+                    "lower": 2
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 0,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 0
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "all"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [6, 2, 1, 5, 3, 4]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 0,
+                  "mark": 2
+                },
+                {
+                  "frame": 3,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 2
+                }
+              ],
+              "balance": 7
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "doubleMark",
+                "mark": 0
+              },
+              "first": "lowest",
+              "second": "equals"
+            },
+            "reference": {
+              "frameValues": [5, 2, 3, 1],
+              "markValues": [0, 4, 2, 5]
+            }
+          },
+          "attempts": 2,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 3,
+              "lamp": "steady",
+              "gauge": 97
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 17,
+                  "to": 49,
+                  "delta": -2
+                },
+                {
+                  "from": 66,
+                  "to": 93,
+                  "delta": -1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 4,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["fuse", "glyph", "valve"],
+        "assignment": [
+          [
+            "fuse.procedure",
+            "fuse.reference",
+            "glyph.procedure",
+            "glyph.reference",
+            "valve.procedure",
+            "valve.reference"
+          ]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "solid"
+              },
+              {
+                "color": 4,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 3,
+                "style": "dashed"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 0,
+                "mark": 2
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 2
+              }
+            ],
+            "balance": 7
+          },
+          "valve": {
+            "plate": 3,
+            "lamp": "steady",
+            "gauge": 97
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 3,
+            "second": 2
+          },
+          "valve": {
+            "level": 2,
+            "vent": "seal"
+          }
+        }
+      }
+    },
+    {
+      "seed": "000000000000000c5c55827df1d1b1a4",
+      "analystCount": 2,
+      "edition": {
+        "seed": "000000000000000c5c55827df1d1b1a4",
+        "generatorVersion": 1,
+        "difficulty": "normal",
+        "label": "PRZ",
+        "analystCount": 2,
+        "fuse": {
+          "panel": {
+            "charge": {
+              "lines": [
+                {
+                  "color": 0,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 2,
+                  "style": "dashed"
+                },
+                {
+                  "color": 0,
+                  "style": "solid"
+                },
+                {
+                  "color": 1,
+                  "style": "solid"
+                }
+              ]
+            },
+            "procedure": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "colorAtLeastTwo",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 2,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 3,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "top",
+                    "color": 1
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "highest",
+                    "group": "all"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            },
+            "reference": {
+              "heat": [1, 4, 6, 5, 3, 2]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "glyph": {
+          "panel": {
+            "charge": {
+              "keys": [
+                {
+                  "frame": 0,
+                  "mark": 0
+                },
+                {
+                  "frame": 1,
+                  "mark": 0
+                },
+                {
+                  "frame": 3,
+                  "mark": 3
+                },
+                {
+                  "frame": 2,
+                  "mark": 1
+                }
+              ],
+              "balance": 25
+            },
+            "procedure": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "highest",
+              "second": "lowest"
+            },
+            "reference": {
+              "frameValues": [5, 1, 4, 6],
+              "markValues": [5, 4, 1, 3]
+            }
+          },
+          "attempts": 4,
+          "usedSafeTemplate": false
+        },
+        "valve": {
+          "panel": {
+            "charge": {
+              "plate": 2,
+              "lamp": "steady",
+              "gauge": 50
+            },
+            "procedure": {
+              "adjustments": [
+                {
+                  "from": 1,
+                  "to": 32,
+                  "delta": -2
+                },
+                {
+                  "from": 54,
+                  "to": 87,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "gaugeIn",
+                "from": 58,
+                "to": 77
+              }
+            },
+            "reference": {
+              "grid": [
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  }
+                ]
+              ]
+            }
+          },
+          "attempts": 1,
+          "usedSafeTemplate": false
+        },
+        "panelOrder": ["glyph", "valve", "fuse"],
+        "assignment": [
+          ["fuse.procedure", "glyph.procedure", "valve.reference"],
+          ["fuse.reference", "glyph.reference", "valve.procedure"]
+        ],
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 0,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              },
+              {
+                "color": 1,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 0,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 0
+              },
+              {
+                "frame": 3,
+                "mark": 3
+              },
+              {
+                "frame": 2,
+                "mark": 1
+              }
+            ],
+            "balance": 25
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "steady",
+            "gauge": 50
+          }
+        },
+        "solution": {
+          "fuse": {
+            "line": 2
+          },
+          "glyph": {
+            "first": 1,
+            "second": 2
+          },
+          "valve": {
+            "level": 3,
+            "vent": "seal"
+          }
+        }
+      }
+    }
+  ]
+}

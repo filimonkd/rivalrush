@@ -1,4 +1,4 @@
-import type { GameId, GameResult, RoomSettings, RoomStatus } from '@rivalrush/shared';
+import type { AnyGameResult, GameId, RoomSettings, RoomStatus } from '@rivalrush/shared';
 
 /**
  * Live room state held by the RoomStore. Plain, serializable data (no sockets, no class
@@ -18,17 +18,26 @@ export interface Seat {
   graceDeadlineAt: number | null;
 }
 
+/** Who played, snapshotted at game start so a player who leaves mid-game keeps their name. */
+export interface RosterEntry {
+  userId: string;
+  displayName: string;
+  photoUrl: string | null;
+}
+
 export interface LiveGameSession {
   sessionId: string;
   gameType: GameId;
   players: string[];
+  /** Same order as `players`. */
+  roster: RosterEntry[];
   isRematch: boolean;
   firstPlayerId: string;
   /** Raw game state. NEVER sent to clients: views are derived per player. */
   state: unknown;
   startedAt: number;
   endedAt: number | null;
-  result: GameResult | null;
+  result: AnyGameResult | null;
 }
 
 export interface LiveRoom {
@@ -46,7 +55,10 @@ export interface LiveRoom {
   expiresAt: number;
   game: LiveGameSession | null;
   gamesPlayed: number;
-  /** Who moves first in the next game (rematches swap the starting player). */
+  /**
+   * Who moves first in the next game: the seat after this game's starting player, in seat order
+   * (2 players: they swap; 3–4 players: they rotate).
+   */
   nextFirstPlayerId: string | null;
   /** Recently applied state-changing action keys (`userId:actionId`), newest last. */
   processedActions: string[];
