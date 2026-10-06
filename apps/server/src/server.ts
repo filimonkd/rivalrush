@@ -8,6 +8,7 @@ import type { Logger } from 'pino';
 import type { TelegramBot } from './bot/bot.js';
 import type { AppConfig } from './config/env.js';
 import type { AnyGameDefinition } from './games/engine/types.js';
+import { createGameRegistry } from './games/registry.js';
 import { createApp } from './http/app.js';
 import { MatchRecorder, recordMatch, type FinishedSession } from './matches/matchService.js';
 import { InMemoryRoomStore } from './rooms/InMemoryRoomStore.js';
@@ -42,6 +43,12 @@ export function buildServer(
   logger: Logger,
   overrides: ServerOverrides = {},
 ): RivalRushServer {
+  // Only the duels are registered unless Defuser is explicitly enabled (dev/test only).
+  const registry = createGameRegistry({
+    defuserEnabled: config.defuserEnabled,
+    defuserFixedSeed: config.defuserFixedSeed,
+    isProduction: config.isProduction,
+  });
   const roomRepo = new RoomRepository(logger);
   const recorder = new MatchRecorder(logger, overrides.recordMatch ?? recordMatch);
   // Express must be the server's initial request listener so Socket.IO can wrap it and
@@ -70,11 +77,18 @@ export function buildServer(
       disconnectGraceMs: config.disconnectGraceMs,
       ...(overrides.now ? { now: overrides.now } : {}),
       ...(overrides.random ? { random: overrides.random } : {}),
-      ...(overrides.games ? { games: overrides.games } : {}),
+      games: overrides.games ?? registry.get,
     },
   );
   sockets.attach(rooms);
-  app = createApp({ config, logger, rooms, roomRepo, bot: overrides.bot ?? null });
+  app = createApp({
+    config,
+    logger,
+    rooms,
+    roomRepo,
+    listGames: registry.list,
+    bot: overrides.bot ?? null,
+  });
 
   return {
     httpServer,

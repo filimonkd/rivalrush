@@ -24,6 +24,12 @@ async function main(): Promise<void> {
     'starting RivalRush server',
   );
 
+  if (config.defuserEnabled) {
+    logger.warn(
+      { event: 'defuser.enabled' },
+      'Defuser plug-in is registered (dev/test only; no UI, never advertised)',
+    );
+  }
   if (config.defuserFixedSeed) {
     // Never the value: it would make every Defuser game predictable. (Config already refuses
     // this in production.)

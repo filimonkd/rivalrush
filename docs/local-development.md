@@ -23,6 +23,13 @@ name is kept per tab):
 Create a room as Alice, copy the invite link (it is `http://localhost:5173/join/<token>` when
 no bot username is set) and open it as Bob.
 
+## Defuser (backend only)
+
+Defuser (co-op, 2–4 players) has a server plug-in but no UI yet. To exercise it locally set
+`DEFUSER_ENABLED=true` (and optionally `DEFUSER_FIXED_SEED`, 32 lowercase hex characters) on the
+server; the web app will not show it. The tests drive it through
+`apps/server/test/helpers/defuserHarness.ts`. Both variables are refused in production.
+
 ## Inside Telegram (development bot)
 
 Telegram only opens HTTPS URLs. Expose both ports with a tunnel:
