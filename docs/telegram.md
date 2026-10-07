@@ -75,8 +75,10 @@ Both modes then call `setMyCommands` (`/start`, `/help`) and `setChatMenuButton`
 
 ## BotFather setup
 
-Use **two bots**: a development bot pointing at your tunnel URL, and the production bot
-pointing at the Vercel domain. Never mix their tokens.
+Use **separate bots**: a development bot pointing at your tunnel URL, the production bot
+pointing at the Vercel domain and, only if you set up staging for Telegram QA, a staging bot
+pointing at the staging Vercel project ([deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games)).
+Never mix their tokens.
 
 1. `/newbot` → name "RivalRush", username e.g. `RivalRushBot`. Save the token to Render's
    `BOT_TOKEN` (production) or `apps/server/.env` (dev bot).
