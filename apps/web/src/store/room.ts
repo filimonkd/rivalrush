@@ -15,7 +15,7 @@ import { api, API_URL } from '../lib/api';
 import { serverOffset } from '../lib/clock';
 import { newActionId } from '../lib/ids';
 import { haptic, onForeground } from '../lib/telegram';
-import { acceptSnapshot, describeEvent } from './roomLogic';
+import { acceptSnapshot, describeEvent, rememberNames } from './roomLogic';
 import { useSession } from './session';
 import { toast } from './toasts';
 
@@ -25,6 +25,8 @@ type AppSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 interface RoomState {
   roomId: string | null;
   snapshot: RoomSnapshot | null;
+  /** Names seen in this room's snapshots, by user id (a teammate who left has no seat). */
+  names: Record<string, string>;
   /** serverTime - local time, for countdowns. */
   offset: number;
   connection: Connection;
@@ -81,7 +83,11 @@ export const useRoom = create<RoomState>((set, get) => {
   const apply = (snap: RoomSnapshot) => {
     const next = acceptSnapshot(get().snapshot, snap, get().roomId);
     if (next !== get().snapshot) {
-      set({ snapshot: next, offset: serverOffset(snap.serverTime, Date.now()) });
+      set({
+        snapshot: next,
+        offset: serverOffset(snap.serverTime, Date.now()),
+        names: next ? rememberNames(get().names, next) : get().names,
+      });
     }
   };
 
@@ -172,6 +178,7 @@ export const useRoom = create<RoomState>((set, get) => {
   return {
     roomId: null,
     snapshot: null,
+    names: {},
     offset: 0,
     connection: 'idle',
     closed: null,
@@ -179,7 +186,7 @@ export const useRoom = create<RoomState>((set, get) => {
 
     async enter(roomId, initial) {
       if (get().roomId !== roomId)
-        set({ roomId, snapshot: initial ?? null, closed: null, error: null });
+        set({ roomId, snapshot: initial ?? null, names: {}, closed: null, error: null });
       else if (initial) apply(initial);
       const s = ensureSocket();
       if (!s.connected) {
@@ -195,6 +202,7 @@ export const useRoom = create<RoomState>((set, get) => {
       set({
         roomId: null,
         snapshot: null,
+        names: {},
         closed: null,
         error: null,
         connection: socket?.connected ? 'online' : 'idle',
