@@ -265,11 +265,16 @@ test('a team of two: three faults detonate, roles swap on rematch, a Leave ends 
   expect(second.op).toBe(analyst);
 
   // The new Analyst leaves from the team drawer: fewer than two players, so the game ends.
+  // The room then drops the finished game (as after any Leave), so the one left waits in the
+  // lobby for a new teammate and is told why.
   const leaver = second.analysts[0]!;
   await id(leaver, 'open-team').click();
   await id(leaver, 'leave-team').click();
+  await expect(
+    id(second.op, 'toast').filter({ hasText: 'Game ended: not enough players' }),
+  ).toBeVisible();
+  await expect(id(second.op, 'lobby-game')).toHaveText('Defuser');
+  await expect(id(second.op, 'defuser-game')).toHaveCount(0);
   await expect(id(leaver, 'greeting')).toBeVisible();
-  await expect(id(second.op, 'result-title')).toHaveText('GAME ENDED');
-  await expect(id(second.op, 'result-detail')).toHaveText('not enough players');
   await shot(second.op.page, 'df-11-ended');
 });
