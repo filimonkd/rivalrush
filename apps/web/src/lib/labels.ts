@@ -1,4 +1,4 @@
-import type { ErrorCode, MatchOutcome } from '@rivalrush/shared';
+import type { ErrorCode, MatchOutcome, MatchSummary } from '@rivalrush/shared';
 
 export { reasonLabel } from './games';
 
@@ -14,6 +14,13 @@ const OUTCOME_LABELS: Record<MatchOutcome, string> = {
 
 export function outcomeLabel(outcome: MatchOutcome): string {
   return OUTCOME_LABELS[outcome];
+}
+
+/** A history row's title: the team for a co-op game, the opponent for a duel. */
+export function matchTitle(m: Pick<MatchSummary, 'coop' | 'teammates' | 'opponent'>): string {
+  return m.coop
+    ? `with ${m.teammates.map((t) => t.displayName).join(', ') || 'a team'}`
+    : `vs ${m.opponent?.displayName ?? 'someone'}`;
 }
 
 const JOIN_ERRORS: Partial<Record<ErrorCode | 'NETWORK_ERROR', string>> = {
