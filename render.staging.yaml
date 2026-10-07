@@ -1,0 +1,61 @@
+# Render Blueprint for the RivalRush STAGING game server — FREE plan. Optional.
+#
+# Staging exists for Telegram multi-phone QA of unreleased games (today: Defuser). It runs with
+# NODE_ENV=production, so every production check applies (secrets, exact https CORS origins,
+# no dev login, no fixed seed); DEPLOY_ENV=staging only adds Defuser. It must use its own
+# Telegram bot, its own database (rivalrush_staging, which the server checks) and its own
+# JWT secret. Never copy the live service's BOT_TOKEN or MONGODB_URI here.
+#
+# This is a separate file on purpose: render.yaml (the live service) never gains a staging
+# service. Create it from the Render dashboard as a new Blueprint with this file path, or as a
+# plain web service with these settings (docs/deployment.md#staging).
+#
+# Free web services sleep after ~15 min idle; do NOT add staging to the uptime pinger, so it
+# only uses free instance hours while testers are playing. A sleep or deploy ends live games.
+services:
+  - type: web
+    name: rivalrush-api-staging
+    runtime: node
+    plan: free
+    region: frankfurt
+    numInstances: 1 # MUST stay 1 until a Redis RoomStore + Socket.IO adapter exist
+    autoDeploy: false # deploy the branch you want to test, by hand
+    buildCommand: npm ci --include=dev && npm run build:shared && npm run build -w @rivalrush/server
+    startCommand: node apps/server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEPLOY_ENV
+        value: staging
+      - key: DEFUSER_ENABLED
+        value: 'true'
+      - key: MONGODB_DB_NAME
+        value: rivalrush_staging
+      - key: NODE_VERSION
+        value: '22'
+      - key: TRUST_PROXY
+        value: '1'
+      - key: LOG_LEVEL
+        value: info
+      - key: BOT_MODE
+        value: webhook
+      - key: DEV_LOGIN_ENABLED
+        value: 'false'
+      - key: DISCONNECT_GRACE_SECONDS
+        value: '60'
+      - key: ROOM_TTL_MINUTES
+        value: '120'
+      - key: JWT_SECRET
+        generateValue: true
+      # Set these in the Render dashboard (never commit them). All staging-only values:
+      - key: BOT_TOKEN # the STAGING bot's token, never the live bot's
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+      - key: MONGODB_URI # the rivalrush_staging DB user's URI
+        sync: false
+      - key: WEBAPP_URL # the staging Vercel project's https URL
+        sync: false
+      - key: CLIENT_ORIGINS # the same staging web origin, exactly
+        sync: false

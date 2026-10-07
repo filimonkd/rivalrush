@@ -97,14 +97,79 @@ describe('loadConfig', () => {
     );
   });
 
+  describe('staging (DEPLOY_ENV=staging): production checks, plus Defuser for Telegram QA', () => {
+    const staging = { ...prod, DEPLOY_ENV: 'staging', MONGODB_DB_NAME: 'rivalrush_staging' };
+
+    it('allows DEFUSER_ENABLED with a staging database, keeping every production check', () => {
+      const c = loadConfig({ ...staging, DEFUSER_ENABLED: 'true' });
+      expect(c).toMatchObject({ isProduction: true, isStaging: true, defuserEnabled: true });
+      expect(() => loadConfig({ ...staging, JWT_SECRET: 'short' })).toThrow(/JWT_SECRET/);
+      expect(() => loadConfig({ ...staging, CLIENT_ORIGINS: '*' })).toThrow(/CLIENT_ORIGINS/);
+    });
+
+    it('still refuses dev login and a fixed seed', () => {
+      expect(() => loadConfig({ ...staging, DEV_LOGIN_ENABLED: 'true' })).toThrow(
+        /DEV_LOGIN_ENABLED/,
+      );
+      const seed = '0123456789abcdef0123456789abcdef';
+      expect(() => loadConfig({ ...staging, DEFUSER_FIXED_SEED: seed })).toThrow(
+        /DEFUSER_FIXED_SEED/,
+      );
+    });
+
+    it('needs a staging database, so a copied live config cannot point staging at live data', () => {
+      for (const name of [undefined, 'rivalrush', 'rivalrush_prod']) {
+        const env: Record<string, string> = { ...staging, DEFUSER_ENABLED: 'true' };
+        if (name === undefined) delete env.MONGODB_DB_NAME;
+        else env.MONGODB_DB_NAME = name;
+        expect(() => loadConfig(env)).toThrow(/MONGODB_DB_NAME naming a staging database/);
+      }
+    });
+
+    it('the live service (DEPLOY_ENV unset or production) still refuses Defuser', () => {
+      for (const env of [prod, { ...prod, DEPLOY_ENV: 'production' }]) {
+        expect(loadConfig(env).isStaging).toBe(false);
+        expect(() => loadConfig({ ...env, DEFUSER_ENABLED: 'true' })).toThrow(
+          /DEFUSER_ENABLED must be false in production/,
+        );
+      }
+    });
+
+    it('is only valid with NODE_ENV=production, and only as production or staging', () => {
+      expect(() => loadConfig({ DEPLOY_ENV: 'staging', DEFUSER_ENABLED: 'true' })).toThrow(
+        /DEPLOY_ENV=staging requires NODE_ENV=production/,
+      );
+      expect(() => loadConfig({ ...prod, DEPLOY_ENV: 'preview' })).toThrow(ConfigError);
+      expect(loadConfig({ NODE_ENV: 'test' }).isStaging).toBe(false);
+    });
+  });
+
   it('reports invalid values as a ConfigError', () => {
     expect(() => loadConfig({ PORT: 'abc' })).toThrow(ConfigError);
   });
 });
 
 describe('deployment files', () => {
-  it('render.yaml never sets DEFUSER_FIXED_SEED', () => {
-    const yaml = readFileSync(new URL('../../../../render.yaml', import.meta.url), 'utf8');
+  const read = (f: string) => readFileSync(new URL(`../../../../${f}`, import.meta.url), 'utf8');
+
+  it('render.yaml (the live service) never enables Defuser, staging or a fixed seed', () => {
+    const yaml = read('render.yaml');
     expect(yaml).not.toContain('DEFUSER_FIXED_SEED');
+    expect(yaml).not.toContain('DEFUSER_ENABLED');
+    expect(yaml).not.toContain('DEPLOY_ENV');
+  });
+
+  it('render.staging.yaml is a hardened staging service on a staging database', () => {
+    const yaml = read('render.staging.yaml');
+    const value = (key: string) =>
+      yaml.match(new RegExp(`- key: ${key}\\s*\\n\\s*value: '?([^'\\n]+)'?`))?.[1];
+    expect(value('NODE_ENV')).toBe('production');
+    expect(value('DEPLOY_ENV')).toBe('staging');
+    expect(value('DEFUSER_ENABLED')).toBe('true');
+    expect(value('DEV_LOGIN_ENABLED')).toBe('false');
+    expect(value('MONGODB_DB_NAME')).toBe('rivalrush_staging');
+    expect(yaml).not.toContain('DEFUSER_FIXED_SEED');
+    expect(yaml).toMatch(/name: rivalrush-api-staging/);
+    expect(yaml).not.toMatch(/name: rivalrush-api\s*$/m);
   });
 });

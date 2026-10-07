@@ -12,14 +12,17 @@ const DUELS: Record<string, AnyGameDefinition> = {
 
 export interface GameRegistryOptions {
   /**
-   * Registers Defuser (docs/defuser.md). Off by default: Defuser has no UI yet, so the server
-   * only registers it in development and test, where tests and E2E create Defuser rooms
-   * explicitly. Config refuses it in production; this factory refuses it too.
+   * Registers Defuser (docs/defuser.md). Off by default: Defuser is not released, so the server
+   * only registers it in development and test (tests and E2E create Defuser rooms explicitly)
+   * and on a staging deployment for Telegram QA. Config refuses it on the live service; this
+   * factory refuses it too.
    */
   defuserEnabled?: boolean;
-  /** Dev/test only: every Defuser game uses this 128-bit seed. Refused in production. */
+  /** Dev/test only: every Defuser game uses this 128-bit seed. Refused in production and staging. */
   defuserFixedSeed?: string | null;
   isProduction?: boolean;
+  /** A production-hardened staging deployment: the one place outside dev/test Defuser may run. */
+  isStaging?: boolean;
 }
 
 export interface GameRegistry {
@@ -30,16 +33,21 @@ export interface GameRegistry {
 /**
  * Builds the set of games this server can run. Adding a game = adding its plug-in here.
  *
- * Defuser is registered only when explicitly enabled, and is never advertised: its catalog
- * entry stays `coming_soon` either way, so the app never offers it to ordinary users. With it
- * unregistered, creating a Defuser room fails with GAME_NOT_AVAILABLE.
+ * Defuser is registered only when explicitly enabled. It is never advertised as live: its
+ * catalog entry stays `coming_soon`, except on staging, where it is `preview` so testers can
+ * start it from Home inside Telegram. With it unregistered, creating a Defuser room fails with
+ * GAME_NOT_AVAILABLE.
  */
 export function createGameRegistry(opts: GameRegistryOptions = {}): GameRegistry {
   const wantsDefuser = opts.defuserEnabled === true;
   const fixedSeed = opts.defuserFixedSeed ?? undefined;
-  if (opts.isProduction && (wantsDefuser || fixedSeed)) {
+  if (opts.isProduction && fixedSeed) {
+    throw new Error('A fixed Defuser seed is not available in production (or staging)');
+  }
+  if (opts.isProduction && wantsDefuser && !opts.isStaging) {
     throw new Error('Defuser is not available in production: refusing to register it');
   }
+  const preview = wantsDefuser && opts.isProduction === true && opts.isStaging === true;
   const games: Record<string, AnyGameDefinition> = { ...DUELS };
   if (wantsDefuser) {
     // Without a fixed seed, every game seeds itself from the platform's CSPRNG-backed random().
@@ -47,7 +55,8 @@ export function createGameRegistry(opts: GameRegistryOptions = {}): GameRegistry
   }
   return {
     get: (id) => (Object.hasOwn(games, id) ? games[id]! : null),
-    list: () => CATALOG.map((g) => ({ ...g })),
+    list: () =>
+      CATALOG.map((g) => (preview && g.id === DEFUSER_ID ? { ...g, status: 'preview' } : { ...g })),
   };
 }
 
