@@ -1,0 +1,4798 @@
+{
+  "briefing-operator": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 1,
+      "view": {
+        "gameId": "defuser",
+        "phase": "BRIEFING",
+        "version": 1,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": false
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": 1791288020000,
+        "deadlineAt": null,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": null,
+        "litKey": null
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "briefing-analyst": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 1,
+      "view": {
+        "gameId": "defuser",
+        "phase": "BRIEFING",
+        "version": 1,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": false
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": 1791288020000,
+        "deadlineAt": null,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": []
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "briefing-analyst-4p": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p4",
+        "displayName": "Dee",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 1,
+      "view": {
+        "gameId": "defuser",
+        "phase": "BRIEFING",
+        "version": 1,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": false
+          },
+          {
+            "userId": "p4",
+            "role": "analyst",
+            "letter": "C",
+            "status": "active",
+            "ready": false
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": 1791288020000,
+        "deadlineAt": null,
+        "result": null,
+        "me": "p3",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": []
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-fuse": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 4,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 4,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": null
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "analyst-3p": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 4,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 4,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "analyst-3p-b": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 4,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 4,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p3",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": [
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          }
+        ]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-1fault": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 5,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 5,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 1,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1],
+        "tried": {
+          "fuse": [1],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": null
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-glyph-lit": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 6,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 6,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 1,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1],
+        "tried": {
+          "fuse": [1],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": 1
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-2faults": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 7,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 7,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 2,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1, 2],
+        "tried": {
+          "fuse": [1, 2],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": 1
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-fuse-solved": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 8,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 8,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 2,
+        "solved": {
+          "fuse": true,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1, 2, 3],
+        "tried": {
+          "fuse": [1, 2],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": 1
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "analyst-solved-fuse": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 8,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 8,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 2,
+        "solved": {
+          "fuse": true,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1, 2, 3],
+        "tried": {
+          "fuse": [1, 2],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "analyst-2p": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 3,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 3,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288241000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "operator-2p": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 3,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 3,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288241000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": null
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "analyst-4p": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p4",
+        "displayName": "Dee",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 5,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 5,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p4",
+            "role": "analyst",
+            "letter": "C",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288301000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "analyst",
+        "sheets": [
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "inactive-operator": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 5,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 5,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": null,
+            "letter": null,
+            "status": "timed_out",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "operator",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p3"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "inactive",
+        "canRejoin": true,
+        "initialSheets": ["fuse.procedure", "glyph.procedure", "valve.reference"]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "promoted-operator": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 5,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 5,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": null,
+            "letter": null,
+            "status": "timed_out",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "operator",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p3"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "operator",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "litKey": null
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "inactive-analyst": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "IN_GAME",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p4",
+        "displayName": "Dee",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 6,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ARMED",
+        "version": 6,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": null,
+            "letter": "A",
+            "status": "timed_out",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p4",
+            "role": "analyst",
+            "letter": "C",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p4"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p4"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288301000,
+        "result": null,
+        "me": "p2",
+        "editionLabel": "PFM",
+        "kind": "inactive",
+        "canRejoin": true,
+        "initialSheets": ["glyph.procedure", "valve.reference"]
+      },
+      "result": null
+    },
+    "gamesPlayed": 0
+  },
+  "debrief-defused": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "FINISHED",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": true,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 9,
+      "view": {
+        "gameId": "defuser",
+        "phase": "DEFUSED",
+        "version": 9,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 1,
+        "solved": {
+          "fuse": true,
+          "glyph": true,
+          "valve": true
+        },
+        "cutLines": [1, 3],
+        "tried": {
+          "fuse": [1],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": {
+          "kind": "coop",
+          "outcome": "defused",
+          "reason": "defused",
+          "panelsSolved": 3,
+          "faults": 1,
+          "msRemaining": 191000,
+          "individual": {
+            "p1": "coop_win",
+            "p2": "coop_win",
+            "p3": "coop_win"
+          }
+        },
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "debrief",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 1,
+            "second": 2
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        },
+        "moves": [
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 1
+            },
+            "ok": false,
+            "at": 1791288004000,
+            "atMs": 3000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 3
+            },
+            "ok": true,
+            "at": 1791288012000,
+            "atMs": 11000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "glyph",
+            "input": {
+              "key": 1
+            },
+            "ok": true,
+            "at": 1791288020000,
+            "atMs": 19000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "glyph",
+            "input": {
+              "key": 2
+            },
+            "ok": true,
+            "at": 1791288030000,
+            "atMs": 29000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "valve",
+            "input": {
+              "level": 4,
+              "vent": "seal"
+            },
+            "ok": true,
+            "at": 1791288080000,
+            "atMs": 79000
+          }
+        ]
+      },
+      "result": {
+        "kind": "coop",
+        "outcome": "defused",
+        "reason": "defused",
+        "panelsSolved": 3,
+        "faults": 1,
+        "msRemaining": 191000,
+        "individual": {
+          "p1": "coop_win",
+          "p2": "coop_win",
+          "p3": "coop_win"
+        }
+      }
+    },
+    "gamesPlayed": 0
+  },
+  "debrief-faults": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "FINISHED",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": true,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 7,
+      "view": {
+        "gameId": "defuser",
+        "phase": "DETONATED",
+        "version": 7,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 3,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [1, 2, 4],
+        "tried": {
+          "fuse": [1, 2, 4],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": {
+          "kind": "coop",
+          "outcome": "detonated",
+          "reason": "faults",
+          "panelsSolved": 0,
+          "faults": 3,
+          "msRemaining": 263000,
+          "individual": {
+            "p1": "coop_loss",
+            "p2": "coop_loss",
+            "p3": "coop_loss"
+          }
+        },
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "debrief",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 1,
+            "second": 2
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        },
+        "moves": [
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 1
+            },
+            "ok": false,
+            "at": 1791288004000,
+            "atMs": 3000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 2
+            },
+            "ok": false,
+            "at": 1791288006000,
+            "atMs": 5000
+          },
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 4
+            },
+            "ok": false,
+            "at": 1791288008000,
+            "atMs": 7000
+          }
+        ]
+      },
+      "result": {
+        "kind": "coop",
+        "outcome": "detonated",
+        "reason": "faults",
+        "panelsSolved": 0,
+        "faults": 3,
+        "msRemaining": 263000,
+        "individual": {
+          "p1": "coop_loss",
+          "p2": "coop_loss",
+          "p3": "coop_loss"
+        }
+      }
+    },
+    "gamesPlayed": 0
+  },
+  "debrief-timer": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "FINISHED",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": true,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 6,
+      "view": {
+        "gameId": "defuser",
+        "phase": "DETONATED",
+        "version": 6,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": "analyst",
+            "letter": "A",
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": "analyst",
+            "letter": "B",
+            "status": "active",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p2"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p2"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": true,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [3],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": {
+          "kind": "coop",
+          "outcome": "detonated",
+          "reason": "timer",
+          "panelsSolved": 1,
+          "faults": 0,
+          "msRemaining": 0,
+          "individual": {
+            "p1": "coop_loss",
+            "p2": "coop_loss",
+            "p3": "coop_loss"
+          }
+        },
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "debrief",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 1,
+            "second": 2
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        },
+        "moves": [
+          {
+            "kind": "input",
+            "playerId": "p1",
+            "panel": "fuse",
+            "input": {
+              "line": 3
+            },
+            "ok": true,
+            "at": 1791288009000,
+            "atMs": 8000
+          }
+        ]
+      },
+      "result": {
+        "kind": "coop",
+        "outcome": "detonated",
+        "reason": "timer",
+        "panelsSolved": 1,
+        "faults": 0,
+        "msRemaining": 0,
+        "individual": {
+          "p1": "coop_loss",
+          "p2": "coop_loss",
+          "p3": "coop_loss"
+        }
+      }
+    },
+    "gamesPlayed": 0
+  },
+  "debrief-abandoned": {
+    "roomId": "qaroom000001",
+    "inviteToken": "qaqaqaqaqaqaqaqa",
+    "gameType": "defuser",
+    "settings": {
+      "difficulty": "normal"
+    },
+    "status": "FINISHED",
+    "hostId": "p1",
+    "maxPlayers": 4,
+    "players": [
+      {
+        "userId": "p1",
+        "displayName": "Ana",
+        "photoUrl": null,
+        "isHost": true,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p2",
+        "displayName": "Ben",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": true,
+        "graceDeadlineAt": null
+      },
+      {
+        "userId": "p3",
+        "displayName": "Cy",
+        "photoUrl": null,
+        "isHost": false,
+        "ready": true,
+        "online": true,
+        "wantsRematch": false,
+        "graceDeadlineAt": null
+      }
+    ],
+    "version": 30,
+    "createdAt": 0,
+    "expiresAt": 0,
+    "serverTime": 0,
+    "game": {
+      "sessionId": "qasession",
+      "gameType": "defuser",
+      "version": 6,
+      "view": {
+        "gameId": "defuser",
+        "phase": "ABANDONED",
+        "version": 6,
+        "settings": {
+          "difficulty": "normal"
+        },
+        "roster": [
+          {
+            "userId": "p1",
+            "role": "operator",
+            "letter": null,
+            "status": "active",
+            "ready": true
+          },
+          {
+            "userId": "p2",
+            "role": null,
+            "letter": "A",
+            "status": "timed_out",
+            "ready": true
+          },
+          {
+            "userId": "p3",
+            "role": null,
+            "letter": "B",
+            "status": "timed_out",
+            "ready": true
+          }
+        ],
+        "sheetIndex": [
+          {
+            "sheet": "fuse.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "fuse.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "glyph.reference",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.procedure",
+            "holders": ["p3"]
+          },
+          {
+            "sheet": "valve.reference",
+            "holders": ["p3"]
+          }
+        ],
+        "faults": 0,
+        "solved": {
+          "fuse": false,
+          "glyph": false,
+          "valve": false
+        },
+        "cutLines": [],
+        "tried": {
+          "fuse": [],
+          "glyph": [],
+          "valve": []
+        },
+        "briefingDeadlineAt": null,
+        "deadlineAt": 1791288271000,
+        "result": {
+          "kind": "coop",
+          "outcome": "abandoned",
+          "reason": "abandoned",
+          "panelsSolved": 0,
+          "faults": 0,
+          "msRemaining": 261500,
+          "individual": {
+            "p1": "coop_unfinished",
+            "p2": "coop_dropped",
+            "p3": "coop_dropped"
+          }
+        },
+        "me": "p1",
+        "editionLabel": "PFM",
+        "kind": "debrief",
+        "charge": {
+          "fuse": {
+            "lines": [
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 2,
+                "style": "dashed"
+              },
+              {
+                "color": 3,
+                "style": "solid"
+              },
+              {
+                "color": 2,
+                "style": "solid"
+              },
+              {
+                "color": 0,
+                "style": "solid"
+              }
+            ]
+          },
+          "glyph": {
+            "keys": [
+              {
+                "frame": 2,
+                "mark": 1
+              },
+              {
+                "frame": 3,
+                "mark": 0
+              },
+              {
+                "frame": 2,
+                "mark": 0
+              },
+              {
+                "frame": 1,
+                "mark": 3
+              }
+            ],
+            "balance": 12
+          },
+          "valve": {
+            "plate": 2,
+            "lamp": "off",
+            "gauge": 87
+          }
+        },
+        "sheets": [
+          {
+            "id": "fuse.procedure",
+            "data": {
+              "rules": [
+                {
+                  "if": {
+                    "kind": "endColor",
+                    "end": "bottom",
+                    "color": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 4,
+                    "lower": 5
+                  },
+                  "then": {
+                    "kind": "nthSolid",
+                    "n": 2
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "noColor",
+                    "color": 3
+                  },
+                  "then": {
+                    "kind": "colorEnd",
+                    "color": 4,
+                    "end": "bottom"
+                  }
+                },
+                {
+                  "if": {
+                    "kind": "colorAbove",
+                    "upper": 2,
+                    "lower": 0
+                  },
+                  "then": {
+                    "kind": "heat",
+                    "which": "lowest",
+                    "group": "solid"
+                  }
+                }
+              ],
+              "otherwise": {
+                "kind": "heat",
+                "which": "highest",
+                "group": "all"
+              }
+            }
+          },
+          {
+            "id": "fuse.reference",
+            "data": {
+              "heat": [6, 3, 2, 1, 5, 4]
+            }
+          },
+          {
+            "id": "glyph.procedure",
+            "data": {
+              "adjustment": {
+                "kind": "addOuter",
+                "amount": 3
+              },
+              "first": "equals",
+              "second": "lowest"
+            }
+          },
+          {
+            "id": "glyph.reference",
+            "data": {
+              "frameValues": [4, 2, 5, 1],
+              "markValues": [3, 4, 5, 1]
+            }
+          },
+          {
+            "id": "valve.procedure",
+            "data": {
+              "adjustments": [
+                {
+                  "from": 13,
+                  "to": 43,
+                  "delta": -1
+                },
+                {
+                  "from": 47,
+                  "to": 74,
+                  "delta": 1
+                }
+              ],
+              "flip": {
+                "kind": "levelAtLeast",
+                "level": 4
+              }
+            }
+          },
+          {
+            "id": "valve.reference",
+            "data": {
+              "grid": [
+                [
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  },
+                  {
+                    "level": 5,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "seal"
+                  }
+                ],
+                [
+                  {
+                    "level": 4,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 3,
+                    "vent": "vent"
+                  }
+                ],
+                [
+                  {
+                    "level": 2,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  },
+                  {
+                    "level": 1,
+                    "vent": "vent"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "solution": {
+          "fuse": {
+            "line": 3
+          },
+          "glyph": {
+            "first": 1,
+            "second": 2
+          },
+          "valve": {
+            "level": 4,
+            "vent": "seal"
+          }
+        },
+        "moves": [
+          {
+            "kind": "system",
+            "playerId": "p2",
+            "event": "timed_out",
+            "at": 1791288009000,
+            "atMs": 8000
+          },
+          {
+            "kind": "system",
+            "playerId": "p3",
+            "event": "timed_out",
+            "at": 1791288009500,
+            "atMs": 8500
+          }
+        ]
+      },
+      "result": {
+        "kind": "coop",
+        "outcome": "abandoned",
+        "reason": "abandoned",
+        "panelsSolved": 0,
+        "faults": 0,
+        "msRemaining": 261500,
+        "individual": {
+          "p1": "coop_unfinished",
+          "p2": "coop_dropped",
+          "p3": "coop_dropped"
+        }
+      }
+    },
+    "gamesPlayed": 0
+  }
+}
