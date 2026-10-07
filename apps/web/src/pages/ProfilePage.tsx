@@ -15,25 +15,33 @@ export function MatchList({ matches }: { matches: MatchSummary[] }) {
     return <p className="py-6 text-center text-sm text-muted">No games yet. Start a duel!</p>;
   return (
     <ul className="flex flex-col gap-2" data-testid="match-list">
-      {matches.map((m) => (
-        <li key={m.sessionId} className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-2">
-          <Avatar
-            name={m.opponent?.displayName ?? '?'}
-            url={m.opponent?.photoUrl ?? null}
-            size={36}
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-bold">vs {m.opponent?.displayName ?? 'someone'}</p>
-            <p className="text-xs text-muted">
-              {gameInfo(m.gameType).name} · {reasonLabel(m.reason, m.gameType)} ·{' '}
-              {new Date(m.endedAt).toLocaleDateString()}
-            </p>
-          </div>
-          <Pill tone={m.outcome === 'win' ? 'good' : m.outcome === 'loss' ? 'bad' : 'muted'}>
-            {outcomeLabel(m.outcome)}
-          </Pill>
-        </li>
-      ))}
+      {matches.map((m) => {
+        // Co-op rows name the team; duel rows the opponent.
+        const other = m.coop ? m.teammates[0] : m.opponent;
+        const title = m.coop
+          ? `with ${m.teammates.map((t) => t.displayName).join(', ') || 'a team'}`
+          : `vs ${m.opponent?.displayName ?? 'someone'}`;
+        const good = m.outcome === 'win' || m.outcome === 'coop_win';
+        const bad = m.outcome === 'loss' || m.outcome === 'coop_loss';
+        return (
+          <li
+            key={m.sessionId}
+            className="flex items-center gap-3 rounded-2xl bg-surface px-3 py-2"
+          >
+            <Avatar name={other?.displayName ?? '?'} url={other?.photoUrl ?? null} size={36} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-bold" data-testid="match-title">
+                {title}
+              </p>
+              <p className="text-xs text-muted">
+                {gameInfo(m.gameType).name} · {reasonLabel(m.reason, m.gameType)} ·{' '}
+                {new Date(m.endedAt).toLocaleDateString()}
+              </p>
+            </div>
+            <Pill tone={good ? 'good' : bad ? 'bad' : 'muted'}>{outcomeLabel(m.outcome)}</Pill>
+          </li>
+        );
+      })}
     </ul>
   );
 }

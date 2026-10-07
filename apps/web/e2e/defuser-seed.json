@@ -1,0 +1,10 @@
+{
+  "seed": "0123456789abcdef0123456789abcdef",
+  "editionLabel": "PFM",
+  "solution": {
+    "fuse": { "line": 3 },
+    "glyph": { "first": 1, "second": 2 },
+    "valve": { "level": 4, "vent": "seal" }
+  },
+  "wrongLines": [1, 2, 4, 5]
+}
