@@ -26,8 +26,10 @@ async function main(): Promise<void> {
 
   if (config.defuserEnabled) {
     logger.warn(
-      { event: 'defuser.enabled' },
-      'Defuser plug-in is registered (dev/test only; no UI, never advertised)',
+      { event: 'defuser.enabled', staging: config.isStaging },
+      config.isStaging
+        ? 'Defuser plug-in is registered on STAGING (preview for Telegram QA; not released)'
+        : 'Defuser plug-in is registered (dev/test only; not offered on Home)',
     );
   }
   if (config.defuserFixedSeed) {
