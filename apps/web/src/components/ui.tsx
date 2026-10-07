@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import { haptic } from '../lib/telegram';
 
 export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -47,8 +47,13 @@ export function Button({
   );
 }
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-3xl bg-card p-4 ${className}`}>{children}</section>;
+/** Extra attributes (data-testid, aria-*, role) reach the element, as with Button. */
+export function Card({ children, className = '', ...rest }: HTMLAttributes<HTMLElement>) {
+  return (
+    <section {...rest} className={`rounded-3xl bg-card p-4 ${className}`}>
+      {children}
+    </section>
+  );
 }
 
 export function Avatar({
