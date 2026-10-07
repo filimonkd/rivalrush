@@ -14,6 +14,8 @@ export interface GameInfo {
   tagline: string;
   /** Short line under the name on the create screen. */
   blurb: string;
+  /** Co-op games (Defuser) say "teammates" and "team" instead of "opponent". */
+  coop?: boolean;
   /** What the secret is called in the UI ("code", "pattern"). */
   secretNoun: string;
   /** Settings shown as tiles on the invite preview and in the lobby. */
@@ -48,14 +50,19 @@ export const GAMES: Record<GameId, GameInfo> = {
       { value: String(num(s, 'maxGuesses')), label: 'guesses' },
     ],
   },
-  // Not playable yet (no server plug-in): present so history and labels can name it.
+  // Co-op. Playable only where the server registers it (dev/test); never offered on Home.
   [DEFUSER_ID]: {
     id: DEFUSER_ID,
     name: 'Defuser',
     tagline: 'Your crew vs. the clock.',
     blurb: 'Co-op · 2–4 players · best on a voice call',
+    coop: true,
     secretNoun: 'Charge',
-    summary: () => [],
+    summary: () => [
+      { value: '2–4', label: 'players' },
+      { value: '~5 min', label: 'per game' },
+      { value: 'Co-op', label: 'voice call' },
+    ],
   },
 };
 

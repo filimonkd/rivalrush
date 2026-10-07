@@ -10,7 +10,7 @@ export default defineConfig({
   preview: { port: 4173 },
   build: { target: 'es2022', sourcemap: true },
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.{ts,tsx}'],
     environment: 'node',
   },
 });

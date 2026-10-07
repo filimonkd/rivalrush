@@ -1,13 +1,11 @@
 import { CC_COLORS } from '@rivalrush/shared';
 import { haptic } from '../../lib/telegram';
+import { FILL, INK } from './palette';
 
 /**
  * Color Cipher's visual language: rounded gem tiles, each color with its own symbol (so the game
  * never relies on hue alone), and diamond feedback pips.
  */
-
-const FILL = ['#e5484d', '#f76b15', '#ffc53d', '#30a46c', '#0090ff', '#8e4ec6'] as const;
-const INK = ['#ffffff', '#ffffff', '#3b2a00', '#ffffff', '#ffffff', '#ffffff'] as const;
 
 const SIZES = {
   lg: 'h-16 w-16 rounded-2xl text-2xl',
