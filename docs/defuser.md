@@ -1,13 +1,14 @@
 # Defuser
 
-**Status: BACKEND INTEGRATED, dev/test only. Not playable by users.** The server-side game
-(state machine, drop-out procedure, per-role views) is registered in the server's game
-registry, but only when `DEFUSER_ENABLED=true`, which the server refuses in production. There is
-no UI, no Home card and no production availability: the catalog lists Defuser as `coming_soon`,
-and without the flag creating a Defuser room fails with `GAME_NOT_AVAILABLE`. Production QA and
-Telegram multi-phone QA have **not** been done. Starting this engineering work is not a product
-decision: the build/no-build gate in the specification (closed beta, decision 19–20 Oct) is
-unchanged.
+**Status: BACKEND INTEGRATED + FRONTEND UI BUILT, dev/test only. Not available to users.** The
+server-side game (state machine, drop-out procedure, per-role views) is registered in the server's
+game registry only when `DEFUSER_ENABLED=true`, which the server refuses in production. The web
+app has the full Defuser UI (briefing, Operator console, Analyst manual, result and debrief), but
+nothing links to it: there is no Home card, the catalog lists Defuser as `coming_soon`, and without
+the flag creating a Defuser room fails with `GAME_NOT_AVAILABLE`. Production QA, Telegram
+multi-phone QA and Playwright E2E have **not** been done. Starting this engineering work is not a
+product decision: the build/no-build gate in the specification (closed beta, decision 19–20 Oct)
+is unchanged.
 
 The authoritative game design is the _Defuser — Game Design Specification_ (Claude Doc, with
 its consistency audits and correction log). This file records what is built in the repository.
@@ -16,26 +17,26 @@ where it disagrees with the specification, the specification wins.
 
 ## Implementation status
 
-| Area                                                                                                                                            | State                                                                                               | Where                                                                               |
-| ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Co-op result model (`CoopResult`: outcome, reason, panelsSolved, faults, msRemaining, individual)                                               | Implemented, tested                                                                                 | `packages/shared/src/games.ts`                                                      |
-| Defuser shared contract (id, settings, sheet catalogue, rule data, Charge, actions, moves, view types)                                          | Implemented (types only; no view is built yet)                                                      | `packages/shared/src/defuser.ts`                                                    |
-| Sheet renderer (rule data → deterministic sheet text)                                                                                           | Implemented, tested                                                                                 | `packages/shared/src/defuserSheets.ts`                                              |
-| Starting-player rotation for 2–4 players                                                                                                        | Implemented, tested (2-player swap unchanged)                                                       | `apps/server/src/rooms/rotation.ts`                                                 |
-| Player names snapshotted at game start; co-op player records and server-only generator info passed to match recording                           | Implemented, tested                                                                                 | `rooms/roomManager.ts`, `matches/matchService.ts`                                   |
-| `stats.coop {played, wins, losses, dropped}`; co-op never touches competitive stats                                                             | Implemented; unit-tested here, integration-tested in CI                                             | `matches/matchService.ts`, `users/*`                                                |
-| History: teammates, roles, co-op summary; seed stored `select: false`, never in any API                                                         | Implemented; integration-tested in CI                                                               | `matches/Match.model.ts`, `users/userService.ts`                                    |
-| Deterministic PRNG (xoshiro128**, 128-bit seed from 3 × 47 platform random bits)                                                                | Implemented, tested                                                                                 | `apps/server/src/games/defuser/prng.ts`                                             |
-| Fuse Lines, Glyph Ledger, Coolant Valve: generator, solver, constraints, safe template                                                          | Implemented, tested                                                                                 | `apps/server/src/games/defuser/{fuse,glyph,valve}.ts`                               |
-| Edition pipeline (retry up to 200, safe template, sheet limits, sheet assignment)                                                               | Implemented, tested                                                                                 | `apps/server/src/games/defuser/edition.ts`                                          |
-| `GameDefinition`: state machine, actions, validation order, views, drop-out procedure, rejoin, timers                                           | Implemented, tested (unit, room-level with a fake clock, 3-client Socket.IO; Mongo recording in CI) | `apps/server/src/games/defuser/{game,state,transitions,dropout,views}.ts`           |
-| Room and Socket.IO integration: `DefuserPlayerView` in snapshots, 5 new room events                                                             | Implemented and tested over real sockets and REST with the registered plug-in (dev/test)            | `packages/shared/src/rooms.ts`, `rooms/roomManager.ts`, `websocket/socketServer.ts` |
-| Operator console, Analyst Codebook, debrief, result UI                                                                                          | **Not implemented**                                                                                 | —                                                                                   |
-| Registry: `createGameRegistry`, `DEFUSER_ENABLED` (dev/test only), never advertised (catalog stays `coming_soon`)                               | Implemented, tested                                                                                 | `games/registry.ts`, `config/env.ts`, `server.ts`                                   |
-| `DEFUSER_FIXED_SEED`: same seed, same edition; refused in production by config and by the registry                                              | Implemented, tested                                                                                 | `config/env.ts`, `games/registry.ts`                                                |
-| Backend test harness (real `buildServer`, real sockets and REST, fixed seed, controllable server clock) and the serialized-payload leak scanner | Implemented                                                                                         | `test/helpers/defuserHarness.ts`, `test/helpers/leak.ts`                            |
-| Playwright E2E with `DEFUSER_FIXED_SEED` in the Playwright env                                                                                  | **Not implemented**                                                                                 | —                                                                                   |
-| Production activation, production QA, Telegram multi-phone QA                                                                                   | **Not done**                                                                                        | —                                                                                   |
+| Area                                                                                                                                                  | State                                                                                               | Where                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Co-op result model (`CoopResult`: outcome, reason, panelsSolved, faults, msRemaining, individual)                                                     | Implemented, tested                                                                                 | `packages/shared/src/games.ts`                                                      |
+| Defuser shared contract (id, settings, sheet catalogue, rule data, Charge, actions, moves, view types)                                                | Implemented (types only; no view is built yet)                                                      | `packages/shared/src/defuser.ts`                                                    |
+| Sheet renderer (rule data → deterministic sheet text)                                                                                                 | Implemented, tested                                                                                 | `packages/shared/src/defuserSheets.ts`                                              |
+| Starting-player rotation for 2–4 players                                                                                                              | Implemented, tested (2-player swap unchanged)                                                       | `apps/server/src/rooms/rotation.ts`                                                 |
+| Player names snapshotted at game start; co-op player records and server-only generator info passed to match recording                                 | Implemented, tested                                                                                 | `rooms/roomManager.ts`, `matches/matchService.ts`                                   |
+| `stats.coop {played, wins, losses, dropped}`; co-op never touches competitive stats                                                                   | Implemented; unit-tested here, integration-tested in CI                                             | `matches/matchService.ts`, `users/*`                                                |
+| History: teammates, roles, co-op summary; seed stored `select: false`, never in any API                                                               | Implemented; integration-tested in CI                                                               | `matches/Match.model.ts`, `users/userService.ts`                                    |
+| Deterministic PRNG (xoshiro128**, 128-bit seed from 3 × 47 platform random bits)                                                                      | Implemented, tested                                                                                 | `apps/server/src/games/defuser/prng.ts`                                             |
+| Fuse Lines, Glyph Ledger, Coolant Valve: generator, solver, constraints, safe template                                                                | Implemented, tested                                                                                 | `apps/server/src/games/defuser/{fuse,glyph,valve}.ts`                               |
+| Edition pipeline (retry up to 200, safe template, sheet limits, sheet assignment)                                                                     | Implemented, tested                                                                                 | `apps/server/src/games/defuser/edition.ts`                                          |
+| `GameDefinition`: state machine, actions, validation order, views, drop-out procedure, rejoin, timers                                                 | Implemented, tested (unit, room-level with a fake clock, 3-client Socket.IO; Mongo recording in CI) | `apps/server/src/games/defuser/{game,state,transitions,dropout,views}.ts`           |
+| Room and Socket.IO integration: `DefuserPlayerView` in snapshots, 5 new room events                                                                   | Implemented and tested over real sockets and REST with the registered plug-in (dev/test)            | `packages/shared/src/rooms.ts`, `rooms/roomManager.ts`, `websocket/socketServer.ts` |
+| Web UI: briefing, Operator console (Fuse, Glyph, Valve with hold-to-commit), Analyst manual and sheet index, inactive/rejoin, roster, result, debrief | Implemented; jsdom tests on real role-view fixtures; manual visual QA at 360×560, 390×844, desktop  | `apps/web/src/features/defuser/*`, `apps/web/test/defuser/*`                        |
+| Registry: `createGameRegistry`, `DEFUSER_ENABLED` (dev/test only), never advertised (catalog stays `coming_soon`)                                     | Implemented, tested                                                                                 | `games/registry.ts`, `config/env.ts`, `server.ts`                                   |
+| `DEFUSER_FIXED_SEED`: same seed, same edition; refused in production by config and by the registry                                                    | Implemented, tested                                                                                 | `config/env.ts`, `games/registry.ts`                                                |
+| Backend test harness (real `buildServer`, real sockets and REST, fixed seed, controllable server clock) and the serialized-payload leak scanner       | Implemented                                                                                         | `test/helpers/defuserHarness.ts`, `test/helpers/leak.ts`                            |
+| Playwright E2E with `DEFUSER_FIXED_SEED` in the Playwright env                                                                                        | **Not implemented**                                                                                 | —                                                                                   |
+| Production activation, production QA, Telegram multi-phone QA                                                                                         | **Not done**                                                                                        | —                                                                                   |
 
 ### Generator verification
 
@@ -72,9 +73,40 @@ DEFUSER_FIXED_SEED=0123456789abcdef0123456789abcdef    # optional: every game us
 
 Without `DEFUSER_FIXED_SEED` each game draws its own 128-bit seed from the platform's
 CSPRNG-backed `random()`. With it, the whole edition (Charge, sheets, assignment, solution) is
-reproducible; `generateEdition({ seed, analystCount })` gives the test the answers. There is still
-no UI, so drive a game with the backend harness (`test/helpers/defuserHarness.ts`): it starts the
-real server, opens real Socket.IO clients and calls the real REST routes.
+reproducible; `generateEdition({ seed, analystCount })` gives the test the answers.
+
+With the flag on, open `/create/defuser` in the web app (there is deliberately no link to it) and
+share the invite with 1–3 other players. The backend harness (`test/helpers/defuserHarness.ts`)
+still drives games from tests: it starts the real server, opens real Socket.IO clients and calls
+the real REST routes.
+
+### Frontend decisions
+
+- The screen renders the role view the server sent and nothing else, reading fields by `kind`
+  (`operator`, `analyst`, `inactive`, `debrief`). Nothing is fetched, computed or hidden with CSS:
+  tests render views with planted extra fields (seed, solution, Charge on an Analyst, sheets on an
+  Operator) and check none of it reaches the page. A static test checks that `apps/web/src` imports
+  nothing from the server, the generator or the solver.
+- Every control sends an intent (`READY`, `CUT_LINE`, `PRESS_GLYPH`, `SET_VALVE`, `REJOIN`) and
+  waits for the next snapshot: a cut line, a lit key, a fault or a solve is drawn only once the
+  server says so. The Valve commit fires only after an uninterrupted 0.6 s hold.
+- Countdowns come from the server deadlines and the measured clock offset. When the countdown
+  reaches zero locally the client asks the server for a snapshot; it never declares a timeout.
+- Promotions and roster changes are read off successive snapshots (an offline player misses
+  events), so "You are now the Operator" and the time-out/Leave notices also appear after a
+  reconnect.
+- Error and fault wording names the Operator's own input at most ("Fault 1 of 3: that was line
+  3"), never the right answer.
+- "Next Operator" on the result sheet is derived from public data: the starting Operator is the
+  seat just before Analyst A, then the server's rule (next seat still in the room).
+- Defuser's screens load on demand (a separate ~40 kB chunk), so the main bundle is unchanged for
+  everyone else.
+- **Backend contract gap (worked around, no backend change):** the co-op roster carries user ids
+  only, and a player who taps Leave loses their seat, so their name is not in later snapshots. The
+  room store keeps the names it has already seen for this room; a never-seen id shows as "A
+  teammate".
+- Lobby, Join and invite copy say "team" for co-op games. Telegram haptics, the BackButton (which
+  asks "Leave the team?" during a live game) and safe-area insets reuse the existing helpers.
 
 ### Backend integration decisions
 
