@@ -19,6 +19,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   const full = room.players.length >= room.maxPlayers;
   const link = inviteLinkFor(room.inviteToken);
   const game = gameInfo(room.gameType);
+  const coop = game.coop === true;
 
   const run = async (fn: () => Promise<{ message: string } | null>) => {
     setBusy(true);
@@ -60,7 +61,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
     <Screen className="gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black">Lobby</h1>
+          <h1 className="text-3xl font-black">{coop ? 'Team lobby' : 'Lobby'}</h1>
           <p className="text-sm font-bold text-muted" data-testid="lobby-game">
             {game.name}
           </p>
@@ -86,7 +87,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
                   ?
                 </div>
                 <p className="font-bold text-muted" data-testid="waiting-opponent">
-                  Waiting for opponent
+                  {coop ? 'Waiting for a teammate' : 'Waiting for opponent'}
                 </p>
               </Card>
             );
@@ -119,6 +120,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
           <p className="font-black">Invite a friend</p>
           <p className="text-sm text-muted">
             Send the link to a Telegram chat. It opens straight into this room.
+            {coop && ' Best with voice: start a Telegram call.'}
           </p>
           <p
             className="truncate rounded-xl bg-surface px-3 py-2 font-mono text-xs text-muted select-text"
@@ -145,8 +147,12 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
             {room.status === 'READY'
               ? 'Start game'
               : full
-                ? 'Waiting for opponent to be ready…'
-                : 'Waiting for opponent…'}
+                ? coop
+                  ? 'Waiting for the team to be ready…'
+                  : 'Waiting for opponent to be ready…'
+                : coop
+                  ? 'Waiting for teammates…'
+                  : 'Waiting for opponent…'}
           </Button>
         ) : (
           <Button

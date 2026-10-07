@@ -88,9 +88,15 @@ export function JoinPage() {
       <Avatar name={preview.host.displayName} url={preview.host.photoUrl} size={96} ring />
       <div>
         <h1 className="text-3xl font-black" data-testid="challenge-title">
-          {preview.host.displayName} challenged you to {game.name}
+          {game.coop
+            ? `${preview.host.displayName} needs a team to defuse a Charge`
+            : `${preview.host.displayName} challenged you to ${game.name}`}
         </h1>
-        <p className="mt-1 text-muted">{game.tagline} · 1 vs 1</p>
+        <p className="mt-1 text-muted">
+          {game.coop
+            ? `${game.tagline} · Co-op for 2–4 players, best on a voice call`
+            : `${game.tagline} · 1 vs 1`}
+        </p>
       </div>
       <Card className="grid w-full grid-cols-3 gap-2 text-center">
         {game.summary(preview.settings).map((item) => (
