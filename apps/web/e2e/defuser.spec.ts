@@ -103,9 +103,9 @@ test('a team of three defuses the Charge: roles, faults, reconnect, all panels, 
   const kai = await player(browser, 'Kai');
   const team = [ivy, jon, kai];
 
-  // Not offered on Home: no start button, only the "Coming soon" tile.
+  // Not offered on Home outside staging: no preview card, only the "Coming soon" tile.
   await expect(ivy.page.getByText('Coming soon')).toBeVisible();
-  await expect(id(ivy, 'start-defuser')).toHaveCount(0);
+  await expect(id(ivy, 'start-preview-defuser')).toHaveCount(0);
   await shot(ivy.page, 'df-1-home');
 
   await assemble(ivy, [jon, kai]);

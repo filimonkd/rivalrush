@@ -74,6 +74,26 @@ describe('game registry: Defuser registration and gating', () => {
     expect(() => createGameRegistry({ isProduction: true })).not.toThrow();
   });
 
+  it('staging (production-hardened) may register Defuser, listed as preview; never a fixed seed', () => {
+    const r = createGameRegistry({ isProduction: true, isStaging: true, defuserEnabled: true });
+    expect(r.get('defuser')?.id).toBe('defuser');
+    expect(r.list().map((g) => [g.id, g.status])).toEqual([
+      ['crack-the-code', 'live'],
+      ['color-cipher', 'live'],
+      ['defuser', 'preview'],
+    ]);
+    expect(() =>
+      createGameRegistry({ isProduction: true, isStaging: true, defuserFixedSeed: SEED }),
+    ).toThrow(/not available in production/);
+    // Staging without the flag: nothing registered, nothing previewed.
+    const off = createGameRegistry({ isProduction: true, isStaging: true });
+    expect(off.get('defuser')).toBeNull();
+    expect(off.list().find((g) => g.id === 'defuser')!.status).toBe('coming_soon');
+    // isStaging means nothing outside production: dev/test stays coming_soon.
+    const dev = createGameRegistry({ isStaging: true, defuserEnabled: true });
+    expect(dev.list().find((g) => g.id === 'defuser')!.status).toBe('coming_soon');
+  });
+
   it('lookups cannot reach inherited properties', () => {
     for (const id of ['__proto__', 'constructor', 'toString', 'hasOwnProperty', '']) {
       expect(createGameRegistry({ defuserEnabled: true }).get(id)).toBeNull();
@@ -224,6 +244,38 @@ describe('buildServer wiring (no database needed for these routes)', () => {
     expect(res.body.games.find((g: { id: string }) => g.id === 'defuser').status).toBe(
       'coming_soon',
     );
+  });
+
+  it('a staging server registers Defuser and offers it as preview; the live config cannot', async () => {
+    const live = {
+      NODE_ENV: 'production',
+      BOT_TOKEN: '123:abc',
+      JWT_SECRET: 'x'.repeat(40),
+      MONGODB_URI: 'mongodb+srv://example/db',
+      CLIENT_ORIGINS: 'https://rivalrush.vercel.app',
+      LOG_LEVEL: 'silent',
+    };
+    const config = loadConfig({
+      ...live,
+      DEPLOY_ENV: 'staging',
+      MONGODB_DB_NAME: 'rivalrush_staging',
+      DEFUSER_ENABLED: 'true',
+    });
+    const s = buildServer(config, createLogger('silent'));
+    closers.push(() => s.close());
+    const token = issueSession('aaaaaaaaaaaaaaaaaaaaaaaa', config.jwtSecret, 600).token;
+    const res = await request(s.httpServer)
+      .get('/api/games')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    expect(res.body.games.find((g: { id: string }) => g.id === 'defuser').status).toBe('preview');
+    const snap = await s.rooms.createRoom(
+      { userId: 'u1', displayName: 'A', photoUrl: null },
+      'defuser',
+      {},
+    );
+    expect(snap.gameType).toBe('defuser');
+    expect(() => loadConfig({ ...live, DEFUSER_ENABLED: 'true' })).toThrow(/DEFUSER_ENABLED/);
   });
 
   it('production config refuses both flags before a server can be built', () => {

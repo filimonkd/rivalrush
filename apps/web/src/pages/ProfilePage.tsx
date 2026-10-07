@@ -5,7 +5,7 @@ import { Avatar, Card, Pill, Screen, Spinner } from '../components/ui';
 import type { ApiError } from '../lib/api';
 import { api } from '../lib/api';
 import { gameInfo } from '../lib/games';
-import { outcomeLabel, reasonLabel } from '../lib/labels';
+import { matchTitle, outcomeLabel, reasonLabel } from '../lib/labels';
 import { useBackButton } from '../lib/useBackButton';
 import { useSession } from '../store/session';
 import { ErrorScreen } from './StatusScreens';
@@ -18,9 +18,7 @@ export function MatchList({ matches }: { matches: MatchSummary[] }) {
       {matches.map((m) => {
         // Co-op rows name the team; duel rows the opponent.
         const other = m.coop ? m.teammates[0] : m.opponent;
-        const title = m.coop
-          ? `with ${m.teammates.map((t) => t.displayName).join(', ') || 'a team'}`
-          : `vs ${m.opponent?.displayName ?? 'someone'}`;
+        const title = matchTitle(m);
         const good = m.outcome === 'win' || m.outcome === 'coop_win';
         const bad = m.outcome === 'loss' || m.outcome === 'coop_loss';
         return (

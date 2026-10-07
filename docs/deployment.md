@@ -13,32 +13,34 @@ been verified in production is tracked in [status.md](status.md) and
 
 ## What "free" means for RivalRush
 
-| Piece     | Free tier                   | What to know                                                                                                                                                                                                                      |
-| --------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| API       | Render **Free** web service | Sleeps after ~15 min without inbound requests; the first request then waits ~1 min. **A sleep or restart ends live games** (they are in memory). Render may restart free services at any time. WebSockets and health checks work. |
-| Keep-warm | UptimeRobot / cron-job.org  | A ping to `/health` every 5–10 min keeps the API awake. One always-awake service ≈ 720–744 h/month, inside Render's 750 free hours. **Don't keep a second service awake** or the hours run out and Render suspends free services. |
-| Bot       | Telegram (webhook mode)     | Telegram POSTs each message to the API, so `/start` works even if the API was asleep (Telegram retries until it answers).                                                                                                         |
-| Web       | Vercel **Hobby**            | Free static hosting + preview deployments. Hobby is for non-commercial use: move to a paid plan before you monetise.                                                                                                              |
-| Database  | Atlas **M0**                | Free forever, 512 MB (plenty for users + match history), replica set (transactions work). Render Free has no static outbound IPs, so the access list must allow `0.0.0.0/0`: use a strong, unique DB password.                    |
-| CI        | GitHub Actions              | Unlimited minutes on public repos; ~2,000 min/month on private repos (one CI run ≈ 4 billed minutes).                                                                                                                             |
+| Piece     | Free tier                                | What to know                                                                                                                                                                                                                      |
+| --------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API       | `localhost:4000` (+ tunnel)              | 2nd Render Free service `rivalrush-api-staging` (`render.staging.yaml`), **not** kept awake                                                                                                                                       | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
+| Keep-warm | UptimeRobot / cron-job.org               | A ping to `/health` every 5–10 min keeps the API awake. One always-awake service ≈ 720–744 h/month, inside Render's 750 free hours. **Don't keep a second service awake** or the hours run out and Render suspends free services. |
+| Bot       | dev bot (polling)                        | staging bot (webhook), its own token                                                                                                                                                                                              | `@rivalrushbot` (webhook)                                        |
+| Web       | `localhost:5173` (+ tunnel for Telegram) | a 2nd Vercel project (Root `apps/web`) with the staging `VITE_*` values                                                                                                                                                           | Vercel production domain                                         |
+| Database  | in-memory (or local)                     | Atlas DB `rivalrush_staging` (same free M0 cluster; the server refuses a non-staging name)                                                                                                                                        | Atlas DB `rivalrush`                                             |
+| CI        | GitHub Actions                           | Unlimited minutes on public repos; ~2,000 min/month on private repos (one CI run ≈ 4 billed minutes).                                                                                                                             |
 
 The web app shows "Waking up the game server…" if sign-in takes longer than 4 s, so a cold
 start looks intentional rather than broken.
 
 ## Environment matrix
 
-There is **no staging environment**: changes are tested locally and in CI, then go to
-production. The "Staging (optional)" column describes how to add one later at no cost; none of
-it exists today.
+Duels are tested locally and in CI, then go to production. **Staging is defined in the repo but
+not set up**: it exists for Telegram multi-phone QA of unreleased games (today Defuser), and you
+create it, at no cost, with [Staging](#staging-optional-telegram-qa-of-unreleased-games) below.
+Nothing in staging ever reaches the live service.
 
-|           | Development                              | Staging (optional, not set up)                                         | Production (live)                                                |
-| --------- | ---------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Web       | `localhost:5173` (+ tunnel for Telegram) | a second Vercel project or preview with its own `VITE_API_URL`         | Vercel production domain                                         |
-| API       | `localhost:4000` (+ tunnel)              | your machine + tunnel, or a 2nd Render Free service **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
-| Database  | in-memory (or local)                     | Atlas DB `rivalrush_staging` (same free M0 cluster)                    | Atlas DB `rivalrush`                                             |
-| Bot       | dev bot (polling)                        | dev bot                                                                | `@rivalrushbot` (webhook)                                        |
-| Dev login | on                                       | **off**                                                                | **off** (server refuses to boot otherwise)                       |
-| CI        | in-memory MongoDB, no secrets            | —                                                                      | —                                                                |
+|           | Development                                      | Staging (optional, not set up)                                                              | Production (live)                                                |
+| --------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Web       | `localhost:5173` (+ tunnel for Telegram)         | a 2nd Vercel project (Root `apps/web`) with the staging `VITE_*` values                     | Vercel production domain                                         |
+| API       | `localhost:4000` (+ tunnel)                      | 2nd Render Free service `rivalrush-api-staging` (`render.staging.yaml`), **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
+| Database  | in-memory (or local)                             | Atlas DB `rivalrush_staging` (same free M0 cluster; the server refuses a non-staging name)  | Atlas DB `rivalrush`                                             |
+| Bot       | dev bot (polling)                                | staging bot (webhook), its own token                                                        | `@rivalrushbot` (webhook)                                        |
+| Dev login | on                                               | **off** (server refuses to boot otherwise)                                                  | **off** (server refuses to boot otherwise)                       |
+| Defuser   | `DEFUSER_ENABLED=true` when needed (not on Home) | `DEPLOY_ENV=staging` + `DEFUSER_ENABLED=true`: "Staging preview" card on Home               | **refused** (server refuses to boot)                             |
+| CI        | in-memory MongoDB, no secrets                    | —                                                                                           | —                                                                |
 
 Vercel PR previews only check that the web app builds; they can't reach the API (see
 [ci-cd.md](ci-cd.md#deployments)).
@@ -97,6 +99,54 @@ Vercel PR previews only check that the web app builds; they can't reach the API 
    also gives you free downtime alerts by email.
 7. Smoke test: `curl https://<api>/health` → `{"status":"ok",…,"database":"up"}`, then `/start`
    the bot and run the manual QA plan.
+
+## Staging (optional): Telegram QA of unreleased games
+
+Staging is a second, free deployment where testers play an unreleased game (today **Defuser**)
+inside Telegram on their own phones ([defuser-qa.md](defuser-qa.md)). It is **not** a preview of
+the live service and shares nothing secret with it.
+
+**What makes it safe** (enforced by the server, tested in `env.test.ts`):
+
+- `NODE_ENV=production`: every production check applies (≥ 32-char `JWT_SECRET`, exact https
+  `CLIENT_ORIGINS`, `BOT_TOKEN` and `MONGODB_URI` required, no dev login, no fixed seed).
+- `DEPLOY_ENV=staging` is the only thing that allows `DEFUSER_ENABLED`. It is refused unless
+  `NODE_ENV=production`, and staging refuses to boot unless `MONGODB_DB_NAME` names a staging
+  database (contains `staging`), so a copied live config cannot write to live data.
+- The live service is unchanged: with `DEPLOY_ENV` unset (or `production`), `DEFUSER_ENABLED`
+  still stops the server from booting, and `render.yaml` never mentions either variable (a test
+  fails if it does).
+- On staging, `/api/games` lists Defuser as `preview` (the live service never does), and Home
+  shows a "Staging preview · not released" card for it.
+
+**Set it up** (all free; you do this, with your accounts; nothing here is automated):
+
+1. **Atlas**: the `rivalrush_staging` user (readWrite on `rivalrush_staging` only) from step 1 of
+   the go-live order. Copy its SRV URI. Never reuse the `rivalrush_prod` user.
+2. **BotFather**: `/newbot` → a **staging** bot (e.g. `RivalRushStagingBot`). Keep its token for
+   Render only. Never use the live bot's token on staging.
+3. **Render**: New → Blueprint → this repo, Blueprint path `render.staging.yaml` (or New → Web
+   Service with the same build/start commands and variables). Fill the `sync: false` values:
+   `BOT_TOKEN` and `BOT_USERNAME` (staging bot), `MONGODB_URI` (staging user), and a placeholder
+   `WEBAPP_URL`/`CLIENT_ORIGINS` for now. Note the URL, e.g.
+   `https://rivalrush-api-staging.onrender.com`.
+4. **Vercel**: Add New → Project → this repo again, Root Directory `apps/web`, a name such as
+   `rivalrush-staging`. Production environment variables: `VITE_API_URL` = the staging Render
+   URL, `VITE_BOT_USERNAME` = the staging bot. Never set `VITE_DEV_LOGIN`.
+5. Set Render staging `WEBAPP_URL` and `CLIENT_ORIGINS` to the staging Vercel URL (exactly, https)
+   and deploy. The server registers the staging bot's webhook and Play button on boot.
+6. **BotFather** → staging bot → Bot Settings → Configure Mini App → enable with the staging
+   Vercel URL (needed for `startapp` invite links).
+7. Smoke test: `curl https://<staging api>/health` shows `database: "up"`; `/start` the staging bot,
+   open the app: Home shows the "Staging preview" Defuser card. Then run
+   [defuser-qa.md](defuser-qa.md).
+
+**Do not** add staging to the uptime pinger: it sleeps when idle and only uses free instance hours
+while testers play (a sleep or deploy ends live games there too). Deploy staging by hand
+(`autoDeploy: false`). To retire it: suspend or delete the Render service and the Vercel project,
+delete the staging bot with `/deletebot`, and drop the `rivalrush_staging` database and user.
+Staging and the closed beta are independent: staging never changes the live service, the live bot
+or the live database.
 
 ## Production checklist
 

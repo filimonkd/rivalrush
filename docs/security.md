@@ -30,15 +30,23 @@ production. Production boot fails if the flag is set. Dev users have negative `t
 they can never collide with real accounts. The web app shows dev login only when built with
 `VITE_DEV_LOGIN=true`; never set that in Vercel.
 
-## Defuser flags (dev/test only)
+## Defuser flags (dev/test, and staging)
 
 `DEFUSER_ENABLED` registers the Defuser server plug-in and `DEFUSER_FIXED_SEED` makes every game
-predictable. Production boot fails if either is set, and the game registry refuses to build with
-either when `isProduction` is true, so neither can be switched on by a code path that skips the
-config. The seed is never echoed in an error and never logged; the startup warning does not
-include it. Defuser state, the Charge, the Codebook and the solution are built into per-role views
-only (see [defuser.md](defuser.md)); the match document keeps the seed in a `select: false` field
-that no API returns.
+predictable. On the live service (`NODE_ENV=production`, `DEPLOY_ENV` unset or `production`) boot
+fails if either is set, and the game registry refuses to build with either, so neither can be
+switched on by a code path that skips the config.
+
+The one exception is a **staging** deployment (`DEPLOY_ENV=staging`) for Telegram QA: it keeps
+`NODE_ENV=production` and every production check, allows `DEFUSER_ENABLED` only, still refuses
+`DEFUSER_FIXED_SEED` and dev login, refuses `DEPLOY_ENV=staging` outside `NODE_ENV=production`,
+and refuses to boot unless `MONGODB_DB_NAME` names a staging database. It must use its own bot,
+database user and JWT secret ([deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games)).
+
+The seed is never echoed in an error and never logged; the startup warning does not include it.
+Defuser state, the Charge, the Codebook and the solution are built into per-role views only (see
+[defuser.md](defuser.md)); the match document keeps the seed in a `select: false` field that no
+API returns.
 
 ## Known limitations
 

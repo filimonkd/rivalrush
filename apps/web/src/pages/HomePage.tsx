@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { Avatar, Button, Card, Logo, Pill, Screen } from '../components/ui';
 import { api } from '../lib/api';
 import { gameInfo } from '../lib/games';
-import { outcomeLabel, reasonLabel } from '../lib/labels';
+import { matchTitle, outcomeLabel, reasonLabel } from '../lib/labels';
 import { useSession } from '../store/session';
 
 export function HomePage() {
@@ -103,6 +103,28 @@ export function HomePage() {
         </span>
       </button>
 
+      {games
+        .filter((g) => g.status === 'preview')
+        .map((g) => (
+          // Only a staging server reports `preview` (docs/deployment.md): never shown on live.
+          <button
+            key={g.id}
+            type="button"
+            data-testid={`start-preview-${g.id}`}
+            onClick={() => navigate(`/create/${g.id}`)}
+            className="rounded-[2rem] border-2 border-dashed border-[#f5a524] bg-[#10142a] p-5 text-left text-[#e8ebff] transition active:scale-[0.98]"
+          >
+            <p className="text-xs font-bold uppercase tracking-widest text-[#f5a524]">
+              Staging preview · not released
+            </p>
+            <p className="mt-1 text-2xl font-black">{g.name}</p>
+            <p className="mt-1 text-[#b6bce0]">{g.tagline}</p>
+            <span className="mt-4 inline-flex h-11 items-center rounded-2xl bg-[#f5a524] px-5 font-black text-[#2a1a00]">
+              Start a team game
+            </span>
+          </button>
+        ))}
+
       <Card>
         <div className="flex items-center justify-between">
           <p className="font-black">Your record</p>
@@ -122,9 +144,15 @@ export function HomePage() {
         <Card>
           <p className="text-xs font-bold uppercase tracking-wider text-muted">Recent game</p>
           <div className="mt-2 flex items-center justify-between">
-            <p className="font-bold">vs {recent.opponent?.displayName ?? 'someone'}</p>
+            <p className="font-bold">{matchTitle(recent)}</p>
             <Pill
-              tone={recent.outcome === 'win' ? 'good' : recent.outcome === 'loss' ? 'bad' : 'muted'}
+              tone={
+                recent.outcome === 'win' || recent.outcome === 'coop_win'
+                  ? 'good'
+                  : recent.outcome === 'loss' || recent.outcome === 'coop_loss'
+                    ? 'bad'
+                    : 'muted'
+              }
             >
               {outcomeLabel(recent.outcome)}
             </Pill>

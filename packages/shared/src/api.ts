@@ -97,7 +97,11 @@ export interface GameCatalogEntry {
   id: string;
   name: string;
   tagline: string;
-  status: 'live' | 'coming_soon';
+  /**
+   * `live`: offered to everyone. `coming_soon`: listed, not playable. `preview`: playable on this
+   * deployment for testing only (Defuser on staging); the live service never reports it.
+   */
+  status: 'live' | 'coming_soon' | 'preview';
   minPlayers: number;
   maxPlayers: number;
 }

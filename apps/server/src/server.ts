@@ -43,11 +43,12 @@ export function buildServer(
   logger: Logger,
   overrides: ServerOverrides = {},
 ): RivalRushServer {
-  // Only the duels are registered unless Defuser is explicitly enabled (dev/test only).
+  // Only the duels are registered unless Defuser is explicitly enabled (dev/test or staging).
   const registry = createGameRegistry({
     defuserEnabled: config.defuserEnabled,
     defuserFixedSeed: config.defuserFixedSeed,
     isProduction: config.isProduction,
+    isStaging: config.isStaging,
   });
   const roomRepo = new RoomRepository(logger);
   const recorder = new MatchRecorder(logger, overrides.recordMatch ?? recordMatch);

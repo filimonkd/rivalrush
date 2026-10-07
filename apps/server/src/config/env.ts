@@ -45,6 +45,11 @@ const fixedSeed = z.preprocess(
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  /**
+   * Which deployment this is, when NODE_ENV=production: the live service (default) or staging.
+   * Staging keeps every production check and only adds Defuser for Telegram QA (docs/deployment.md).
+   */
+  DEPLOY_ENV: z.preprocess(cleanEnvValue, z.enum(['production', 'staging']).optional()),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
   HOST: z.string().default('0.0.0.0'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
@@ -76,7 +81,7 @@ const envSchema = z.object({
 
   CLIENT_ORIGINS: z.string().default('http://localhost:5173'),
   DEV_LOGIN_ENABLED: bool,
-  /** Dev/test only: register the Defuser server plug-in (no UI yet; never advertised). */
+  /** Register the Defuser plug-in: dev/test, or staging (DEPLOY_ENV=staging). Never live. */
   DEFUSER_ENABLED: bool,
   DEFUSER_FIXED_SEED: fixedSeed,
 
@@ -91,7 +96,10 @@ const envSchema = z.object({
 
 export interface AppConfig {
   nodeEnv: 'development' | 'test' | 'production';
+  /** NODE_ENV=production: every production check applies (also on staging). */
   isProduction: boolean;
+  /** A production-hardened staging deployment (DEPLOY_ENV=staging), for Telegram QA. */
+  isStaging: boolean;
   port: number;
   host: string;
   logLevel: string;
@@ -108,7 +116,7 @@ export interface AppConfig {
   authMaxAgeSeconds: number;
   clientOrigins: string[];
   devLoginEnabled: boolean;
-  /** Registers the Defuser plug-in. Dev/test only; refused in production. */
+  /** Registers the Defuser plug-in. Dev/test and staging only; refused on the live service. */
   defuserEnabled: boolean;
   /** Test only; refused in production. Never log the value. */
   defuserFixedSeed: string | null;
@@ -123,6 +131,8 @@ const DEV_JWT_SECRET = 'dev-only-insecure-jwt-secret-change-me-0000';
 /**
  * Validates the environment. In production it refuses to start with insecure settings:
  * dev login on, a fixed Defuser seed, missing/weak secrets, wildcard CORS, or no database.
+ * Defuser is refused too, except on a staging deployment (DEPLOY_ENV=staging), which must also
+ * use a staging database.
  */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = envSchema.safeParse(env);
@@ -132,6 +142,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   }
   const e = parsed.data;
   const isProduction = e.NODE_ENV === 'production';
+  if (e.DEPLOY_ENV === 'staging' && !isProduction) {
+    throw new ConfigError(
+      'DEPLOY_ENV=staging requires NODE_ENV=production: staging runs with every production check',
+    );
+  }
+  const isStaging = isProduction && e.DEPLOY_ENV === 'staging';
   const botMode = e.BOT_MODE ?? (e.BOT_POLLING ? 'polling' : 'off');
   const publicUrl = (e.PUBLIC_URL ?? e.RENDER_EXTERNAL_URL ?? null)?.replace(/\/$/, '') ?? null;
   const clientOrigins = e.CLIENT_ORIGINS.split(',')
@@ -141,7 +157,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (isProduction) {
     const problems: string[] = [];
     if (e.DEV_LOGIN_ENABLED) problems.push('DEV_LOGIN_ENABLED must be false in production');
-    if (e.DEFUSER_ENABLED) problems.push('DEFUSER_ENABLED must be false in production');
+    if (e.DEFUSER_ENABLED && !isStaging)
+      problems.push('DEFUSER_ENABLED must be false in production (allowed only on staging)');
+    if (isStaging && !/staging/i.test(e.MONGODB_DB_NAME ?? ''))
+      problems.push('DEPLOY_ENV=staging needs MONGODB_DB_NAME naming a staging database');
     if (e.DEFUSER_FIXED_SEED) problems.push('DEFUSER_FIXED_SEED must not be set in production');
     if (!e.BOT_TOKEN) problems.push('BOT_TOKEN is required');
     if (!e.JWT_SECRET || e.JWT_SECRET.length < 32)
@@ -164,6 +183,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     nodeEnv: e.NODE_ENV,
     isProduction,
+    isStaging,
     port: e.PORT,
     host: e.HOST,
     logLevel: e.LOG_LEVEL,
