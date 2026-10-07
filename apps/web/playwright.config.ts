@@ -1,10 +1,19 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Two-browser end-to-end test of the full MVP loop against the real built server
  * (in-memory MongoDB replica set, dev login) and the production web build.
  * Telegram itself is not available here; dev login stands in for initData auth.
+ *
+ * Defuser is registered here (dev/test only; the server refuses both flags in production) with a
+ * fixed seed, so every Defuser game deals the edition pinned in `e2e/defuser-seed.json`.
  */
+const DEFUSER_SEED = (
+  JSON.parse(readFileSync(new URL('./e2e/defuser-seed.json', import.meta.url), 'utf8')) as {
+    seed: string;
+  }
+).seed;
 const SERVER_PORT = 4100;
 const WEB_PORT = 4173;
 const chromiumPath = process.env.PW_CHROMIUM_PATH;
@@ -36,6 +45,8 @@ export default defineConfig({
         CLIENT_ORIGINS: `http://localhost:${WEB_PORT}`,
         LOG_LEVEL: 'warn',
         DISCONNECT_GRACE_SECONDS: '60',
+        DEFUSER_ENABLED: 'true',
+        DEFUSER_FIXED_SEED: DEFUSER_SEED,
       },
     },
     {
