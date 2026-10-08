@@ -45,13 +45,38 @@ interface RoomState {
 
 let socket: AppSocket | null = null;
 let socketToken: string | null = null;
+/** Whether the current socket has connected at least once. */
+let everConnected = false;
 let stopForeground: (() => void) | null = null;
 
-function call<T>(
+/** How long a tap made while a brand-new socket is still connecting waits for it. */
+export const FIRST_CONNECT_WAIT_MS = 5000;
+
+/** Resolves when `s` connects, or after `ms`, whichever comes first. */
+function connected(s: AppSocket, ms: number): Promise<void> {
+  if (s.connected) return Promise.resolve();
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      s.off('connect', done);
+      resolve();
+    };
+    const timer = setTimeout(done, ms);
+    s.on('connect', done);
+  });
+}
+
+async function call<T>(
   event: keyof ClientToServerEvents,
   payload: unknown,
   timeoutMs = 8000,
 ): Promise<Ack<T>> {
+  // Right after entering a room the socket is still opening: a tap then (e.g. Ready straight
+  // after joining) waits for it briefly instead of failing. A socket that was connected and
+  // dropped still fails fast, so callers can fall back (Leave uses REST) or show "Reconnecting".
+  if (socket && !socket.connected && !everConnected) {
+    await connected(socket, Math.min(timeoutMs, FIRST_CONNECT_WAIT_MS));
+  }
   return new Promise((resolve) => {
     if (!socket || !socket.connected) {
       resolve({
@@ -104,6 +129,7 @@ export const useRoom = create<RoomState>((set, get) => {
     if (socket && socketToken === token) return socket;
     socket?.disconnect();
     socketToken = token;
+    everConnected = false;
     socket = io(API_URL || undefined, {
       auth: { token },
       transports: ['websocket', 'polling'],
@@ -112,6 +138,7 @@ export const useRoom = create<RoomState>((set, get) => {
       reconnectionDelayMax: 4000,
     }) as AppSocket;
     socket.on('connect', () => {
+      everConnected = true;
       set({ connection: 'online' });
       void get().resync();
     });

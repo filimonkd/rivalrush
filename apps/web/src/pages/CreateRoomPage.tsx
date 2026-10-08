@@ -9,6 +9,7 @@ import {
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card, Screen } from '../components/ui';
+import { HowToPlayButton } from '../features/defuser/HowToPlay';
 import { api, ApiError } from '../lib/api';
 import { gameInfo } from '../lib/games';
 import { haptic } from '../lib/telegram';
@@ -123,6 +124,7 @@ export function CreateRoomPage() {
             2–4 players, about 5 minutes: a briefing of up to 20 s, then a 4:00–5:00 countdown.
             Three faults detonate it. Best on a Telegram voice call.
           </p>
+          <HowToPlayButton className="self-start bg-surface" />
         </Card>
       ) : (
         <Card className="flex flex-col gap-5">
