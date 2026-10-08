@@ -276,6 +276,22 @@ Decide on 19–20 Oct, using the numbers and the survey together. Re-check day-7
 When the signals disagree, the qualitative answers (survey questions 3, 4, 6 and 11) break the
 tie. A strong "want to play again" with weak numbers usually means friction, so polish first.
 
+**Working it out:** export the survey as CSV (Google Forms: Responses → ⋮ → Download responses;
+Tally: Results → Export) to `survey.csv` next to your `testers.txt` (both are git-ignored, never
+commit them), then add `--decide` to the [beta report](#the-beta-report-one-command):
+
+```sh
+npm run beta:report -w @rivalrush/server -- --since 2026-10-12 --until 2026-10-18 --tz <your zone> \
+  --testers testers.txt --decide --survey survey.csv --blockers <open Blocker issues> \
+  --reminder-days 2026-10-12,2026-10-14 [--wrong-result]
+```
+
+Below the metrics it prints each row of this table with every condition marked ✅ holds, –
+does not, or ❓ unknown (with what to pass to know it), and the row the data points to. It never
+guesses a missing input, and it prints how it reads the plan's softer wording ("similar",
+"fixable friction"). It reads only counts from the survey: names and written answers stay in
+the form, so read questions 6 and 9 there. The decision stays yours.
+
 ## One-week schedule
 
 | When                | What                                                                                                                                                                                                                                         |
@@ -288,5 +304,5 @@ tie. A strong "want to play again" with weak numbers usually means friction, so 
 | Day 5 · Fri 16 Oct  | Health check. Poll 2 (timer). Ask testers to invite one friend outside the group.                                                                                                                                                            |
 | Day 6 · Sat 17 Oct  | Health check. Send the survey.                                                                                                                                                                                                               |
 | Day 7 · Sun 18 Oct  | Health check. Last daily log. Remind about the survey.                                                                                                                                                                                       |
-| Mon 19 – Tue 20 Oct | Close the survey, run all queries, fill [the decision table](#what-happens-after-the-beta), thank testers and tell them what's next. Keep the app running (no reminders) to measure day-7 return.                                            |
+| Mon 19 – Tue 20 Oct | Close the survey, run `beta:report --decide` with its export, check [the decision table](#what-happens-after-the-beta), thank testers and tell them what's next. Keep the app running (no reminders) to measure day-7 return.                |
 | Sun 25 Oct          | Day-7 return query; confirm the decision.                                                                                                                                                                                                    |

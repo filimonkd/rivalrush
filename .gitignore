@@ -13,3 +13,5 @@ apps/web/playwright-report/
 .vercel
 # Closed-beta tester list for `beta:report --testers` (personal data: never commit)
 testers*.txt
+# Survey exports for `beta:report --survey` (names and answers: never commit)
+survey*.csv
