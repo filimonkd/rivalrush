@@ -1,4 +1,9 @@
-import type { ActiveRoomResponse, GameCatalogEntry, MatchSummary } from '@rivalrush/shared';
+import {
+  DEFUSER_ID,
+  type ActiveRoomResponse,
+  type GameCatalogEntry,
+  type MatchSummary,
+} from '@rivalrush/shared';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Avatar, Button, Card, Logo, Pill, Screen } from '../components/ui';
@@ -103,10 +108,37 @@ export function HomePage() {
         </span>
       </button>
 
+      {games.some((g) => g.id === DEFUSER_ID && g.status === 'live') && (
+        // Offered only when the server lists Defuser as live (DEFUSER_ENABLED on the live service).
+        <button
+          type="button"
+          data-testid="start-defuser"
+          onClick={() => navigate(`/create/${DEFUSER_ID}`)}
+          className="relative overflow-hidden rounded-[2rem] bg-[#10142a] p-6 text-left text-[#e8ebff] shadow-2xl shadow-[#f5a524]/20 transition active:scale-[0.98]"
+        >
+          <div
+            className="absolute -right-3 -top-4 font-mono text-[6rem] font-black tabular-nums text-[#f5a524] opacity-15"
+            aria-hidden
+          >
+            4:59
+          </div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#f5a524]">
+            Live now · New · Co-op
+          </p>
+          <p className="mt-1 text-3xl font-black">Defuser</p>
+          <p className="mt-1 text-[#b6bce0]">
+            Your crew vs. the clock. 2–4 players, best on a call.
+          </p>
+          <span className="mt-5 inline-flex h-12 items-center rounded-2xl bg-[#f5a524] px-5 text-lg font-black text-[#2a1a00]">
+            Start a team game ⏱
+          </span>
+        </button>
+      )}
+
       {games
         .filter((g) => g.status === 'preview')
         .map((g) => (
-          // Only a staging server reports `preview` (docs/deployment.md): never shown on live.
+          // Only a staging server reports `preview` (docs/deployment.md).
           <button
             key={g.id}
             type="button"

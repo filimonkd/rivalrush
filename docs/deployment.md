@@ -34,15 +34,15 @@ owner, following [Staging](#staging-optional-telegram-qa-of-unreleased-games) be
 `rivalrush_staging` database user.
 Nothing in staging ever reaches the live service.
 
-|           | Development                                      | Staging (set up 8 Oct 2026)                                                                 | Production (live)                                                |
-| --------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Web       | `localhost:5173` (+ tunnel for Telegram)         | a 2nd Vercel project (Root `apps/web`) with the staging `VITE_*` values                     | Vercel production domain                                         |
-| API       | `localhost:4000` (+ tunnel)                      | 2nd Render Free service `rivalrush-api-staging` (`render.staging.yaml`), **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
-| Database  | in-memory (or local)                             | Atlas DB `rivalrush_staging` (same free M0 cluster; the server refuses a non-staging name)  | Atlas DB `rivalrush`                                             |
-| Bot       | dev bot (polling)                                | staging bot (webhook), its own token                                                        | `@rivalrushbot` (webhook)                                        |
-| Dev login | on                                               | **off** (server refuses to boot otherwise)                                                  | **off** (server refuses to boot otherwise)                       |
-| Defuser   | `DEFUSER_ENABLED=true` when needed (not on Home) | `DEPLOY_ENV=staging` + `DEFUSER_ENABLED=true`: "Staging preview" card on Home               | **refused** (server refuses to boot)                             |
-| CI        | in-memory MongoDB, no secrets                    | —                                                                                           | —                                                                |
+|           | Development                                      | Staging (set up 8 Oct 2026)                                                                 | Production (live)                                                                                                                            |
+| --------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web       | `localhost:5173` (+ tunnel for Telegram)         | a 2nd Vercel project (Root `apps/web`) with the staging `VITE_*` values                     | Vercel production domain                                                                                                                     |
+| API       | `localhost:4000` (+ tunnel)                      | 2nd Render Free service `rivalrush-api-staging` (`render.staging.yaml`), **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger)                                                                             |
+| Database  | in-memory (or local)                             | Atlas DB `rivalrush_staging` (same free M0 cluster; the server refuses a non-staging name)  | Atlas DB `rivalrush`                                                                                                                         |
+| Bot       | dev bot (polling)                                | staging bot (webhook), its own token                                                        | `@rivalrushbot` (webhook)                                                                                                                    |
+| Dev login | on                                               | **off** (server refuses to boot otherwise)                                                  | **off** (server refuses to boot otherwise)                                                                                                   |
+| Defuser   | `DEFUSER_ENABLED=true` when needed (not on Home) | `DEPLOY_ENV=staging` + `DEFUSER_ENABLED=true`: "Staging preview" card on Home               | Off unless you set `DEFUSER_ENABLED=true` in the Render dashboard: then released to everyone ([how](#releasing-defuser-on-the-live-service)) |
+| CI        | in-memory MongoDB, no secrets                    | —                                                                                           | —                                                                                                                                            |
 
 Vercel PR previews only check that the web app builds; they can't reach the API (see
 [ci-cd.md](ci-cd.md#deployments)).
@@ -112,14 +112,13 @@ the live service and shares nothing secret with it.
 
 - `NODE_ENV=production`: every production check applies (≥ 32-char `JWT_SECRET`, exact https
   `CLIENT_ORIGINS`, `BOT_TOKEN` and `MONGODB_URI` required, no dev login, no fixed seed).
-- `DEPLOY_ENV=staging` is the only thing that allows `DEFUSER_ENABLED`. It is refused unless
-  `NODE_ENV=production`, and staging refuses to boot unless `MONGODB_DB_NAME` names a staging
-  database (contains `staging`), so a copied live config cannot write to live data.
-- The live service is unchanged: with `DEPLOY_ENV` unset (or `production`), `DEFUSER_ENABLED`
-  still stops the server from booting, and `render.yaml` never mentions either variable (a test
-  fails if it does).
-- On staging, `/api/games` lists Defuser as `preview` (the live service never does), and Home
-  shows a "Staging preview · not released" card for it.
+- `DEPLOY_ENV=staging` is refused unless `NODE_ENV=production`, and staging refuses to boot
+  unless `MONGODB_DB_NAME` names a staging database (contains `staging`), so a copied live config
+  cannot write to live data.
+- On staging, `/api/games` lists Defuser as `preview` and Home shows a "Staging preview" card for
+  it. On the live service Defuser is a separate switch you set by hand
+  ([below](#releasing-defuser-on-the-live-service)); `render.yaml` never mentions
+  `DEFUSER_ENABLED` or `DEPLOY_ENV` (a test fails if it does).
 
 **Set it up** (all free; you do this, with your accounts; nothing here is automated):
 
@@ -149,6 +148,29 @@ while testers play (a sleep or deploy ends live games there too). Deploy staging
 delete the staging bot with `/deletebot`, and drop the `rivalrush_staging` database and user.
 Staging and the closed beta are independent: staging never changes the live service, the live bot
 or the live database.
+
+## Releasing Defuser on the live service
+
+Defuser ships in the live code but stays off until you switch it on. The switch is the
+`DEFUSER_ENABLED` environment variable on the **live** Render service, set in the dashboard (never
+in `render.yaml`, so a blueprint sync cannot change it).
+
+**Turn it on** (product owner's decision, 8 Oct 2026):
+
+1. The live service runs a commit that includes the release change (`prod:check --commit`).
+2. Pick a quiet moment and tell players: saving an environment variable restarts the service,
+   which ends games in progress ([runbook](runbook.md#closed-beta-daily-routine)).
+3. Render → the live API service → **Environment** → add `DEFUSER_ENABLED` = `true` → **Save**.
+   Render restarts the service. The boot log says `Defuser is LIVE: offered to everyone on Home`.
+4. Run `prod:check` (all ✅), then open `@rivalrushbot` → **Play**: Home shows the **Defuser**
+   card ("Live now · New · Co-op") and no "Coming soon" tile. Play one team game on two phones.
+
+**Turn it off:** set `DEFUSER_ENABLED` to `false` (or delete it) and save. After the restart Home
+shows the "Coming soon" tile again and new Defuser rooms are refused (`GAME_NOT_AVAILABLE`); games
+already played stay in history and stats.
+
+What stays refused on the live service whatever the switch says: `DEFUSER_FIXED_SEED`, dev login,
+and a staging configuration.
 
 ## Production checklist
 

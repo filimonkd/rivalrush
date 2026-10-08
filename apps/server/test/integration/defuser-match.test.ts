@@ -41,7 +41,7 @@ describe('gating: Defuser is off unless explicitly enabled', () => {
     expect(games.body.games.filter((g: { status: string }) => g.status === 'live')).toHaveLength(2);
   });
 
-  it('production refuses to start with Defuser enabled or a fixed seed', async () => {
+  it('production accepts the Defuser switch but never a fixed seed', async () => {
     const { loadConfig } = await import('../../src/config/env.js');
     const prod = {
       NODE_ENV: 'production',
@@ -50,7 +50,7 @@ describe('gating: Defuser is off unless explicitly enabled', () => {
       MONGODB_URI: 'mongodb+srv://example/db',
       CLIENT_ORIGINS: 'https://rivalrush.vercel.app',
     };
-    expect(() => loadConfig({ ...prod, DEFUSER_ENABLED: 'true' })).toThrow(/DEFUSER_ENABLED/);
+    expect(loadConfig({ ...prod, DEFUSER_ENABLED: 'true' }).defuserEnabled).toBe(true);
     expect(() => loadConfig({ ...prod, DEFUSER_FIXED_SEED: SEED })).toThrow(/DEFUSER_FIXED_SEED/);
   });
 });

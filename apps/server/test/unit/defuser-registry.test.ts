@@ -64,14 +64,23 @@ describe('game registry: Defuser registration and gating', () => {
     expect(listGames().find((g) => g.id === 'defuser')!.status).toBe('coming_soon');
   });
 
-  it('refuses to register Defuser, or a fixed seed, in production', () => {
-    expect(() => createGameRegistry({ isProduction: true, defuserEnabled: true })).toThrow(
-      /not available in production/,
-    );
+  it('on the live service Defuser is live only when enabled; a fixed seed is always refused', () => {
+    const released = createGameRegistry({ isProduction: true, defuserEnabled: true });
+    expect(released.get('defuser')?.id).toBe('defuser');
+    expect(released.list().map((g) => [g.id, g.status])).toEqual([
+      ['crack-the-code', 'live'],
+      ['color-cipher', 'live'],
+      ['defuser', 'live'],
+    ]);
+    const off = createGameRegistry({ isProduction: true });
+    expect(off.get('defuser')).toBeNull();
+    expect(off.list().find((g) => g.id === 'defuser')!.status).toBe('coming_soon');
+    expect(() =>
+      createGameRegistry({ isProduction: true, defuserEnabled: true, defuserFixedSeed: SEED }),
+    ).toThrow(/not available in production/);
     expect(() => createGameRegistry({ isProduction: true, defuserFixedSeed: SEED })).toThrow(
       /not available in production/,
     );
-    expect(() => createGameRegistry({ isProduction: true })).not.toThrow();
   });
 
   it('staging (production-hardened) may register Defuser, listed as preview; never a fixed seed', () => {
@@ -246,7 +255,7 @@ describe('buildServer wiring (no database needed for these routes)', () => {
     );
   });
 
-  it('a staging server registers Defuser and offers it as preview; the live config cannot', async () => {
+  it('a staging server registers Defuser and offers it as preview', async () => {
     const live = {
       NODE_ENV: 'production',
       BOT_TOKEN: '123:abc',
@@ -275,19 +284,46 @@ describe('buildServer wiring (no database needed for these routes)', () => {
       {},
     );
     expect(snap.gameType).toBe('defuser');
-    expect(() => loadConfig({ ...live, DEFUSER_ENABLED: 'true' })).toThrow(/DEFUSER_ENABLED/);
   });
 
-  it('production config refuses both flags before a server can be built', () => {
-    const prod = {
-      NODE_ENV: 'production',
-      BOT_TOKEN: '123:abc',
-      JWT_SECRET: 'x'.repeat(40),
-      MONGODB_URI: 'mongodb+srv://example/db',
-      CLIENT_ORIGINS: 'https://rivalrush.vercel.app',
-    };
-    expect(() => loadConfig({ ...prod, DEFUSER_ENABLED: 'true' })).toThrow(/DEFUSER_ENABLED/);
+  const prod = {
+    NODE_ENV: 'production',
+    BOT_TOKEN: '123:abc',
+    JWT_SECRET: 'x'.repeat(40),
+    MONGODB_URI: 'mongodb+srv://example/db',
+    CLIENT_ORIGINS: 'https://rivalrush.vercel.app',
+    LOG_LEVEL: 'silent',
+  };
+
+  it('the live service offers Defuser as live once DEFUSER_ENABLED is set, and not before', async () => {
+    for (const [flag, status] of [
+      ['false', 'coming_soon'],
+      ['true', 'live'],
+    ] as const) {
+      const config = loadConfig({ ...prod, DEFUSER_ENABLED: flag });
+      const s = buildServer(config, createLogger('silent'));
+      closers.push(() => s.close());
+      const token = issueSession('aaaaaaaaaaaaaaaaaaaaaaaa', config.jwtSecret, 600).token;
+      const res = await request(s.httpServer)
+        .get('/api/games')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+      expect(res.body.games.find((g: { id: string }) => g.id === 'defuser').status).toBe(status);
+      const create = s.rooms.createRoom(
+        { userId: 'u1', displayName: 'A', photoUrl: null },
+        'defuser',
+        {},
+      );
+      if (flag === 'true') expect((await create).gameType).toBe('defuser');
+      else await expect(create).rejects.toMatchObject({ code: 'GAME_NOT_AVAILABLE' });
+    }
+  });
+
+  it('production config still refuses a fixed seed before a server can be built', () => {
     expect(() => loadConfig({ ...prod, DEFUSER_FIXED_SEED: SEED })).toThrow(/DEFUSER_FIXED_SEED/);
+    expect(() =>
+      loadConfig({ ...prod, DEFUSER_ENABLED: 'true', DEFUSER_FIXED_SEED: SEED }),
+    ).toThrow(/DEFUSER_FIXED_SEED/);
     expect(loadConfig(prod).defuserEnabled).toBe(false);
   });
 });

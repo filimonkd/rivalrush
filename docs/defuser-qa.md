@@ -3,8 +3,9 @@
 **Status: run 1 done (8 Oct 2026, partial: one 2-player game). Most rows not yet run.**
 This QA runs on **staging only** ([deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games)):
 the staging bot, the staging Vercel project and the `rivalrush_staging` database. It never touches
-the live bot, the live database or the closed beta. A pass here is evidence for the product
-decision; it is **not** a release, and Defuser stays off on the live service whatever the result.
+the live bot, the live database or the closed beta. The owner decided to release Defuser on 8 Oct
+2026 before this script was complete ([deployment.md](deployment.md#releasing-defuser-on-the-live-service));
+the remaining rows are still worth running, on staging or on the live bot once it is switched on.
 
 What the automated suites already cover (unit, jsdom, real-socket backend, Playwright in Chromium
 with dev login, see [testing.md](testing.md)) is the game logic and the browser UI. This script is
@@ -47,7 +48,7 @@ time. Rotate who hosts and who is Operator.
 | #   | Area          | Step                                                                  | Expected                                                                                                                       | Status             |
 | --- | ------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------ |
 | 1   | Entry         | Open the staging app                                                  | Home shows the dashed "Staging preview · not released" Defuser card; duels unchanged                                           | ✅ run 1           |
-| 2   | Entry         | Open the **live** bot (`@rivalrushbot`)                               | No Defuser card, only the "Coming soon" tile (live is untouched)                                                               | ✅ run 1           |
+| 2   | Entry         | Open the **live** bot (`@rivalrushbot`)                               | Before the switch: only the "Coming soon" tile. After: the "Live now · New · Co-op" Defuser card, no Coming soon               | ✅ run 1           |
 | 3   | Create        | Tap the card → Create room                                            | "New team game"; lobby says "Team lobby", game "Defuser", "Best with voice"                                                    | ✅ run 1           |
 | 4   | Invite        | Send invite → share to the group chat                                 | Message reads "<name> needs a team to defuse a Charge…"; the link opens the staging app                                        | ✅ run 1           |
 | 5   | Join          | Teammates tap the link                                                | Join page "<host> needs a team to defuse a Charge" → Join → lobby; up to 4 seats                                               | ✅ run 1 (2 seats) |

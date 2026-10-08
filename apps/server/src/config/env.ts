@@ -81,7 +81,10 @@ const envSchema = z.object({
 
   CLIENT_ORIGINS: z.string().default('http://localhost:5173'),
   DEV_LOGIN_ENABLED: bool,
-  /** Register the Defuser plug-in: dev/test, or staging (DEPLOY_ENV=staging). Never live. */
+  /**
+   * Register the Defuser plug-in. On the live service it releases Defuser to everyone (the
+   * product owner's decision, 7 Oct 2026); setting it back to false turns the game off again.
+   */
   DEFUSER_ENABLED: bool,
   DEFUSER_FIXED_SEED: fixedSeed,
 
@@ -116,7 +119,7 @@ export interface AppConfig {
   authMaxAgeSeconds: number;
   clientOrigins: string[];
   devLoginEnabled: boolean;
-  /** Registers the Defuser plug-in. Dev/test and staging only; refused on the live service. */
+  /** Registers the Defuser plug-in (dev/test, staging, or released on the live service). */
   defuserEnabled: boolean;
   /** Test only; refused in production. Never log the value. */
   defuserFixedSeed: string | null;
@@ -131,8 +134,7 @@ const DEV_JWT_SECRET = 'dev-only-insecure-jwt-secret-change-me-0000';
 /**
  * Validates the environment. In production it refuses to start with insecure settings:
  * dev login on, a fixed Defuser seed, missing/weak secrets, wildcard CORS, or no database.
- * Defuser is refused too, except on a staging deployment (DEPLOY_ENV=staging), which must also
- * use a staging database.
+ * A staging deployment (DEPLOY_ENV=staging) must also use a staging database.
  */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = envSchema.safeParse(env);
@@ -157,8 +159,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (isProduction) {
     const problems: string[] = [];
     if (e.DEV_LOGIN_ENABLED) problems.push('DEV_LOGIN_ENABLED must be false in production');
-    if (e.DEFUSER_ENABLED && !isStaging)
-      problems.push('DEFUSER_ENABLED must be false in production (allowed only on staging)');
     if (isStaging && !/staging/i.test(e.MONGODB_DB_NAME ?? ''))
       problems.push('DEPLOY_ENV=staging needs MONGODB_DB_NAME naming a staging database');
     if (e.DEFUSER_FIXED_SEED) problems.push('DEFUSER_FIXED_SEED must not be set in production');

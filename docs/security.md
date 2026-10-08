@@ -34,13 +34,14 @@ they can never collide with real accounts. The web app shows dev login only when
 ## Defuser flags (dev/test, and staging)
 
 `DEFUSER_ENABLED` registers the Defuser server plug-in and `DEFUSER_FIXED_SEED` makes every game
-predictable. On the live service (`NODE_ENV=production`, `DEPLOY_ENV` unset or `production`) boot
-fails if either is set, and the game registry refuses to build with either, so neither can be
-switched on by a code path that skips the config.
+predictable. `DEFUSER_FIXED_SEED` is refused on every production deployment (boot fails, and the
+game registry refuses to build with it), so editions are never predictable outside dev/test.
+`DEFUSER_ENABLED` is the release switch: on the live service it is off unless the owner sets it
+in the Render dashboard ([deployment.md](deployment.md#releasing-defuser-on-the-live-service));
+`render.yaml` never sets it.
 
-The one exception is a **staging** deployment (`DEPLOY_ENV=staging`) for Telegram QA: it keeps
-`NODE_ENV=production` and every production check, allows `DEFUSER_ENABLED` only, still refuses
-`DEFUSER_FIXED_SEED` and dev login, refuses `DEPLOY_ENV=staging` outside `NODE_ENV=production`,
+A **staging** deployment (`DEPLOY_ENV=staging`) for Telegram QA keeps `NODE_ENV=production` and
+every production check, still refuses `DEFUSER_FIXED_SEED` and dev login, refuses `DEPLOY_ENV=staging` outside `NODE_ENV=production`,
 and refuses to boot unless `MONGODB_DB_NAME` names a staging database. It must use its own bot,
 database user and JWT secret ([deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games)).
 

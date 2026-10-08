@@ -40,12 +40,15 @@ describe('loadConfig', () => {
     expect(message).not.toContain(seed);
   });
 
-  it('DEFUSER_ENABLED is off by default and refused in production', () => {
+  it('DEFUSER_ENABLED is off by default; on the live service it is the release switch', () => {
     expect(loadConfig({}).defuserEnabled).toBe(false);
+    expect(loadConfig(prod).defuserEnabled).toBe(false);
     expect(loadConfig({ NODE_ENV: 'test', DEFUSER_ENABLED: 'true' }).defuserEnabled).toBe(true);
-    expect(() => loadConfig({ ...prod, DEFUSER_ENABLED: 'true' })).toThrow(
-      /DEFUSER_ENABLED must be false in production/,
-    );
+    expect(loadConfig({ ...prod, DEFUSER_ENABLED: 'true' })).toMatchObject({
+      isProduction: true,
+      isStaging: false,
+      defuserEnabled: true,
+    });
   });
 
   it('parses DEFUSER_FIXED_SEED outside production and rejects a malformed one without echoing it', () => {
@@ -126,12 +129,18 @@ describe('loadConfig', () => {
       }
     });
 
-    it('the live service (DEPLOY_ENV unset or production) still refuses Defuser', () => {
+    it('the live service (DEPLOY_ENV unset or production) is never staging, with or without Defuser', () => {
       for (const env of [prod, { ...prod, DEPLOY_ENV: 'production' }]) {
         expect(loadConfig(env).isStaging).toBe(false);
-        expect(() => loadConfig({ ...env, DEFUSER_ENABLED: 'true' })).toThrow(
-          /DEFUSER_ENABLED must be false in production/,
-        );
+        expect(loadConfig({ ...env, DEFUSER_ENABLED: 'true' }).isStaging).toBe(false);
+        // The fixed seed stays refused on the live service whatever DEFUSER_ENABLED says.
+        expect(() =>
+          loadConfig({
+            ...env,
+            DEFUSER_ENABLED: 'true',
+            DEFUSER_FIXED_SEED: '0123456789abcdef0123456789abcdef',
+          }),
+        ).toThrow(/DEFUSER_FIXED_SEED must not be set in production/);
       }
     });
 
@@ -152,7 +161,9 @@ describe('loadConfig', () => {
 describe('deployment files', () => {
   const read = (f: string) => readFileSync(new URL(`../../../../${f}`, import.meta.url), 'utf8');
 
-  it('render.yaml (the live service) never enables Defuser, staging or a fixed seed', () => {
+  // The live Defuser switch is set by hand in the Render dashboard, never from the blueprint, so
+  // a blueprint sync can neither release Defuser nor quietly take it away.
+  it('render.yaml (the live service) never sets the Defuser switch, staging or a fixed seed', () => {
     const yaml = read('render.yaml');
     expect(yaml).not.toContain('DEFUSER_FIXED_SEED');
     expect(yaml).not.toContain('DEFUSER_ENABLED');
