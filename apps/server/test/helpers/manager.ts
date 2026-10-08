@@ -2,6 +2,7 @@ import type { RoomEvent } from '@rivalrush/shared';
 import { pino } from 'pino';
 import type { CtcState } from '../../src/games/crack-the-code/game.js';
 import type { AnyGameDefinition } from '../../src/games/engine/types.js';
+import type { StartedSession } from '../../src/analytics/gameStarts.js';
 import type { FinishedSession } from '../../src/matches/matchService.js';
 import { InMemoryRoomStore } from '../../src/rooms/InMemoryRoomStore.js';
 import { RoomManager, type RemovalReason } from '../../src/rooms/roomManager.js';
@@ -38,6 +39,7 @@ export function makeManager(seed = 1, games?: (id: string) => AnyGameDefinition 
   const store = new InMemoryRoomStore();
   const changes: Array<{ room: LiveRoom; events: RoomEvent[] }> = [];
   const removed: Array<{ roomId: string; userId: string; reason: RemovalReason }> = [];
+  const started: StartedSession[] = [];
   const finished: FinishedSession[] = [];
   const persisted: LiveRoom[] = [];
   const manager = new RoomManager(
@@ -45,6 +47,7 @@ export function makeManager(seed = 1, games?: (id: string) => AnyGameDefinition 
     {
       roomChanged: (room, events) => changes.push({ room: structuredClone(room), events }),
       userRemoved: (roomId, userId, reason) => removed.push({ roomId, userId, reason }),
+      gameStarted: (s) => started.push(s),
       gameFinished: (s) => finished.push(s),
       persistRoom: (room) => persisted.push(structuredClone(room)),
     },
@@ -58,7 +61,7 @@ export function makeManager(seed = 1, games?: (id: string) => AnyGameDefinition 
   );
   const raw = async (roomId: string) => (await store.get(roomId))!;
   const state = async (roomId: string) => (await raw(roomId)).game!.state as CtcState;
-  return { manager, store, changes, removed, finished, persisted, raw, state };
+  return { manager, store, changes, removed, started, finished, persisted, raw, state };
 }
 
 let n = 0;

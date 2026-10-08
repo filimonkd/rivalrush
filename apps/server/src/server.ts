@@ -5,6 +5,7 @@ import {
   type ServerResponse,
 } from 'node:http';
 import type { Logger } from 'pino';
+import { GameStartLog, type StartedSession } from './analytics/gameStarts.js';
 import type { TelegramBot } from './bot/bot.js';
 import type { AppConfig } from './config/env.js';
 import type { AnyGameDefinition } from './games/engine/types.js';
@@ -31,6 +32,7 @@ export interface ServerOverrides {
   now?: () => number;
   random?: () => number;
   recordMatch?: (s: FinishedSession) => Promise<'recorded' | 'duplicate'>;
+  recordGameStart?: (s: StartedSession) => Promise<void>;
   /** Telegram bot; when set, the app serves its webhook endpoint. */
   bot?: TelegramBot | null;
   /** Game lookup (tests only: games that aren't in the live registry yet). */
@@ -52,6 +54,7 @@ export function buildServer(
   });
   const roomRepo = new RoomRepository(logger);
   const recorder = new MatchRecorder(logger, overrides.recordMatch ?? recordMatch);
+  const starts = new GameStartLog(logger, overrides.recordGameStart);
   // Express must be the server's initial request listener so Socket.IO can wrap it and
   // claim /socket.io/ requests; the app itself is built once its dependencies exist.
   let app: ((req: IncomingMessage, res: ServerResponse) => void) | null = null;
@@ -69,6 +72,7 @@ export function buildServer(
     {
       roomChanged: (room, events) => sockets.roomChanged(room, events),
       userRemoved: (roomId, userId, reason) => sockets.userRemoved(roomId, userId, reason),
+      gameStarted: (session) => starts.submit(session),
       gameFinished: (session) => void recorder.submit(session),
       persistRoom: (room) => roomRepo.persist(room),
     },
@@ -102,6 +106,7 @@ export function buildServer(
       await sockets.close();
       if (httpServer.listening) await new Promise<void>((r) => httpServer.close(() => r()));
       await recorder.drain();
+      await starts.drain();
       await roomRepo.drain();
     },
   };

@@ -14,6 +14,7 @@ import { ZodError } from 'zod';
 import { AppError } from '../errors.js';
 import type { Actor, AnyGameDefinition, SystemAction } from '../games/engine/types.js';
 import { getGame } from '../games/registry.js';
+import type { StartedSession } from '../analytics/gameStarts.js';
 import type { FinishedSession } from '../matches/matchService.js';
 import { tokenHint } from '../logger.js';
 import type { SeatIdentity } from '../users/userService.js';
@@ -32,6 +33,8 @@ export interface RoomManagerHooks {
   roomChanged(room: LiveRoom, events: RoomEvent[]): void;
   /** A user no longer belongs to the room. */
   userRemoved(roomId: string, userId: string, reason: RemovalReason): void;
+  /** A game session started; record it for analytics (best effort, optional). */
+  gameStarted?(session: StartedSession): void;
   /** A game session ended; record it. */
   gameFinished(session: FinishedSession): void;
   /** Membership/status changed; persist room metadata (best effort). */
@@ -53,6 +56,7 @@ interface OpContext {
   now: number;
   events: RoomEvent[];
   removed: Array<{ userId: string; reason: RemovalReason }>;
+  started: StartedSession[];
   finished: FinishedSession[];
   persist: boolean;
   dirty: boolean;
@@ -358,6 +362,7 @@ export class RoomManager {
         now: this.now(),
         events: [],
         removed: [],
+        started: [],
         finished: [],
         persist: false,
         dirty: false,
@@ -404,6 +409,7 @@ export class RoomManager {
     if (changed) safe('roomChanged', () => this.hooks.roomChanged(room, ctx.events));
     for (const r of ctx.removed)
       safe('userRemoved', () => this.hooks.userRemoved(room.roomId, r.userId, r.reason));
+    for (const s of ctx.started) safe('gameStarted', () => this.hooks.gameStarted?.(s));
     for (const f of ctx.finished) safe('gameFinished', () => this.hooks.gameFinished(f));
     if (ctx.persist) safe('persistRoom', () => this.hooks.persistRoom(room));
   }
@@ -525,6 +531,14 @@ export class RoomManager {
     }
     this.touch(room, ctx);
     ctx.persist = true;
+    ctx.started.push({
+      sessionId: room.game.sessionId,
+      roomId: room.roomId,
+      gameType: room.gameType,
+      isRematch,
+      players: players.length,
+      startedAt: ctx.now,
+    });
     this.bump(room, ctx, 'game_started', null, {
       sessionId: room.game.sessionId,
       isRematch,
@@ -659,6 +673,7 @@ export class RoomManager {
           now: this.now(),
           events: [],
           removed: [],
+          started: [],
           finished: [],
           persist: false,
           dirty: false,

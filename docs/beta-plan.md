@@ -22,25 +22,53 @@ All numbers are **learning targets, not pass/fail**. With ~50 matches, one match
 rematch rate by about 2 points; with 15–20 testers, one person moves day-7 return by 5–7
 points. Read them together with what testers say.
 
-| Metric                | Question it answers        | Definition                                                                                      | Source                        | Learning target |
-| --------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------- | --------------- |
-| Invite → join         | Does the invite flow work? | Rooms that reached 2 players ÷ rooms created                                                    | Atlas `rooms`                 | ≥ 60%           |
-| Match completion      | Do games finish fairly?    | Matches ending `cracked` / `both_cracked` / `out_of_guesses` ÷ games started                    | Atlas `matches` + Render logs | ≥ 80%           |
-| Abandon rate          | Are reconnects holding up? | Matches ending `abandoned` ÷ games started                                                      | Atlas `matches` + Render logs | ≤ 5%            |
-| Rematch rate          | Is one game enough?        | Rematch sessions ÷ finished matches                                                             | Atlas `matches`               | ≥ 40%           |
-| Games per active user | Is it a habit?             | Matches per player who played that week                                                         | Atlas `matches`               | ≥ 3             |
-| Multi-day players     | Early "came back" signal   | Players who played on 2+ different days ÷ players                                               | Atlas `matches`               | ≥ 50%           |
-| Day-7 return          | Retention                  | Players whose first game was 7+ days ago and who played again on day 7 or later ÷ those players | Atlas `matches` (from 19 Oct) | ≥ 25%           |
-| Organic invite rate   | Growth loop                | New users whose first launch came from an invite link ÷ new users                               | Atlas `users`                 | ≥ 50%           |
-| Outsiders             | Do testers spread it?      | Players who are not on the tester list                                                          | Atlas `users` vs tester list  | any             |
+| Metric                | Question it answers        | Definition                                                                                      | Source                          | Learning target |
+| --------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- | --------------- |
+| Invite → join         | Does the invite flow work? | Rooms that reached 2 players ÷ rooms created                                                    | Atlas `rooms`                   | ≥ 60%           |
+| Match completion      | Do games finish fairly?    | Matches ending `cracked` / `both_cracked` / `out_of_guesses` ÷ games started                    | Atlas `matches` + `game_starts` | ≥ 80%           |
+| Abandon rate          | Are reconnects holding up? | Matches ending `abandoned` ÷ games started                                                      | Atlas `matches` + `game_starts` | ≤ 5%            |
+| Rematch rate          | Is one game enough?        | Rematch sessions ÷ finished matches                                                             | Atlas `matches`                 | ≥ 40%           |
+| Games per active user | Is it a habit?             | Matches per player who played that week                                                         | Atlas `matches`                 | ≥ 3             |
+| Multi-day players     | Early "came back" signal   | Players who played on 2+ different days ÷ players                                               | Atlas `matches`                 | ≥ 50%           |
+| Day-7 return          | Retention                  | Players whose first game was 7+ days ago and who played again on day 7 or later ÷ those players | Atlas `matches` (from 19 Oct)   | ≥ 25%           |
+| Organic invite rate   | Growth loop                | New users whose first launch came from an invite link ÷ new users                               | Atlas `users`                   | ≥ 50%           |
+| Outsiders             | Do testers spread it?      | Players who are not on the tester list                                                          | Atlas `users` vs tester list    | any             |
 
-"Games started" is not stored in the database; count `game.started` lines in the Render logs
-(Logs → search `"event":"game.started"`, filter to the day). Render may keep only recent logs on
-the free plan, so write the count into the daily log every evening.
+"Games started" is stored in the database: the server writes one `game_starts` document per
+started game (session id, room id, game, rematch flag, player count, time; no names). Games
+that started before that release reached Render exist only in the Render logs (Logs → search
+`"event":"game.started"`); the report says from when starts are recorded.
 
 The difference between games started and matches recorded = games that never finished:
-abandoned mid-way, still running, or lost to a restart. A large gap on a day with a deploy is
-expected; a large gap on a quiet day is worth investigating.
+abandoned mid-way, still running, or lost to a restart (the report's "never finished"). A large
+gap on a day with a deploy is expected; a large gap on a quiet day is worth investigating.
+
+### The beta report (one command)
+
+`npm run beta:report` computes every metric above, a per-game and per-day table, and a ready
+row for the [daily log](#daily-log). It only reads (aggregations and counts, no index builds)
+and prints counts, never names. Run it from your own computer in a clone of the repository
+(`npm ci` once):
+
+```sh
+read -rs MONGODB_URI && export MONGODB_URI   # paste the read-only URI, then Enter (not echoed)
+MONGODB_DB_NAME=rivalrush npm run beta:report -w @rivalrush/server -- \
+  --since 2026-10-12 --tz Europe/Berlin --testers testers.txt
+```
+
+| Option           | Meaning                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `--since` (req.) | First day of the window (`YYYY-MM-DD`, midnight in `--tz`)                                         |
+| `--until`        | Last day included (default: up to now)                                                             |
+| `--tz`           | Your time zone for day boundaries, e.g. `Europe/Berlin` (default `UTC`)                            |
+| `--testers`      | A local file, one tester per line: Telegram id or `@username`; counts "outsiders". Never commit it |
+| `--json`         | Machine-readable output                                                                            |
+
+**Use a read-only database user, once:** Atlas → Database Access → Add New Database User →
+Password, username `rivalrush_report`, a long random password, **Specific Privileges → `read` on
+`rivalrush`** (nothing else). Build its URI from Atlas → Connect → Drivers. Keep it in your
+password manager; never paste it (or any password or token) into a chat, an issue or a commit.
+Day-7 return needs `--since` at least 7 days before `--until`; run it from 19 Oct.
 
 ### The "play again" signal
 
@@ -57,7 +85,8 @@ No single number answers it. Look for these together:
 
 ### Queries
 
-Run them in Atlas → Data Explorer → `rivalrush` database → the collection → **Aggregations**.
+The report runs these pipelines; use them by hand only if you can't run it. Run them in
+Atlas → Data Explorer → `rivalrush` database → the collection → **Aggregations**.
 
 Replace the date with the beta start (UTC). If the editor rejects `ISODate(...)`, use
 `{ "$date": "2026-10-12T00:00:00Z" }`. Or run the same pipelines in `mongosh`.
@@ -173,11 +202,13 @@ is inflated. The "outsiders" count is the more honest growth signal.
 
 ### Daily log
 
-Copy into a spreadsheet and fill in every evening (cumulative since the beta started).
+Copy into a spreadsheet and fill in every evening (cumulative since the beta started). The last
+line of `npm run beta:report -- --since 2026-10-12` is this row with the numbers filled in;
+add the reminder, deploys and notes yourself.
 
-| Date   | Reminder posted? | Rooms | Joined | Games started (logs) | Matches | Normal endings | Abandoned | Rematches | Players | Multi-day | Deploys / incidents | Notes |
-| ------ | ---------------- | ----- | ------ | -------------------- | ------- | -------------- | --------- | --------- | ------- | --------- | ------------------- | ----- |
-| 12 Oct |                  |       |        |                      |         |                |           |           |         |           |                     |       |
+| Date   | Reminder posted? | Rooms | Joined | Games started | Matches | Normal endings | Abandoned | Rematches | Players | Multi-day | Deploys / incidents | Notes |
+| ------ | ---------------- | ----- | ------ | ------------- | ------- | -------------- | --------- | --------- | ------- | --------- | ------------------- | ----- |
+| 12 Oct |                  |       |        |               |         |                |           |           |         |           |                     |       |
 
 ## Feedback
 

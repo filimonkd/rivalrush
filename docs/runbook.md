@@ -29,9 +29,9 @@ severity.
 
 **Evening (15 min):**
 
-1. Count today's `game.started` in the Render logs; run the queries in
-   [beta-plan.md](beta-plan.md#queries).
-2. Fill in the daily log row, including whether you posted a reminder and any deploys.
+1. Run the [beta report](beta-plan.md#the-beta-report-one-command)
+   (`npm run beta:report -w @rivalrush/server -- --since 2026-10-12 --tz <your zone>`).
+2. Paste its daily-log row into the log and add whether you posted a reminder and any deploys.
 3. Triage new issues: Blocker → fix now; Major → this week if safe; Minor → polish week.
 4. Decide whether a deploy is needed tomorrow (see the deploy rule below).
 
@@ -63,8 +63,8 @@ production` or `Invalid environment` line names the bad variable.
     resumes next month or with a paid plan, which is a cost decision for the owner.
 - **Tell testers:** "RivalRush is down right now, we're on it. Games in progress were lost; your
   stats are safe."
-- **After:** live games were lost. Note the duration and count of `game.started` without a
-  matching result.
+- **After:** live games were lost. Note the duration; the beta report's "never finished" counts
+  the games that started without a result.
 
 ### MongoDB unavailable
 

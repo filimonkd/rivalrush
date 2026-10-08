@@ -261,6 +261,7 @@ export class DefuserHarness {
         h.finished.push(s);
         return 'recorded';
       },
+      recordGameStart: async () => undefined,
     });
     // No database: room metadata persistence is not part of what this harness exercises.
     h.server.roomRepo.persist = () => undefined;
