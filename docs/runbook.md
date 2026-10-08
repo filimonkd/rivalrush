@@ -17,6 +17,10 @@ Telegram bot `@rivalrushbot`. Architecture and free-tier limits: [deployment.md]
    - many `auth.failed` in a short time (wrong token, or someone probing)
 4. Send `/start` to the bot: welcome message with a **Play** button.
 
+After any deploy, run `npm run prod:check -w @rivalrush/server -- --api … --web … --commit <sha>`
+from your computer: one line per check (health, commit, CORS, dev login off, webhook, Socket.IO,
+web app → API), all ✅ ([launch checklist](beta-launch-checklist.md#a-deploy-what-the-beta-runs-on-fri-9-oct)).
+
 ## Closed beta: daily routine
 
 Plan, metrics and queries: [beta-plan.md](beta-plan.md).

@@ -171,6 +171,8 @@ or the live database.
   `match.recorded`, `match.record_failed`, `socket.connected`/`disconnected`.
 - Alert on: health check failures, repeated `match.record_failed`, spikes in `auth.failed`.
 - The keep-warm pinger (UptimeRobot / cron-job.org) doubles as free downtime alerting.
+- After a deploy: `npm run prod:check` (read-only: health, deployed commit, CORS, dev login
+  off, webhook, Socket.IO, web app → API), see [beta-launch-checklist.md](beta-launch-checklist.md).
 - Beta metrics: `npm run beta:report` with a read-only Atlas user
   ([beta-plan.md](beta-plan.md#the-beta-report-one-command)). Game starts are stored in
   `game_starts` (one small document per game, no names).
