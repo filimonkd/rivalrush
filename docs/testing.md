@@ -61,7 +61,7 @@ answered and the client keeps the higher version (`reliability.test.ts` + web lo
 ## Defuser: Telegram multi-phone QA (staging)
 
 A 38-row script for real phones in real Telegram against the **staging** deployment lives in
-[defuser-qa.md](defuser-qa.md). Not run yet.
+[defuser-qa.md](defuser-qa.md). Run 1 (8 Oct 2026): one 2-player game on staging; most rows not yet run.
 
 ## Production manual QA
 

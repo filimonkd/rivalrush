@@ -5,10 +5,11 @@ users.** The server-side game (state machine, drop-out procedure, per-role views
 only when `DEFUSER_ENABLED=true`. The live service refuses that flag. The web app has the full
 Defuser UI (briefing, Operator console, Analyst manual, result and debrief), but the live app never
 offers it: the catalog lists Defuser as `coming_soon`, and without the flag creating a Defuser room
-fails with `GAME_NOT_AVAILABLE`. A separate **staging** deployment (`DEPLOY_ENV=staging`, defined
-in the repo but **not set up**) may run it for Telegram multi-phone QA, with a "Staging preview"
-card on Home ([defuser-qa.md](defuser-qa.md)). Telegram multi-phone QA has **not** been run and
-production QA has not been done; the Playwright E2E runs only against the dev/test server in CI.
+fails with `GAME_NOT_AVAILABLE`. A separate **staging** deployment (`DEPLOY_ENV=staging`, set up
+8 Oct 2026, bot `@RivalRushStagingbot`) runs it for Telegram multi-phone QA, with a "Staging
+preview" card on Home ([defuser-qa.md](defuser-qa.md)). Telegram QA run 1 (one 2-player game,
+invite link, detonation) is done; most of the script is not yet run, and production QA has not
+been done; the Playwright E2E runs only against the dev/test server in CI.
 Starting this engineering work is not a product decision: the build/no-build gate in the
 specification (closed beta, decision 19–20 Oct) is unchanged.
 
@@ -38,8 +39,8 @@ where it disagrees with the specification, the specification wins.
 | `DEFUSER_FIXED_SEED`: same seed, same edition; refused in production by config and by the registry                                                                     | Implemented, tested                                                                                 | `config/env.ts`, `games/registry.ts`                                                                                                  |
 | Backend test harness (real `buildServer`, real sockets and REST, fixed seed, controllable server clock) and the serialized-payload leak scanner                        | Implemented                                                                                         | `test/helpers/defuserHarness.ts`, `test/helpers/leak.ts`                                                                              |
 | Playwright E2E (3 and 2 browsers) with `DEFUSER_FIXED_SEED` from `e2e/defuser-seed.json` in the Playwright env; a server test pins that seed's edition                 | Implemented; runs in CI (dev/test server only)                                                      | `apps/web/e2e/defuser.spec.ts`, `apps/server/test/unit/defuser-e2e-seed.test.ts`                                                      |
-| Staging mode (`DEPLOY_ENV=staging`: production checks + Defuser, staging DB required, `preview` catalog status, Home "Staging preview" card) and `render.staging.yaml` | Implemented, tested; **staging not set up**                                                         | `config/env.ts`, `games/registry.ts`, `HomePage.tsx`, [deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games) |
-| Telegram multi-phone QA script (38 rows, staging)                                                                                                                      | Written; **not run**                                                                                | [defuser-qa.md](defuser-qa.md)                                                                                                        |
+| Staging mode (`DEPLOY_ENV=staging`: production checks + Defuser, staging DB required, `preview` catalog status, Home "Staging preview" card) and `render.staging.yaml` | Implemented, tested; **staging set up 8 Oct 2026**                                                  | `config/env.ts`, `games/registry.ts`, `HomePage.tsx`, [deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games) |
+| Telegram multi-phone QA script (38 rows, staging)                                                                                                                      | Run 1 (partial)                                                                                     | [defuser-qa.md](defuser-qa.md)                                                                                                        |
 | Production activation, production QA                                                                                                                                   | **Not done** (waits for the product decision)                                                       | —                                                                                                                                     |
 
 ### Generator verification
