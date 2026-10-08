@@ -68,7 +68,8 @@ export function CreateRoomPage() {
   const navigate = useNavigate();
   const { gameId = CRACK_THE_CODE_ID } = useParams();
   const isCipher = gameId === COLOR_CIPHER_ID;
-  // Reached only by its URL (never from Home); the server refuses it unless Defuser is enabled.
+  // Reached from Home's Defuser card (live or staging preview); the server refuses it unless
+  // Defuser is enabled there.
   const isDefuser = gameId === DEFUSER_ID;
   const game = gameInfo(isDefuser ? DEFUSER_ID : isCipher ? COLOR_CIPHER_ID : CRACK_THE_CODE_ID);
   const [codeLength, setCodeLength] = useState<number>(CTC_LIMITS.codeLength.default);

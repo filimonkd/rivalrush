@@ -45,7 +45,7 @@ export function buildServer(
   logger: Logger,
   overrides: ServerOverrides = {},
 ): RivalRushServer {
-  // Only the duels are registered unless Defuser is explicitly enabled (dev/test or staging).
+  // Only the duels are registered unless Defuser is explicitly enabled (DEFUSER_ENABLED).
   const registry = createGameRegistry({
     defuserEnabled: config.defuserEnabled,
     defuserFixedSeed: config.defuserFixedSeed,

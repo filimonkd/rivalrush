@@ -1,11 +1,11 @@
 # Defuser
 
-**Status: BACKEND INTEGRATED + FRONTEND UI BUILT, dev/test and staging only. Not available to
-users.** The server-side game (state machine, drop-out procedure, per-role views) is registered
-only when `DEFUSER_ENABLED=true`. The live service refuses that flag. The web app has the full
-Defuser UI (briefing, Operator console, Analyst manual, result and debrief), but the live app never
-offers it: the catalog lists Defuser as `coming_soon`, and without the flag creating a Defuser room
-fails with `GAME_NOT_AVAILABLE`. A separate **staging** deployment (`DEPLOY_ENV=staging`, set up
+**Status: RELEASE-READY behind a switch. On the live service only after the owner sets
+`DEFUSER_ENABLED=true` there** ([how](deployment.md#releasing-defuser-on-the-live-service); the
+owner decided to release it on 8 Oct 2026). The server-side game (state machine, drop-out
+procedure, per-role views) is registered only when `DEFUSER_ENABLED=true`; the live catalog then
+lists it as `live` and Home offers a Defuser card to everyone. Without the switch the catalog says
+`coming_soon` and creating a Defuser room fails with `GAME_NOT_AVAILABLE`. A separate **staging** deployment (`DEPLOY_ENV=staging`, set up
 8 Oct 2026, bot `@RivalRushStagingbot`) runs it for Telegram multi-phone QA, with a "Staging
 preview" card on Home ([defuser-qa.md](defuser-qa.md)). Telegram QA run 1 (one 2-player game,
 invite link, detonation) is done; most of the script is not yet run, and production QA has not

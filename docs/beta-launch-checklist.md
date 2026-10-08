@@ -70,15 +70,15 @@ for both duels and the fix for a lost tap right after joining (#24).
 
 With a second phone (or a friend), against the **live** bot `@rivalrushbot`:
 
-| #   | Do                                                           | Expect                                                                                     |
-| --- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| 1   | `/start` → **Play** on phone A                               | Home with Crack the Code and Color Cipher live; Defuser only as "Coming soon"              |
-| 2   | **Start a duel** → **Create room**                           | The lobby opens How to play by itself (first time on this phone), with your room's numbers |
-| 3   | **Send invite** to phone B's chat; B taps it → **Join game** | B sees How to play once too; after it, **I'm ready** works on the first tap                |
-| 4   | A taps **Start game**, both play to a result                 | Result on both phones; **Rematch** starts a new game with the other player first           |
-| 5   | Repeat 2–4 with **Color Cipher**                             | Same, with Color Cipher's own How to play                                                  |
-| 6   | Profile on both phones                                       | Both games in recent matches; wins and losses add up                                       |
-| 7   | Background the app on B for ~20 s mid-game, return           | Game still running, B catches up without reloading                                         |
+| #   | Do                                                           | Expect                                                                                                           |
+| --- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| 1   | `/start` → **Play** on phone A                               | Home with Crack the Code and Color Cipher live; Defuser as "Coming soon", or its live card once you switch it on |
+| 2   | **Start a duel** → **Create room**                           | The lobby opens How to play by itself (first time on this phone), with your room's numbers                       |
+| 3   | **Send invite** to phone B's chat; B taps it → **Join game** | B sees How to play once too; after it, **I'm ready** works on the first tap                                      |
+| 4   | A taps **Start game**, both play to a result                 | Result on both phones; **Rematch** starts a new game with the other player first                                 |
+| 5   | Repeat 2–4 with **Color Cipher**                             | Same, with Color Cipher's own How to play                                                                        |
+| 6   | Profile on both phones                                       | Both games in recent matches; wins and losses add up                                                             |
+| 7   | Background the app on B for ~20 s mid-game, return           | Game still running, B catches up without reloading                                                               |
 
 Then on your computer:
 
@@ -122,4 +122,7 @@ by a day and tell the testers. Do not start the week with a known Blocker.
 - Only fixes for Blockers (or a safe, tested Major) reach the live service, deployed by hand
   with a heads-up ([deploy rule](runbook.md#closed-beta-daily-routine)).
 - Anything else is tried on staging first ([deployment.md](deployment.md#staging-optional-telegram-qa-of-unreleased-games)).
-- Defuser stays off the live service whatever happens on staging.
+- Defuser on the live service is your switch (`DEFUSER_ENABLED` in the Render dashboard,
+  [how](deployment.md#releasing-defuser-on-the-live-service)). Flipping it restarts the service, so
+  treat it like a deploy: quiet hour, heads-up. Its games show up in the beta report as their own
+  row in "Per game".

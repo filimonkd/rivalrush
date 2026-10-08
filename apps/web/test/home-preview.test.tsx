@@ -58,8 +58,8 @@ const home = () =>
     </MemoryRouter>,
   );
 
-describe('Home and unreleased games', () => {
-  it('live (coming_soon): Defuser has no start button, only the Coming soon tile', async () => {
+describe('Home and Defuser in each deployment', () => {
+  it('not released (coming_soon): Defuser has no start button, only the Coming soon tile', async () => {
     games = [entry('crack-the-code', 'live'), entry('defuser', 'coming_soon')];
     home();
     expect(await screen.findByText('Coming soon')).toBeTruthy();
@@ -73,6 +73,27 @@ describe('Home and unreleased games', () => {
     expect(card.textContent).toContain('Staging preview · not released');
     expect(card.textContent).toContain('Defuser');
     expect(screen.queryByText('Coming soon')).toBeNull();
+  });
+
+  it('released (live): a Defuser start card for everyone, no preview label, no Coming soon tile', async () => {
+    games = [entry('crack-the-code', 'live'), entry('defuser', 'live')];
+    home();
+    const card = await screen.findByTestId('start-defuser');
+    expect(card.textContent).toContain('Live now · New · Co-op');
+    expect(card.textContent).toContain('Start a team game');
+    expect(card.textContent).not.toContain('Staging');
+    expect(screen.queryByTestId('start-preview-defuser')).toBeNull();
+    expect(screen.queryByText('Coming soon')).toBeNull();
+  });
+
+  it('the live card appears only for a live Defuser', async () => {
+    for (const status of ['coming_soon', 'preview'] as const) {
+      games = [entry('crack-the-code', 'live'), entry('defuser', status)];
+      home();
+      await screen.findByText(status === 'preview' ? /Staging preview/ : 'Coming soon');
+      expect(screen.queryByTestId('start-defuser')).toBeNull();
+      cleanup();
+    }
   });
 
   it('the recent-game card names the team for a co-op game', async () => {

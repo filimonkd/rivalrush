@@ -50,7 +50,8 @@ export const GAMES: Record<GameId, GameInfo> = {
       { value: String(num(s, 'maxGuesses')), label: 'guesses' },
     ],
   },
-  // Co-op. Playable only where the server registers it (dev/test); never offered on Home.
+  // Co-op. Playable where the server registers it (DEFUSER_ENABLED); Home offers it when the
+  // server lists it as live (released) or preview (staging).
   [DEFUSER_ID]: {
     id: DEFUSER_ID,
     name: 'Defuser',
