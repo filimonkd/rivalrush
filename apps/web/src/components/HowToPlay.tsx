@@ -1,14 +1,34 @@
 import { useState } from 'react';
-import { haptic } from '../../lib/telegram';
-import { HOW_TO_STEPS, markHowToSeen } from './howto';
+import { gameInfo } from '../lib/games';
+import { howToFor, markHowToSeen } from '../lib/howto';
+import { haptic } from '../lib/telegram';
 
-/** A short, skippable explainer for first-time teams. Closing it (any way) counts as seen. */
-export function HowToPlay({ onClose }: { onClose: () => void }) {
+const TONES = {
+  defuser: { label: 'text-[#f5a524]', dot: 'bg-[#f5a524]', next: 'bg-[#f5a524] text-[#2a1a00]' },
+  duel: { label: 'text-accent', dot: 'bg-accent', next: 'bg-accent text-accent-text' },
+} as const;
+
+/**
+ * A short, skippable explainer for first-time players of a game. Closing it (any way) counts as
+ * seen for that game on this device. `settings` puts the room's own numbers into the steps.
+ */
+export function HowToPlay({
+  gameId,
+  settings,
+  onClose,
+}: {
+  gameId: string;
+  settings?: Record<string, unknown>;
+  onClose: () => void;
+}) {
   const [i, setI] = useState(0);
-  const step = HOW_TO_STEPS[i]!;
-  const last = i === HOW_TO_STEPS.length - 1;
+  const howTo = howToFor(gameId);
+  const steps = howTo.steps(settings);
+  const tone = TONES[howTo.tone];
+  const step = steps[i]!;
+  const last = i === steps.length - 1;
   const close = () => {
-    markHowToSeen();
+    markHowToSeen(gameId);
     onClose();
   };
   return (
@@ -16,7 +36,7 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
       role="dialog"
       aria-modal="true"
-      aria-label="How to play Defuser"
+      aria-label={`How to play ${gameInfo(gameId).name}`}
       data-testid="how-to-play"
     >
       <div
@@ -24,8 +44,8 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
         style={{ paddingBottom: 'calc(var(--rr-safe-bottom) + 20px)' }}
       >
         <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-[#f5a524]">
-            How to play · {i + 1} of {HOW_TO_STEPS.length}
+          <p className={`text-xs font-black uppercase tracking-widest ${tone.label}`}>
+            How to play · {i + 1} of {steps.length}
           </p>
           {!last && (
             <button
@@ -49,10 +69,10 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
           </ul>
         </div>
         <div className="flex items-center justify-center gap-1.5" aria-hidden>
-          {HOW_TO_STEPS.map((_, n) => (
+          {steps.map((_, n) => (
             <span
               key={n}
-              className={`h-2 rounded-full transition-all ${n === i ? 'w-5 bg-[#f5a524]' : 'w-2 bg-muted/40'}`}
+              className={`h-2 rounded-full transition-all ${n === i ? `w-5 ${tone.dot}` : 'w-2 bg-muted/40'}`}
             />
           ))}
         </div>
@@ -74,7 +94,7 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
               if (last) close();
               else setI(i + 1);
             }}
-            className="h-12 flex-[2] rounded-2xl bg-[#f5a524] font-black text-[#2a1a00]"
+            className={`h-12 flex-[2] rounded-2xl font-black ${tone.next}`}
             data-testid={last ? 'howto-done' : 'howto-next'}
           >
             {last ? 'Got it' : 'Next'}
@@ -85,20 +105,30 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** "How to play" link that opens the explainer. */
-export function HowToPlayButton({ className = '' }: { className?: string }) {
+/** "How to play" button (or a compact text link) that opens the game's explainer. */
+export function HowToPlayButton({
+  gameId,
+  settings,
+  link = false,
+  className = '',
+}: {
+  gameId: string;
+  settings?: Record<string, unknown>;
+  link?: boolean;
+  className?: string;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`h-11 rounded-2xl px-4 font-bold text-link ${className}`}
+        className={`${link ? 'text-sm' : 'h-11 rounded-2xl px-4'} font-bold text-link ${className}`}
         data-testid="open-how-to-play"
       >
         How to play
       </button>
-      {open && <HowToPlay onClose={() => setOpen(false)} />}
+      {open && <HowToPlay gameId={gameId} settings={settings} onClose={() => setOpen(false)} />}
     </>
   );
 }

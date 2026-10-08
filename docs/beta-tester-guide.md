@@ -36,13 +36,15 @@ the longer version for anyone who wants it.
 2. You're signed in automatically with your Telegram account.
 3. **Start a duel** → choose the settings (code length 3–5 digits, 30–90 s per turn, 8–12
    guesses) → **Create room**.
-4. **Send invite** opens Telegram's chat picker. Your friend taps the link and **Join game**.
-5. Your friend taps **I'm ready**, you tap **Start game**.
-6. Both of you have 60 s to hide a code (different digits, no repeats). If time runs out, the
+4. The first time you open a game's lobby, a short **How to play** opens (skip it any time; it's
+   also under **How to play** in the lobby and on the create screen).
+5. **Send invite** opens Telegram's chat picker. Your friend taps the link and **Join game**.
+6. Your friend taps **I'm ready**, you tap **Start game**.
+7. Both of you have 60 s to hide a code (different digits, no repeats). If time runs out, the
    game picks one for you.
-7. Take turns guessing. Each guess shows bulls (right place) and cows (wrong place).
-8. If the first player cracks the code, the second player gets **one last chance** to tie.
-9. After the result: **Rematch** (the other player goes first) or **Leave**.
+8. Take turns guessing. Each guess shows bulls (right place) and cows (wrong place).
+9. If the first player cracks the code, the second player gets **one last chance** to tie.
+10. After the result: **Rematch** (the other player goes first) or **Leave**.
 
 Your profile shows wins, losses, draws, win rate, streaks and your recent games.
 

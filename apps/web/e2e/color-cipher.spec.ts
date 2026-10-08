@@ -67,6 +67,13 @@ test('two friends play Color Cipher: invite, patterns, feedback, last chance, re
   await shot(ada, 'cc-2-create');
   await ada.getByTestId('create-room').click();
   await expect(ada.getByTestId('lobby-game')).toHaveText('Color Cipher');
+  // First Color Cipher lobby on this device: its own How to play opens by itself.
+  await expect(ada.getByTestId('how-to-play')).toHaveAttribute(
+    'aria-label',
+    'How to play Color Cipher',
+  );
+  await expect(ada.getByTestId('howto-step')).toContainText('colors can repeat');
+  await ada.getByTestId('howto-skip').click();
   const invite = (await ada.getByTestId('invite-link').textContent())!.trim();
 
   // Ben opens the invite: the preview names the game.
@@ -75,6 +82,7 @@ test('two friends play Color Cipher: invite, patterns, feedback, last chance, re
   await expect(ben.getByTestId('challenge-title')).toHaveText('Ada challenged you to Color Cipher');
   await shot(ben, 'cc-3-invite');
   await ben.getByTestId('join-game').click();
+  await ben.getByTestId('howto-skip').click();
   await ben.getByTestId('ready-toggle').click();
   await ada.getByTestId('start-game').click();
 
