@@ -21,6 +21,7 @@ import {
   roleLabel,
   type DebriefView,
 } from './model';
+import { HowToPlayButton } from './HowToPlay';
 
 const TONE = { good: 'text-bull', bad: 'text-danger', muted: 'text-muted' } as const;
 
@@ -129,6 +130,7 @@ export function DefuserResult({
           <Button variant="secondary" onClick={onDebrief} data-testid="open-debrief">
             Debrief
           </Button>
+          <HowToPlayButton className="w-full" />
           {canVote ? (
             mySeat?.wantsRematch ? (
               <Button disabled variant="secondary" data-testid="rematch-waiting">

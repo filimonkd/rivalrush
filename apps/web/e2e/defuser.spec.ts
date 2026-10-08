@@ -57,6 +57,14 @@ async function assemble(host: Player, guests: Player[]) {
   await expect(id(host, 'defuser-create-info')).toBeVisible();
   await id(host, 'create-room').click();
   await expect(id(host, 'lobby-game')).toHaveText('Defuser');
+  // First Defuser lobby on this device: How to play opens by itself. The host reads it through.
+  await expect(id(host, 'how-to-play')).toBeVisible();
+  for (let step = 1; step < 5; step++) {
+    await expect(id(host, 'howto-step')).toHaveAttribute('data-step', String(step));
+    await id(host, 'howto-next').click();
+  }
+  await id(host, 'howto-done').click();
+  await expect(id(host, 'how-to-play')).toHaveCount(0);
   const invite = (await id(host, 'invite-link').textContent())!.trim();
   for (const g of guests) {
     await g.page.goto(new URL(invite).pathname);
@@ -65,6 +73,9 @@ async function assemble(host: Player, guests: Player[]) {
     );
     await id(g, 'join-game').click();
     await expect(id(g, 'lobby-game')).toHaveText('Defuser');
+    // Guests skip it.
+    await id(g, 'howto-skip').click();
+    await expect(id(g, 'how-to-play')).toHaveCount(0);
   }
   for (const g of guests) await id(g, 'ready-toggle').click();
   await expect(id(host, 'start-game')).toBeEnabled();

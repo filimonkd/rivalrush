@@ -2,6 +2,8 @@ import type { RoomSnapshot } from '@rivalrush/shared';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar, Button, Card, Pill, Screen } from '../components/ui';
+import { HowToPlay } from '../features/defuser/HowToPlay';
+import { seenHowTo } from '../features/defuser/howto';
 import { gameInfo } from '../lib/games';
 import { inviteLinkFor, inviteText } from '../lib/invite';
 import { confirmDialog, haptic, shareToTelegram } from '../lib/telegram';
@@ -20,6 +22,8 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   const link = inviteLinkFor(room.inviteToken);
   const game = gameInfo(room.gameType);
   const coop = game.coop === true;
+  // A team game explains itself once per device, while the team gathers (QA run 1).
+  const [helpOpen, setHelpOpen] = useState(() => coop && !seenHowTo());
 
   const run = async (fn: () => Promise<{ message: string } | null>) => {
     setBusy(true);
@@ -59,6 +63,7 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
 
   return (
     <Screen className="gap-4">
+      {helpOpen && <HowToPlay onClose={() => setHelpOpen(false)} />}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black">{coop ? 'Team lobby' : 'Lobby'}</h1>
@@ -73,6 +78,23 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
             .join(' · ')}
         </Pill>
       </div>
+
+      {coop && (
+        <Card className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-black">New to {game.name}?</p>
+            <p className="text-sm text-muted">The roles, the sheets and what sets it off.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            className="h-11 shrink-0 rounded-2xl bg-surface px-4 font-bold text-link"
+            data-testid="open-how-to-play"
+          >
+            How to play
+          </button>
+        </Card>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         {Array.from({ length: room.maxPlayers }, (_, i) => {

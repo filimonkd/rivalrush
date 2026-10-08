@@ -90,6 +90,13 @@ the real REST routes.
 
 ### Frontend decisions
 
+- **How to play** (added after Telegram QA run 1, where a first-time player found the game
+  confusing, mostly the sheets and why it blew up): a skippable five-step explainer (goal, roles,
+  reading a sheet, the three panels, faults and the timer). It opens by itself the first time a
+  phone reaches a Defuser team lobby (remembered in `localStorage`; if storage is unavailable it
+  simply shows again), and from a button in the lobby, on the create page and on the result screen.
+  It is in the lobby, not the briefing, because the briefing lasts at most 20 s. It explains how to
+  read the sheets, never an edition's answer.
 - The screen renders the role view the server sent and nothing else, reading fields by `kind`
   (`operator`, `analyst`, `inactive`, `debrief`). Nothing is fetched, computed or hidden with CSS:
   tests render views with planted extra fields (seed, solution, Charge on an Analyst, sheets on an
