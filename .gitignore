@@ -11,3 +11,5 @@ apps/web/playwright-report/
 .DS_Store
 *.log
 .vercel
+# Closed-beta tester list for `beta:report --testers` (personal data: never commit)
+testers*.txt

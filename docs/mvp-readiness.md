@@ -99,6 +99,7 @@ Plan: [beta-plan.md](beta-plan.md) · Tester guide and message:
 
 ## Recommended next step
 
-1. Finish the owner actions above this week.
+1. Finish the owner actions above this week, in the order of the
+   [launch checklist](beta-launch-checklist.md) (it ends with a go/no-go on 11 Oct).
 2. Run the closed beta 12–18 Oct following [beta-plan.md](beta-plan.md#one-week-schedule).
 3. Decide on 19–20 Oct with the decision table; re-check day-7 return on 25 Oct.

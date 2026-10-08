@@ -37,6 +37,17 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: game
+    attributes:
+      label: Game
+      options:
+        - Crack the Code
+        - Color Cipher
+        - Not in a game
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
     id: where
     attributes:
       label: Where in the app
@@ -44,8 +55,9 @@ body:
         - Sign-in / opening the app
         - Home
         - Create room / lobby
+        - How to play
         - Invite link / joining
-        - Hiding the code (setup)
+        - Hiding the code or pattern (setup)
         - My turn
         - Their turn
         - Result / rematch
