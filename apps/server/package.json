@@ -11,6 +11,7 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "beta:report": "tsx --conditions=source src/analytics/betaReportCli.ts",
     "test:defuser:full": "DEFUSER_SEEDS=100000 DEFUSER_ORACLE_SAMPLES=200000 DEFUSER_VIEW_SEEDS=10000 vitest run test/unit/defuser-generator.test.ts test/unit/defuser-oracle.test.ts test/unit/defuser-views.test.ts"
   },
   "dependencies": {

@@ -79,7 +79,7 @@ Vercel PR previews only check that the web app builds; they can't reach the API 
    matrix above.) Indexes are created by the server on
    boot (`syncIndexes`): `users.telegramId` unique, `matches.sessionId` unique,
    `matches.players.userId+endedAt`, `rooms.roomId` unique, `rooms.inviteTokenHash` unique,
-   TTL on `rooms.purgeAt` (30 days after expiry).
+   TTL on `rooms.purgeAt` (30 days after expiry), `game_starts.sessionId` unique.
 2. **Render**: New → Blueprint → this repo (`render.yaml`, `plan: free`). Fill the
    `sync: false` variables (use a placeholder `WEBAPP_URL` for now). Note the service URL,
    e.g. `https://rivalrush-api.onrender.com`. If you created the service by hand instead of
@@ -171,6 +171,9 @@ or the live database.
   `match.recorded`, `match.record_failed`, `socket.connected`/`disconnected`.
 - Alert on: health check failures, repeated `match.record_failed`, spikes in `auth.failed`.
 - The keep-warm pinger (UptimeRobot / cron-job.org) doubles as free downtime alerting.
+- Beta metrics: `npm run beta:report` with a read-only Atlas user
+  ([beta-plan.md](beta-plan.md#the-beta-report-one-command)). Game starts are stored in
+  `game_starts` (one small document per game, no names).
 
 ## Rollback
 

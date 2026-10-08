@@ -93,7 +93,8 @@ Plan: [beta-plan.md](beta-plan.md) · Tester guide and message:
 | 🟡 Owner action required | Recruit testers, create the survey, set up the daily log                                                   |
 | 🟡 Optional              | QA rows 36–37 (invite to a room idle > 2 h; old link after a restart)                                      |
 | ⚠️ Known limitation      | Deploys and restarts end live games; free tier can sleep without the pinger                                |
-| ⚠️ Known limitation      | "Games started" exists only in Render logs (short retention): record it daily                              |
+| ✅ Ready (automated)     | Game starts stored in `game_starts`; `npm run beta:report` prints every metric and the daily-log row       |
+| 🟡 Owner action required | Deploy that release before 12 Oct; create the read-only `rivalrush_report` Atlas user                      |
 | ⚠️ Known limitation      | ~50 matches and 15–20 testers make every rate noisy: directional, not pass/fail                            |
 
 ## Recommended next step

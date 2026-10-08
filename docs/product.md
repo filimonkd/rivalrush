@@ -26,14 +26,14 @@ future game uses original names, art and rules.
 
 ## Success signals (hypotheses for the first playtest, not guarantees)
 
-| Metric                       | Source                                                                                                  |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Invite → join                | `rooms.peakPlayers >= 2` ÷ rooms created                                                                |
-| Match completion             | `matches.result.reason` ∈ {cracked, both_cracked, out_of_guesses} ÷ games started (`game.started` logs) |
-| Abandon rate                 | `reason = abandoned` ÷ started                                                                          |
-| Rematch rate                 | `matches.isRematch` ÷ finished                                                                          |
-| Games per player / D7 return | `matches.players.userId`, `users.createdAt`                                                             |
-| Organic invites              | `users.acquisition.viaInvite` (set from the signed `start_param` on first sign-in)                      |
+| Metric                       | Source                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| Invite → join                | `rooms.peakPlayers >= 2` ÷ rooms created                                                          |
+| Match completion             | `matches.result.reason` ∈ {cracked, both_cracked, out_of_guesses} ÷ games started (`game_starts`) |
+| Abandon rate                 | `reason = abandoned` ÷ started                                                                    |
+| Rematch rate                 | `matches.isRematch` ÷ finished                                                                    |
+| Games per player / D7 return | `matches.players.userId`, `users.createdAt`                                                       |
+| Organic invites              | `users.acquisition.viaInvite` (set from the signed `start_param` on first sign-in)                |
 
 The most important early signal: **do people want to play again?** The closed beta measures it:
 [beta-plan.md](beta-plan.md) (metrics, queries, decisions) and
