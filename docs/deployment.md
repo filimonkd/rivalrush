@@ -27,12 +27,14 @@ start looks intentional rather than broken.
 
 ## Environment matrix
 
-Duels are tested locally and in CI, then go to production. **Staging is defined in the repo but
-not set up**: it exists for Telegram multi-phone QA of unreleased games (today Defuser), and you
-create it, at no cost, with [Staging](#staging-optional-telegram-qa-of-unreleased-games) below.
+Duels are tested locally and in CI, then go to production. **Staging** exists for Telegram
+multi-phone QA of unreleased games (today Defuser). It was **set up on 8 Oct 2026** by the product
+owner, following [Staging](#staging-optional-telegram-qa-of-unreleased-games) below: bot
+`@RivalRushStagingbot`, Render service `rivalrush-api-staging`, a separate Vercel project and the
+`rivalrush_staging` database user.
 Nothing in staging ever reaches the live service.
 
-|           | Development                                      | Staging (optional, not set up)                                                              | Production (live)                                                |
+|           | Development                                      | Staging (set up 8 Oct 2026)                                                                 | Production (live)                                                |
 | --------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Web       | `localhost:5173` (+ tunnel for Telegram)         | a 2nd Vercel project (Root `apps/web`) with the staging `VITE_*` values                     | Vercel production domain                                         |
 | API       | `localhost:4000` (+ tunnel)                      | 2nd Render Free service `rivalrush-api-staging` (`render.staging.yaml`), **not** kept awake | Render Free `rivalrush-api` (1 instance, kept awake by a pinger) |
