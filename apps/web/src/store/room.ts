@@ -217,8 +217,10 @@ export const useRoom = create<RoomState>((set, get) => {
       else if (initial) apply(initial);
       const s = ensureSocket();
       if (!s.connected) {
-        set({ connection: s.active ? 'reconnecting' : 'connecting' });
-        s.connect();
+        set({ connection: everConnected ? 'reconnecting' : 'connecting' });
+        // An active socket is already connecting (or retrying): a second connect() would send a
+        // second CONNECT and leave a ghost socket on the server. Only wake a stopped one.
+        if (!s.active) s.connect();
         return; // 'connect' handler resyncs
       }
       set({ connection: 'online' });

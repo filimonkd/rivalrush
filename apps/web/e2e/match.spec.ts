@@ -94,6 +94,17 @@ test('two friends play a full Crack the Code match, rematch, reconnect and finis
   await alice.getByTestId('start-duel').click();
   await alice.getByTestId('opt-length').getByRole('button', { name: '3' }).click();
   await alice.getByTestId('create-room').click();
+  // First Crack the Code lobby on this device: How to play opens by itself, with this room's
+  // numbers. Alice reads it through.
+  await expect(alice.getByTestId('how-to-play')).toBeVisible();
+  await expect(alice.getByTestId('howto-step')).toContainText('3 digits from 0–9');
+  for (let step = 1; step < 4; step++) {
+    await expect(alice.getByTestId('howto-step')).toHaveAttribute('data-step', String(step));
+    await alice.getByTestId('howto-next').click();
+  }
+  await expect(alice.getByTestId('howto-step')).toContainText('one last guess');
+  await alice.getByTestId('howto-done').click();
+  await expect(alice.getByTestId('how-to-play')).toHaveCount(0);
   await expect(alice.getByTestId('waiting-opponent')).toBeVisible();
   const invite = (await alice.getByTestId('invite-link').textContent())!.trim();
   expect(invite).toMatch(/\/join\/[A-Za-z0-9_-]{16,}$/);
@@ -106,6 +117,7 @@ test('two friends play a full Crack the Code match, rematch, reconnect and finis
   );
   await bob.getByTestId('join-game').click();
   await expect(alice.getByText('Bob joined')).toBeVisible();
+  await bob.getByTestId('howto-skip').click();
 
   // Ready → Start.
   await expect(alice.getByTestId('start-game')).toBeDisabled();
@@ -207,10 +219,12 @@ test('a declined rematch frees the room for someone new, with nothing of the old
   await signIn(alice, 'Alina');
   await alice.getByTestId('start-duel').click();
   await alice.getByTestId('create-room').click();
+  await alice.getByTestId('howto-skip').click();
   const invite = (await alice.getByTestId('invite-link').textContent())!.trim();
   await signIn(bob, 'Boris');
   await bob.goto(new URL(invite).pathname);
   await bob.getByTestId('join-game').click();
+  await bob.getByTestId('howto-skip').click();
   await bob.getByTestId('ready-toggle').click();
   await alice.getByTestId('start-game').click();
   await expect(alice.getByTestId('lock-secret')).toBeVisible();
@@ -243,6 +257,7 @@ test('a declined rematch frees the room for someone new, with nothing of the old
     'Alina challenged you to Crack the Code',
   );
   await carol.getByTestId('join-game').click();
+  await carol.getByTestId('howto-skip').click();
   await carol.getByTestId('ready-toggle').click();
   await alice.getByTestId('start-game').click();
   await expect(carol.getByTestId('lock-secret')).toBeVisible();

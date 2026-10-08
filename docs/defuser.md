@@ -97,7 +97,9 @@ the real REST routes.
   phone reaches a Defuser team lobby (remembered in `localStorage`; if storage is unavailable it
   simply shows again), and from a button in the lobby, on the create page and on the result screen.
   It is in the lobby, not the briefing, because the briefing lasts at most 20 s. It explains how to
-  read the sheets, never an edition's answer.
+  read the sheets, never an edition's answer. The same component now serves the duels too
+  (`components/HowToPlay.tsx`, content in `lib/howto.ts`; "seen" is remembered per game, and
+  the Defuser key `rr.defuser.howToSeen` is unchanged).
 - The screen renders the role view the server sent and nothing else, reading fields by `kind`
   (`operator`, `analyst`, `inactive`, `debrief`). Nothing is fetched, computed or hidden with CSS:
   tests render views with planted extra fields (seed, solution, Charge on an Analyst, sheets on an

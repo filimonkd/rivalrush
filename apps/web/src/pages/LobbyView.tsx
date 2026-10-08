@@ -2,9 +2,9 @@ import type { RoomSnapshot } from '@rivalrush/shared';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar, Button, Card, Pill, Screen } from '../components/ui';
-import { HowToPlay } from '../features/defuser/HowToPlay';
-import { seenHowTo } from '../features/defuser/howto';
+import { HowToPlay } from '../components/HowToPlay';
 import { gameInfo } from '../lib/games';
+import { seenHowTo } from '../lib/howto';
 import { inviteLinkFor, inviteText } from '../lib/invite';
 import { confirmDialog, haptic, shareToTelegram } from '../lib/telegram';
 import { useRoom } from '../store/room';
@@ -22,8 +22,9 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
   const link = inviteLinkFor(room.inviteToken);
   const game = gameInfo(room.gameType);
   const coop = game.coop === true;
-  // A team game explains itself once per device, while the team gathers (QA run 1).
-  const [helpOpen, setHelpOpen] = useState(() => coop && !seenHowTo());
+  // Every game explains itself once per device, while the players gather (Defuser QA run 1).
+  const [helpOpen, setHelpOpen] = useState(() => !seenHowTo(room.gameType));
+  const settings = room.settings as unknown as Record<string, unknown>;
 
   const run = async (fn: () => Promise<{ message: string } | null>) => {
     setBusy(true);
@@ -63,12 +64,27 @@ export function LobbyView({ room }: { room: RoomSnapshot }) {
 
   return (
     <Screen className="gap-4">
-      {helpOpen && <HowToPlay onClose={() => setHelpOpen(false)} />}
+      {helpOpen && (
+        <HowToPlay gameId={room.gameType} settings={settings} onClose={() => setHelpOpen(false)} />
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black">{coop ? 'Team lobby' : 'Lobby'}</h1>
-          <p className="text-sm font-bold text-muted" data-testid="lobby-game">
-            {game.name}
+          <p className="text-sm font-bold text-muted">
+            <span data-testid="lobby-game">{game.name}</span>
+            {!coop && (
+              <>
+                {' · '}
+                <button
+                  type="button"
+                  onClick={() => setHelpOpen(true)}
+                  className="font-bold text-link"
+                  data-testid="open-how-to-play"
+                >
+                  How to play
+                </button>
+              </>
+            )}
           </p>
         </div>
         <Pill tone="accent">

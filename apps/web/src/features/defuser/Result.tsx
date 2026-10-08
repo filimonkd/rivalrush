@@ -1,4 +1,5 @@
 import {
+  DEFUSER_ID,
   PANEL_IDS,
   type DefuserMove,
   type PanelId,
@@ -6,6 +7,7 @@ import {
   type RoomSnapshot,
 } from '@rivalrush/shared';
 import { useEffect, useRef, useState } from 'react';
+import { HowToPlayButton } from '../../components/HowToPlay';
 import { Button } from '../../components/ui';
 import { haptic } from '../../lib/telegram';
 import { useSession } from '../../store/session';
@@ -21,7 +23,6 @@ import {
   roleLabel,
   type DebriefView,
 } from './model';
-import { HowToPlayButton } from './HowToPlay';
 
 const TONE = { good: 'text-bull', bad: 'text-danger', muted: 'text-muted' } as const;
 
@@ -130,7 +131,7 @@ export function DefuserResult({
           <Button variant="secondary" onClick={onDebrief} data-testid="open-debrief">
             Debrief
           </Button>
-          <HowToPlayButton className="w-full" />
+          <HowToPlayButton gameId={DEFUSER_ID} className="w-full" />
           {canVote ? (
             mySeat?.wantsRematch ? (
               <Button disabled variant="secondary" data-testid="rematch-waiting">

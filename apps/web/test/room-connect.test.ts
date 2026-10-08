@@ -7,6 +7,7 @@ class FakeSocket {
   connected = false;
   active = false;
   emitted: string[] = [];
+  connectCalls = 0;
   private handlers = new Map<string, Set<(...a: unknown[]) => void>>();
   on(ev: string, fn: (...a: unknown[]) => void) {
     if (!this.handlers.has(ev)) this.handlers.set(ev, new Set());
@@ -18,11 +19,13 @@ class FakeSocket {
     return this;
   }
   connect() {
+    this.connectCalls++;
     this.active = true;
     return this;
   }
   disconnect() {
     this.connected = false;
+    this.active = false;
     return this;
   }
   /** The server answers every request with the room. */
@@ -40,7 +43,13 @@ class FakeSocket {
 }
 
 let fake: FakeSocket;
-vi.mock('socket.io-client', () => ({ io: () => fake }));
+// Like the real client, a new socket starts connecting at once (autoConnect).
+vi.mock('socket.io-client', () => ({
+  io: () => {
+    fake.active = true;
+    return fake;
+  },
+}));
 
 const room = (): RoomSnapshot =>
   ({
@@ -91,5 +100,29 @@ describe('the first connection after entering a room', () => {
       code: 'RECONNECT_REQUIRED',
     });
     expect(Date.now() - started).toBeLessThan(500);
+  });
+});
+
+describe('entering a room more than once while connecting', () => {
+  it('never sends a second connect for a socket that is already connecting', async () => {
+    // The Join page enters the room, then the room page enters it again on mount.
+    await useRoom.getState().enter('room00000001', room());
+    await useRoom.getState().enter('room00000001');
+    expect(fake.connectCalls).toBe(0);
+    // A first connection is "Connecting…", not "Reconnecting…".
+    expect(useRoom.getState().connection).toBe('connecting');
+    fake.fire('connect');
+    await expect(useRoom.getState().setReady(true)).resolves.toBeNull();
+  });
+
+  it('wakes a stopped socket once, and calls it reconnecting after a drop', async () => {
+    await useRoom.getState().enter('room00000001', room());
+    fake.fire('connect');
+    fake.disconnect();
+    await useRoom.getState().enter('room00000001');
+    expect(fake.connectCalls).toBe(1);
+    expect(useRoom.getState().connection).toBe('reconnecting');
+    await useRoom.getState().enter('room00000001');
+    expect(fake.connectCalls).toBe(1);
   });
 });

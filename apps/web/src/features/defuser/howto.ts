@@ -1,14 +1,11 @@
+import type { HowToStep } from '../../lib/howto';
+
 /**
  * The How-to-play explainer for first-time teams (QA run 1: a first game "worked, but confused
  * me", mostly the sheets and why it blew up). Plain words, no spoilers: it explains how to read
  * the sheets, never what any edition's answer is.
  */
-export interface HowToStep {
-  title: string;
-  lines: string[];
-}
-
-export const HOW_TO_STEPS: readonly HowToStep[] = [
+export const DEFUSER_HOW_TO_STEPS: readonly HowToStep[] = [
   {
     title: 'Defuse the Charge together',
     lines: [
@@ -51,22 +48,3 @@ export const HOW_TO_STEPS: readonly HowToStep[] = [
     ],
   },
 ];
-
-const SEEN_KEY = 'rr.defuser.howToSeen';
-
-/** Whether this device has already seen (or skipped) the explainer. Storage may be unavailable. */
-export function seenHowTo(): boolean {
-  try {
-    return localStorage.getItem(SEEN_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-export function markHowToSeen(): void {
-  try {
-    localStorage.setItem(SEEN_KEY, '1');
-  } catch {
-    /* storage unavailable: it will show again next time, which is harmless */
-  }
-}
